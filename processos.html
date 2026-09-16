@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DETRAN/GEAPO - Processos Jurídicos</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome (Ícones) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            background-color: #f4f7f6;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        /* --- ESTILOS DO PAINEL LATERAL --- */
+        .sidebar {
+            height: 100vh;
+            background-color: #343a40;
+            color: white;
+            position: fixed;
+            width: 260px;
+            overflow-y: auto;
+            z-index: 100;
+        }
+        .sidebar::-webkit-scrollbar { width: 6px; }
+        .sidebar::-webkit-scrollbar-thumb { background-color: #6c757d; border-radius: 4px; }
+        .sidebar .nav-link { color: #d1d8e0; margin-bottom: 5px; font-size: 0.9rem; }
+        .sidebar .nav-link:hover { background-color: #495057; color: white; border-radius: 5px; }
+        .sidebar i { width: 25px; text-align: center; margin-right: 10px; font-size: 1.1rem; }
+        
+        .main-content {
+            margin-left: 260px;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        .card-header {
+            background-color: transparent;
+            font-weight: bold;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        /* TABELAS */
+        .table-responsive {
+            max-height: 550px;
+            overflow-y: auto;
+        }
+        .table-docs th, .table-docs td {
+            vertical-align: middle;
+            font-size: 0.85rem;
+            white-space: nowrap;
+        }
+        .table-docs th {
+            position: sticky;
+            top: 0;
+            background-color: #343a40;
+            color: white;
+            z-index: 10;
+            text-align: center;
+        }
+        .col-obs, .col-assunto {
+            max-width: 250px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* FOOTER */
+        .footer {
+            margin-top: auto;
+            text-align: center;
+            padding: 20px 0;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="dashboard-screen">
+        <!-- MENU LATERAL -->
+        <nav class="sidebar p-3">
+            <div class="text-center mb-4 mt-2">
+                <h5 class="text-white m-0">DETRAN/GEAPO</h5>
+                <small class="text-secondary">Apoio Operacional</small>
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item"><a class="nav-link" href="index.html"><i class="fas fa-chart-line text-info"></i> Painel Geral</a></li>
+                <li class="nav-item"><a class="nav-link" href="geapo.html"><i class="fas fa-building text-primary"></i> GEAPO Institucional</a></li>
+                <li class="nav-item"><a class="nav-link" href="contrato.html"><i class="fas fa-file-signature text-warning"></i> Contrato Geral/Orbenk</a></li>
+                <li class="nav-item"><a class="nav-link" href="ateste.html"><i class="fas fa-check-double text-success"></i> Ateste Serviço/Orbenk</a></li>
+                <li class="nav-item"><a class="nav-link" href="sgpe.html"><i class="fas fa-folder-open text-danger"></i> Controle SGPE</a></li>
+                <li class="nav-item"><a class="nav-link" href="oficios.html"><i class="fas fa-envelope-open-text text-info"></i> Ofícios/Despachos</a></li>
+                <li class="nav-item"><a class="nav-link active fw-bold text-white" href="processos.html"><i class="fas fa-balance-scale text-primary"></i> Processos Jurídicos</a></li>
+                <li class="nav-item"><a class="nav-link" href="frota.html"><i class="fas fa-car text-secondary"></i> Frota e Multas</a></li>
+                <li class="nav-item"><a class="nav-link" href="compras.html"><i class="fas fa-shopping-cart text-success"></i> Compras e CPESC</a></li>
+                <li class="nav-item"><a class="nav-link" href="diarias.html"><i class="fas fa-plane text-info"></i> Diárias e Passagem</a></li>
+                <li class="nav-item"><a class="nav-link" href="efetivo.html"><i class="fas fa-users text-warning"></i> Efetivo</a></li>
+                <li class="nav-item"><a class="nav-link" href="agenda.html"><i class="fas fa-calendar-alt text-danger"></i> Agenda e Prazos</a></li>
+                <li class="nav-item"><a class="nav-link" href="agencias.html"><i class="fas fa-map-marker-alt text-primary"></i> Agências</a></li>
+                <li class="nav-item"><a class="nav-link" href="portarias.html"><i class="fas fa-file-alt text-secondary"></i> Portarias</a></li>
+                <li class="nav-item"><a class="nav-link" href="leis.html"><i class="fas fa-gavel text-warning"></i> Leis e Instruções</a></li>
+                <li class="nav-item"><a class="nav-link" href="manuais.html"><i class="fas fa-book text-success"></i> Manuais/Funções</a></li>
+                <li class="nav-item"><a class="nav-link" href="relatorios.html"><i class="fas fa-chart-pie text-info"></i> Relatorios Gerenciais</a></li>
+            </ul>
+        </nav>
+
+        <!-- CONTEÚDO PRINCIPAL -->
+        <div class="main-content">
+            
+            <!-- CABEÇALHO DO MÓDULO -->
+            <div class="d-flex justify-content-between align-items-center mb-4 pt-2">
+                <div>
+                    <h3 class="m-0"><i class="fas fa-balance-scale text-primary me-2"></i>Processos Jurídicos</h3>
+                    <small class="text-muted">Registro, triagem e controle de demandas jurídicas e administrativos</small>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                    <div class="input-group input-group-sm" style="width: 180px;">
+                        <span class="input-group-text bg-light fw-bold"><i class="fas fa-calendar-alt me-1"></i> Exer.</span>
+                        <input type="number" id="anoExercicio" class="form-control fw-bold text-primary" value="2026" min="1900" max="2100" onchange="trocarAno(this.value)">
+                    </div>
+                    <span class="border-start ps-3"><i class="fas fa-user-circle"></i> <strong>GEAPO (Admin)</strong></span>
+                </div>
+            </div>
+
+            <!-- PAINEL RECOLHÍVEL DE CADASTRO -->
+            <div class="card mb-4">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <span><i class="fas fa-plus-circle text-primary me-2"></i>Cadastrar Novo Processo Jurídico</span>
+                    <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#formProcessoCollapse">
+                        <i class="fas fa-chevron-down me-1"></i> Recolher / Expandir
+                    </button>
+                </div>
+                <div class="collapse" id="formProcessoCollapse">
+                    <div class="card-body">
+                        <form onsubmit="salvarProcesso(event)">
+                            <div class="row g-3">
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-bold">Data de Recebimento</label>
+                                    <input type="date" id="inputDataRecebimento" class="form-control form-control-sm" required>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-bold">Nº SGPE</label>
+                                    <input type="text" id="inputSGPE" class="form-control form-control-sm" placeholder="Ex: 12345/2026" oninput="validarSGPE(this)" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-bold">Nome do Colaborador</label>
+                                    <input type="text" id="inputColaborador" class="form-control form-control-sm" placeholder="Nome do responsável / colaborador" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <label class="form-label small fw-bold m-0">Município (SC)</label>
+                                        <button type="button" class="btn btn-link btn-xs p-0 text-decoration-none" onclick="adicionarNovoMunicipio()">+ Adicionar</button>
+                                    </div>
+                                    <select id="selectMunicipio" class="form-select form-select-sm mt-1" required>
+                                        <option value="">Selecione o Município...</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold">Órgão / Setor Solicitante</label>
+                                    <input type="text" id="inputOrgao" class="form-control form-control-sm" placeholder="Ex: Vara da Fazenda / PGE" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold">Assunto / Motivo</label>
+                                    <input type="text" id="inputAssunto" class="form-control form-control-sm" placeholder="Descrição resumida da ação" required>
+                                </div>
+                                <div class="col-md-12">
+                                    <label class="form-label small fw-bold">Observações (OBS)</label>
+                                    <input type="text" id="inputOBS" class="form-control form-control-sm" placeholder="Observações complementares do processo">
+                                </div>
+                                <div class="col-md-12 text-end">
+                                    <button type="submit" class="btn btn-sm btn-primary px-4"><i class="fas fa-save me-1"></i> Salvar Processo</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TABELA EM FORMATO PLANILHA -->
+            <div class="card">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <span><i class="fas fa-table me-2"></i> Planilha de Processos Jurídicos</span>
+                    <span class="badge bg-secondary" id="badgeTotalProcessos">0 registros</span>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover align-middle table-docs mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Data Recebimento</th>
+                                    <th>Nº SGPE</th>
+                                    <th>Nome do Colaborador</th>
+                                    <th>Município</th>
+                                    <th>Órgão/Setor Solicitante</th>
+                                    <th>Assunto/Motivo</th>
+                                    <th>OBS</th>
+                                    <th style="width: 80px;">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbodyProcessos"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RODAPÉ ASSINADO -->
+            <footer class="footer">
+                SICAGE - Sistema de Controle Administrativo da GEAPO.<br>
+                ⓒ 2026 Desenvolvido por [Ingrid/Gabriela].
+            </footer>
+        </div>
+    </div>
+
+    <!-- Modal para Adicionar Município Manualmente -->
+    <div class="modal fade" id="modalMunicipio" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content">
+                <div class="modal-header py-2">
+                    <h6 class="modal-title fw-bold">Adicionar Município</h6>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <label class="form-label small">Nome do Município:</label>
+                    <input type="text" id="inputNovoMunicipio" class="form-control form-control-sm" placeholder="Ex: Novo Município">
+                </div>
+                <div class="modal-footer py-2">
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-sm btn-primary" onclick="confirmarNovoMunicipio()">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts Bootstrap e Lógica JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let anoAtual = 2026;
+
+        // LISTA DE MUNICÍPIOS DE SANTA CATARINA EM ORDEM ALFABÉTICA
+        const municipiosPadraoSC = [
+            "Abdon Batista", "Abelardo Luz", "Agrolândia", "Agronômica", "Água Doce", "Águas de Chapecó", "Águas Frias", "Águas Mornas",
+            "Alfredo Wagner", "Alto Bela Vista", "Anchieta", "Angelina", "Anita Garibaldi", "Anitápolis", "Antônio Carlos", "Apiúna",
+            "Arabutã", "Araquari", "Araranguá", "Armazém", "Arroio Trinta", "Arvoredo", "Ascurra", "Atalanta", "Balneário Arroio do Silva",
+            "Balneário Barra do Sul", "Balneário Camboriú", "Balneário Gaivota", "Balneário Piçarras", "Balneário Rincão", "Bandeirante",
+            "Barra Bonita", "Barra Velha", "Bela Vista do Toldo", "Belmonte", "Benedito Novo", "Biguaçu", "Blumenau", "Bocaina do Sul",
+            "Bom Jardim da Serra", "Bom Jesus", "Bom Jesus do Oeste", "Bom Retiro", "Bombinhas", "Botuverá", "Braço do Norte", "Braço do Trombudo",
+            "Brunópolis", "Brusque", "Caçador", "Caibi", "Calmon", "Camboriú", "Campo Alegre", "Campo Belo do Sul", "Campo Erê",
+            "Campos Novos", "Canelinha", "Canoinhas", "Capão Alto", "Capinzal", "Capivari de Baixo", "Catanduvas", "Caxambu do Sul",
+            "Celso Ramos", "Cerro Negro", "Chapecó", "Cocal do Sul", "Concórdia", "Cordilheira Alta", "Coronel Freitas", "Coronel Martins",
+            "Correia Pinto", "Corupá", "Criciúma", "Cunha Porã", "Cunhataí", "Curitibanos", "Descanso", "Dionísio Cerqueira", "Dona Emma",
+            "Doutor Pedrinho", "Entre Rios", "Ermo", "Erval Velho", "Faxinal dos Guedes", "Flor do Sertão", "Florianópolis", "Formosa do Sul",
+            "Forquilhinha", "Fraiburgo", "Frei Rogério", "Galvão", "Garopaba", "Garuva", "Gaspar", "Governador Celso Ramos", "Grão-Pará",
+            "Gravatal", "Guabiruba", "Guaraciaba", "Guaramirim", "Guarujá do Sul", "Guatambu", "Herval d'Oeste", "Ibiam", "Ibicaré",
+            "Ibirama", "Içara", "Ilhota", "Imaruí", "Imbituba", "Imbuia", "Indaial", "Iomerê", "Ipê em Flores", "Ipuaçu", "Ipumirim",
+            "Iraceminha", "Irani", "Irati", "Irineópolis", "Itá", "Itaiópolis", "Itajaí", "Itapema", "Itapiranga", "Itapoá", "Ituporanga",
+            "Jaborá", "Jacinto Machado", "Jaguaruna", "Jaraguá do Sul", "Jardinópolis", "Joaçaba", "Joinville", "José Boiteux", "Jupiá",
+            "Lages", "Laguna", "Lajeado Grande", "Laurentino", "Lauro Müller", "Lebon Régis", "Leoberto Leal", "Lindóia do Sul", "Lontras",
+            "Luiz Alves", "Luzerna", "Macieira", "Mafra", "Major Gercino", "Major Vieira", "Maracajá", "Maravilha", "Marema", "Massaranduba",
+            "Matos Costa", "Meleiro", "Mirim Doce", "Modelo", "Mondaí", "Monte Carlo", "Monte Castelo", "Morro da Fumaça", "Morro Grande",
+            "Navegantes", "Nova Erechim", "Nova Itaberaba", "Nova Trento", "Nova Veneza", "Novo Horizonte", "Orleans", "Otacílio Costa",
+            "Ouro", "Ouro Verde", "Paial", "Painel", "Palhoça", "Palma Sola", "Palmeira", "Palmitos", "Papanduva", "Paraíso", "Passo de Torres",
+            "Passos Maia", "Paulo Lopes", "Pedras Grandes", "Penha", "Peritiba", "Pescaria Brava", "Petrolândia", "Pinhalzinho",
+            "Pinheiro Preto", "Piratuba", "Planalto Alegre", "Pomerode", "Ponte Alta", "Ponte Alta do Norte", "Ponte Serrada", "Porto Belo",
+            "Porto União", "Pouso Redondo", "Praia Grande", "Presidente Castello Branco", "Presidente Getúlio", "Presidente Nereu",
+            "Princesa", "Quilombo", "Rancho Queimado", "Rio das Antas", "Rio do Campo", "Rio do Oeste", "Rio do Sul", "Rio dos Cedros",
+            "Rio Fortuna", "Rio Negrinho", "Rio Rufino", "Riqueza", "Rodeio", "Romelândia", "Salete", "Saltinho", "Salto Veloso", "Sangão",
+            "Santa Cecília", "Santa Helena", "Santa Rosa de Lima", "Santa Rosa do Sul", "Santa Terezinha", "Santa Terezinha do Progresso",
+            "Santiago do Sul", "Santo Amaro da Imperatriz", "São Bento do Sul", "São Bernardino", "São Carlos", "São Cristóvão do Sul",
+            "São Domingos", "São Francisco do Sul", "São João Batista", "São João do Itaperiú", "São João do Oeste", "São João do Sul",
+            "São Joaquim", "São José", "São José do Cedro", "São José do Cerrito", "São Lourenço do Oeste", "São Ludgero", "São Martinho",
+            "São Miguel da Boa Vista", "São Miguel do Oeste", "São Pedro de Alcântara", "Saudades", "Seara", "Serra Alta", "Siderópolis",
+            "Sombrio", "Sul Brasil", "Taió", "Tangará", "Tigrinhos", "Timbó", "Timbó Grande", "Timbé do Sul", "Três Barras", "Treviso",
+            "Treze de Maio", "Treze Tílias", "Trombudo Central", "Tubarão", "Tunápolis", "Turvo", "Urubici", "Urupema", "Urussanga",
+            "Vargeão", "Vargem", "Vargem Bonita", "Vidal Ramos", "Videira", "Vitor Meireles", "Witmarsum", "Xanxerê", "Xavantina",
+            "Xaxim", "Zortéa"
+        ];
+
+        let listaMunicipios = JSON.parse(localStorage.getItem('geapo_municipios_sc')) || municipiosPadraoSC;
+        let processosJuridicos = JSON.parse(localStorage.getItem('geapo_processos_juridicos')) || [
+            {
+                id: 1,
+                ano: 2026,
+                dataRecebimento: '2026-08-10',
+                sgpe: '43210/2026',
+                colaborador: 'Carlos Eduardo',
+                municipio: 'Florianópolis',
+                orgao: '1ª Vara da Fazenda Pública',
+                assunto: 'Mandado de Segurança - CNH',
+                obs: 'Aguardando parecer da PGE'
+            },
+            {
+                id: 2,
+                ano: 2026,
+                dataRecebimento: '2026-09-01',
+                sgpe: '88712/2026',
+                colaborador: 'Ana Paula Silva',
+                municipio: 'Joinville',
+                orgao: 'Juizado Especial da Fazenda',
+                assunto: 'Anulação de Auto de Infração',
+                obs: 'Documentação enviada para instrução'
+            }
+        ];
+
+        let modalInstancia;
+
+        document.addEventListener("DOMContentLoaded", function() {
+            modalInstancia = new bootstrap.Modal(document.getElementById('modalMunicipio'));
+            carregarMunicipios();
+            renderizarTabelaProcessos();
+        });
+
+        function salvarStorage() {
+            localStorage.setItem('geapo_processos_juridicos', JSON.stringify(processosJuridicos));
+        }
+
+        function salvarMunicipiosStorage() {
+            localStorage.setItem('geapo_municipios_sc', JSON.stringify(listaMunicipios));
+        }
+
+        function trocarAno(novoAno) {
+            if(novoAno) {
+                anoAtual = parseInt(novoAno);
+                renderizarTabelaProcessos();
+            }
+        }
+
+        function validarSGPE(input) {
+            input.value = input.value.replace(/[^0-9/]/g, '');
+        }
+
+        function carregarMunicipios(selecionarAdicionado = "") {
+            const select = document.getElementById('selectMunicipio');
+            select.innerHTML = '<option value="">Selecione o Município...</option>';
+
+            // Garantir ordem alfabética
+            listaMunicipios.sort((a, b) => a.localeCompare(b, 'pt-BR'));
+
+            listaMunicipios.forEach(mun => {
+                const opt = document.createElement('option');
+                opt.value = mun;
+                opt.textContent = mun;
+                if(mun === selecionarAdicionado) {
+                    opt.selected = true;
+                }
+                select.appendChild(opt);
+            });
+        }
+
+        function adicionarNovoMunicipio() {
+            document.getElementById('inputNovoMunicipio').value = '';
+            modalInstancia.show();
+        }
+
+        function confirmarNovoMunicipio() {
+            const novo = document.getElementById('inputNovoMunicipio').value.trim();
+            if(!novo) {
+                alert("Por favor, informe o nome do município.");
+                return;
+            }
+
+            if(!listaMunicipios.includes(novo)) {
+                listaMunicipios.push(novo);
+                salvarMunicipiosStorage();
+            }
+
+            carregarMunicipios(novo);
+            modalInstancia.hide();
+        }
+
+        function salvarProcesso(event) {
+            event.preventDefault();
+
+            const novoId = processosJuridicos.length > 0 ? Math.max(...processosJuridicos.map(p => p.id)) + 1 : 1;
+
+            const novoProcesso = {
+                id: novoId,
+                ano: anoAtual,
+                dataRecebimento: document.getElementById('inputDataRecebimento').value,
+                sgpe: document.getElementById('inputSGPE').value,
+                colaborador: document.getElementById('inputColaborador').value,
+                municipio: document.getElementById('selectMunicipio').value,
+                orgao: document.getElementById('inputOrgao').value,
+                assunto: document.getElementById('inputAssunto').value,
+                obs: document.getElementById('inputOBS').value
+            };
+
+            processosJuridicos.push(novoProcesso);
+            salvarStorage();
+            
+            event.target.reset();
+            renderizarTabelaProcessos();
+        }
+
+        function excluirProcesso(id) {
+            if(confirm("Deseja realmente excluir este processo jurídico?")) {
+                processosJuridicos = processosJuridicos.filter(p => p.id !== id);
+                salvarStorage();
+                renderizarTabelaProcessos();
+            }
+        }
+
+        function renderizarTabelaProcessos() {
+            const tbody = document.getElementById('tbodyProcessos');
+            tbody.innerHTML = '';
+
+            const filtrados = processosJuridicos.filter(p => p.ano === anoAtual);
+            document.getElementById('badgeTotalProcessos').innerText = `${filtrados.length} registros`;
+
+            if(filtrados.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" class="text-center text-muted p-4">Nenhum processo jurídico cadastrado para o exercício de ${anoAtual}.</td></tr>`;
+                return;
+            }
+
+            filtrados.forEach(proc => {
+                const dataFmt = proc.dataRecebimento ? proc.dataRecebimento.split('-').reverse().join('/') : '--/--/----';
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="text-center fw-bold">${dataFmt}</td>
+                        <td class="fw-bold text-primary text-center">${proc.sgpe}</td>
+                        <td>${proc.colaborador}</td>
+                        <td><span class="badge bg-light text-dark border">${proc.municipio}</span></td>
+                        <td>${proc.orgao}</td>
+                        <td class="col-assunto" title="${proc.assunto}">${proc.assunto}</td>
+                        <td class="col-obs" title="${proc.obs}">${proc.obs || '-'}</td>
+                        <td class="text-center">
+                            <button class="btn btn-sm btn-outline-danger" onclick="excluirProcesso(${proc.id})" title="Excluir Registro">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+    </script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+      // Caso não exista a sessão gravada pelo index.html, redireciona o usuário para o Login
+      if (!sessionStorage.getItem('sicage_usuario')) {
+          alert("Acesso restrito! Por favor, realize o login primeiro na tela inicial.");
+          window.location.href = "index.html";
+      }
+  });
+</script>
+<!-- CÓDIGO DE PROTEÇÃO E MODO VISUALIZADOR -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const usuarioAtivo = sessionStorage.getItem('sicage_usuario');
+        const nivelAtivo = sessionStorage.getItem('sicage_nivel');
+
+        // 1. Se tentar entrar sem logar, manda de volta para o index.html
+        if (!usuarioAtivo) {
+            alert("Acesso restrito! Por favor, faça login na página inicial.");
+            window.location.href = "index.html";
+            return;
+        }
+
+        // 2. Se for Visualizador, bloqueia os botões da página atual
+        if (nivelAtivo === 'Visualizador') {
+            const elementos = document.querySelectorAll('button, input, select, textarea');
+
+            elementos.forEach(el => {
+                const eSidebar = el.closest('.sidebar');
+                const eExercicio = el.id === 'anoExercicio';
+                const eSair = el.getAttribute('onclick') && el.getAttribute('onclick').includes('fazerLogout');
+                const eLink = el.tagName === 'A' || el.classList.contains('btn-whatsapp') || el.classList.contains('btn-email');
+
+                if (!eSidebar && !eExercicio && !eSair && !eLink) {
+                    el.disabled = true;
+                    el.classList.add('disabled');
+                    el.style.pointerEvents = 'none';
+                    el.style.opacity = '0.6';
+                }
+            });
+        }
+    });
+
+    function fazerLogout() {
+        sessionStorage.removeItem('sicage_usuario');
+        sessionStorage.removeItem('sicage_nivel');
+        window.location.href = "index.html";
+    }
+</script>
+</body>
+</body>
+</html>

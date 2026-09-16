@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DETRAN/GEAPO - Relatórios Gerenciais</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome (Ícones) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            background-color: #f4f7f6;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        /* --- ESTILOS DO PAINEL LATERAL --- */
+        .sidebar {
+            height: 100vh;
+            background-color: #343a40;
+            color: white;
+            position: fixed;
+            width: 260px;
+            overflow-y: auto;
+            z-index: 100;
+        }
+        .sidebar::-webkit-scrollbar { width: 6px; }
+        .sidebar::-webkit-scrollbar-thumb { background-color: #6c757d; border-radius: 4px; }
+        .sidebar .nav-link { color: #d1d8e0; margin-bottom: 5px; font-size: 0.9rem; }
+        .sidebar .nav-link:hover { background-color: #495057; color: white; border-radius: 5px; }
+        .sidebar i { width: 25px; text-align: center; margin-right: 10px; font-size: 1.1rem; }
+        
+        .main-content {
+            margin-left: 260px;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        .card-header {
+            background-color: transparent;
+            font-weight: bold;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        /* --- TABELA DE RELATÓRIOS --- */
+        .table-responsive {
+            max-height: 550px;
+            overflow-y: auto;
+            overflow-x: auto;
+        }
+        .table-report th, .table-report td {
+            vertical-align: middle;
+            font-size: 0.85rem;
+            white-space: nowrap;
+        }
+        .table-report th {
+            position: sticky;
+            top: 0;
+            background-color: #0d6efd;
+            color: white;
+            z-index: 10;
+            text-align: center;
+        }
+
+        /* ESTILOS DE IMPRESSÃO DO RELATÓRIO */
+        @media print {
+            .sidebar, .btn-print-hide, .card-filter { display: none !important; }
+            .main-content { margin-left: 0 !important; padding: 0 !important; }
+            .card { box-shadow: none !important; border: 1px solid #ccc !important; }
+            .table-report th { background-color: #333 !important; color: #fff !important; }
+        }
+
+        /* FOOTER */
+        .footer {
+            margin-top: auto;
+            text-align: center;
+            padding: 20px 0;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="dashboard-screen">
+        <!-- MENU LATERAL DE NAVEGAÇÃO -->
+        <nav class="sidebar p-3">
+            <div class="text-center mb-4 mt-2">
+                <h5 class="text-white m-0">DETRAN/GEAPO</h5>
+                <small class="text-secondary">Apoio Operacional</small>
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item"><a class="nav-link" href="index.html"><i class="fas fa-chart-line text-info"></i> Painel Geral</a></li>
+                <li class="nav-item"><a class="nav-link" href="geapo.html"><i class="fas fa-building text-primary"></i> GEAPO Institucional</a></li>
+                <li class="nav-item"><a class="nav-link" href="contrato.html"><i class="fas fa-file-signature text-warning"></i> Contrato Geral/Orbenk</a></li>
+                <li class="nav-item"><a class="nav-link" href="ateste.html"><i class="fas fa-check-double text-success"></i> Ateste Serviço/Orbenk</a></li>
+                <li class="nav-item"><a class="nav-link" href="sgpe.html"><i class="fas fa-folder-open text-danger"></i> Controle SGPE</a></li>
+                <li class="nav-item"><a class="nav-link" href="oficios.html"><i class="fas fa-envelope-open-text text-info"></i> Ofícios/Despachos</a></li>
+                <li class="nav-item"><a class="nav-link" href="processos.html"><i class="fas fa-balance-scale text-primary"></i> Processos Jurídicos</a></li>
+                <li class="nav-item"><a class="nav-link" href="frota.html"><i class="fas fa-car text-secondary"></i> Frota e Multas</a></li>
+                <li class="nav-item"><a class="nav-link" href="compras.html"><i class="fas fa-shopping-cart text-success"></i> Compras e CPESC</a></li>
+                <li class="nav-item"><a class="nav-link" href="diarias.html"><i class="fas fa-plane text-info"></i> Diárias e Passagem</a></li>
+                <li class="nav-item"><a class="nav-link" href="efetivo.html"><i class="fas fa-users text-warning"></i> Efetivo</a></li>
+                <li class="nav-item"><a class="nav-link" href="agenda.html"><i class="fas fa-calendar-alt text-danger"></i> Agenda e Prazos</a></li>
+                <li class="nav-item"><a class="nav-link" href="agencias.html"><i class="fas fa-map-marker-alt text-primary"></i> Agências</a></li>
+                <li class="nav-item"><a class="nav-link" href="portarias.html"><i class="fas fa-file-alt text-secondary"></i> Portarias</a></li>
+                <li class="nav-item"><a class="nav-link" href="leis.html"><i class="fas fa-gavel text-warning"></i> Leis e Instruções</a></li>
+                <li class="nav-item"><a class="nav-link" href="manuais.html"><i class="fas fa-book text-success"></i> Manuais/Funções</a></li>
+                <li class="nav-item"><a class="nav-link active fw-bold text-white" href="relatorios.html"><i class="fas fa-chart-pie text-info"></i> Relatórios Gerenciais</a></li>
+            </ul>
+        </nav>
+
+        <!-- CONTEÚDO PRINCIPAL -->
+        <div class="main-content">
+            
+            <!-- CABEÇALHO DO MÓDULO -->
+            <div class="d-flex justify-content-between align-items-center mb-3 pt-2">
+                <div>
+                    <h3 class="m-0"><i class="fas fa-chart-pie text-info me-2"></i>Módulo de Relatórios Gerenciais Integrados</h3>
+                    <small class="text-muted">Geração de relatórios analíticos, pesquisa avançada com filtros customizados em todos os módulos da GEAPO</small>
+                </div>
+                <div class="btn-print-hide">
+                    <span><i class="fas fa-user-circle"></i> <strong>GEAPO (Admin)</strong></span>
+                </div>
+            </div>
+
+            <!-- PAINEL DE BUSCA E FILTROS CUSTOMIZADOS -->
+            <div class="card card-filter mb-3">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center py-2">
+                    <span class="text-primary"><i class="fas fa-filter me-2"></i>Painel de Filtros e Parâmetros para Relatório</span>
+                    <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFiltros">
+                        <i class="fas fa-chevron-down me-1"></i> Expandir / Minimizar Filtros
+                    </button>
+                </div>
+                <div class="collapse show" id="collapseFiltros">
+                    <div class="card-body">
+                        <form onsubmit="gerarRelatorio(event)">
+                            <div class="row g-3">
+                                <!-- SELEÇÃO DO MÓDULO ALVO -->
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold text-dark"><i class="fas fa-cubes text-info me-1"></i> Selecione o Módulo para Pesquisa</label>
+                                    <select id="selectModulo" class="form-select form-select-sm fw-bold border-primary" onchange="atualizarFiltrosDinamicos()" required>
+                                        <option value="sgpe">1. Controle SGPE (Processos)</option>
+                                        <option value="frota">2. Frota e Multas</option>
+                                        <option value="efetivo">3. Efetivo e Servidores</option>
+                                        <option value="compras">4. Compras e CPESC</option>
+                                        <option value="diarias">5. Diárias e Passagens Aéreas</option>
+                                        <option value="contrato">6. Contrato Geral / Orbenk</option>
+                                        <option value="ateste">7. Ateste de Serviço / Orbenk</option>
+                                        <option value="oficios">8. Ofícios e Despachos</option>
+                                        <option value="processos">9. Processos Jurídicos</option>
+                                        <option value="agenda">10. Agenda e Prazos</option>
+                                        <option value="agencias">11. Agências DETRAN</option>
+                                        <option value="portarias">12. Portarias</option>
+                                        <option value="leis">13. Leis e Instruções Normativas</option>
+                                        <option value="manuais">14. Manuais e Descrição de Funções</option>
+                                        <option value="geapo">15. GEAPO Institucional</option>
+                                    </select>
+                                </div>
+
+                                <!-- CAMPOS DE DATA -->
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold">Data Inicial</label>
+                                    <input type="date" id="dataInicio" class="form-control form-control-sm">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold">Data Final</label>
+                                    <input type="date" id="dataFim" class="form-control form-control-sm">
+                                </div>
+
+                                <!-- FILTRO DE TEXTO GERAL -->
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold">Termo de Pesquisa / Palavra-Chave</label>
+                                    <input type="text" id="inputBusca" class="form-control form-control-sm" placeholder="Digite código, protocolo, assunto, nome...">
+                                </div>
+
+                                <!-- FILTRO DINÂMICO ESPECÍFICO DO MÓDULO -->
+                                <div class="col-md-4" id="containerFiltroEspecifico">
+                                    <!-- Conteúdo gerado via JS -->
+                                </div>
+
+                                <!-- STATUS / CLASSIFICAÇÃO -->
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold">Status / Situação</label>
+                                    <select id="selectStatus" class="form-select form-select-sm">
+                                        <option value="">Todos os Status</option>
+                                        <option value="Ativo / Concluído / Deferido">Ativo / Concluído / Deferido</option>
+                                        <option value="Pendente / Em Andamento">Pendente / Em Andamento</option>
+                                        <option value="Crítico / Alerta">Crítico / Alerta</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-12 text-end pt-2 border-top">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary me-2" onclick="limparFiltros()"><i class="fas fa-eraser me-1"></i> Limpar Filtros</button>
+                                    <button type="submit" class="btn btn-sm btn-primary px-4"><i class="fas fa-search me-1"></i> Gerar Relatório Gerencial</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARDS COMPLEMENTARES DE RESUMO DO RELATÓRIO -->
+            <div class="row g-3 mb-3">
+                <div class="col-md-4">
+                    <div class="card p-3 bg-white border-start border-4 border-primary m-0">
+                        <small class="text-muted fw-bold text-uppercase">Registros Encontrados</small>
+                        <h3 class="m-0 fw-bold text-primary" id="cardTotal">0</h3>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card p-3 bg-white border-start border-4 border-success m-0">
+                        <small class="text-muted fw-bold text-uppercase">Módulo Pesquisado</small>
+                        <h4 class="m-0 fw-bold text-success" id="cardModuloNome">Controle SGPE</h4>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card p-3 bg-white border-start border-4 border-warning m-0">
+                        <small class="text-muted fw-bold text-uppercase">Período Selecionado</small>
+                        <h6 class="m-0 fw-bold text-dark mt-1" id="cardPeriodo">Todos os registros</h6>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TABELA DO RELATÓRIO GERADO -->
+            <div class="card">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center py-2">
+                    <span class="fw-bold"><i class="fas fa-list-alt me-2"></i> Resultado do Relatório Consolidação GEAPO</span>
+                    <div class="btn-print-hide d-flex gap-2">
+                        <button class="btn btn-sm btn-outline-success" onclick="exportarCSV()"><i class="fas fa-file-excel me-1"></i> Exportar CSV</button>
+                        <button class="btn btn-sm btn-outline-dark" onclick="window.print()"><i class="fas fa-print me-1"></i> Imprimir / PDF</button>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover align-middle table-report mb-0" id="tabelaRelatorio">
+                            <thead id="theadRelatorio"></thead>
+                            <tbody id="tbodyRelatorio"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RODAPÉ ASSINADO -->
+            <footer class="footer">
+                SICAGE - Sistema de Controle Administrativo da GEAPO.<br>
+                ⓒ 2026 Desenvolvido por [Ingrid/Gabriela].
+            </footer>
+        </div>
+    </div>
+
+    <!-- Scripts Bootstrap e Lógica JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // MOCks DE DADOS PARA DEMONSTRAÇÃO E TESTES INTEGRADOS DE TODOS OS MÓDULOS
+        const dadosBase = {
+            sgpe: JSON.parse(localStorage.getItem('geapo_sgpe')) || [
+                { id: 1, numero: 'DETRAN 12345/2026', assunto: 'Aquisição de Materiais de Pátio', setor: 'Compras / CPESC', data: '2026-01-10', status: 'Concluído' },
+                { id: 2, numero: 'DETRAN 98765/2026', assunto: 'Manutenção Preventiva de Frota Viatura', setor: 'Frota', data: '2026-02-15', status: 'Pendente' }
+            ],
+            frota: JSON.parse(localStorage.getItem('geapo_frota')) || [
+                { id: 1, placa: 'QHA-4321', modelo: 'Renault Duster 2.0', setor: 'Fiscalização Operacional', motorista: 'Sgt. Silva', data: '2026-02-01', status: 'Ativo' },
+                { id: 2, placa: 'MKL-9988', modelo: 'Toyota Corolla', setor: 'Diretoria / GEAPO', motorista: 'Gerson Oliveira', data: '2026-02-10', status: 'Ativo' }
+            ],
+            efetivo: JSON.parse(localStorage.getItem('geapo_efetivo')) || [
+                { id: 1, nome: 'Ingrid Santos', cargo: 'Analista Administrativo', setor: 'GEAPO Geral', matricula: '789123-0', status: 'Ativo' },
+                { id: 2, nome: 'Gabriela Silva', cargo: 'Gestora Operacional', setor: 'Contratos / Orbenk', matricula: '654321-9', status: 'Ativo' }
+            ],
+            compras: JSON.parse(localStorage.getItem('geapo_compras')) || [
+                { id: 1, objeto: 'Aquisição de Cones e Cavaletes', valor: 'R$ 15.400,00', modalidade: 'CPESC', data: '2026-01-20', status: 'Aprovado' }
+            ],
+            diarias: JSON.parse(localStorage.getItem('geapo_diarias')) || [
+                { id: 1, servidor: 'João Pedro Costa', destino: 'Chapecó/SC - Agência Regional', valor: 'R$ 1.200,00', data: '2026-02-05', status: 'Pago' }
+            ],
+            contrato: JSON.parse(localStorage.getItem('geapo_contrato')) || [
+                { id: 1, contrato: 'CT 045/2024 - Orbenk', objeto: 'Prestação de Serviços Terceirizados', vigencia: '31/12/2026', valor: 'R$ 450.000,00', status: 'Vigente' }
+            ],
+            ateste: JSON.parse(localStorage.getItem('geapo_ateste')) || [
+                { id: 1, mesRef: 'Janeiro/2026', notaFiscal: 'NF 88492 - Orbenk', valor: 'R$ 38.500,00', dataAteste: '2026-02-05', status: 'Atestado' }
+            ],
+            oficios: JSON.parse(localStorage.getItem('geapo_oficios')) || [
+                { id: 1, numero: 'OF-GEAPO 102/2026', destinatario: 'Gerência de Finanças', assunto: 'Encaminhamento de Faturas Orbenk', data: '2026-02-12', status: 'Enviado' }
+            ],
+            processos: JSON.parse(localStorage.getItem('geapo_processos')) || [
+                { id: 1, numero: 'PJ 004921/2026', tribunal: 'TJSC - Vara da Fazenda', assunto: 'Recurso de Licitação Frota', data: '2026-01-18', status: 'Em Análise' }
+            ],
+            agenda: JSON.parse(localStorage.getItem('geapo_agenda')) || [
+                { id: 1, evento: 'Reunião de Alinhamento Contrato Orbenk', data: '2026-03-10', local: 'Auditório DETRAN/SC', responsavel: 'Gabriela Silva', status: 'Confirmado' }
+            ],
+            agencias: JSON.parse(localStorage.getItem('geapo_agencias')) || [
+                { id: 1, nome: 'Ciretran Joinville', regional: 'Norte', chefe: 'Marcos Souza', contato: '(47) 3400-0000', status: 'Ativo' }
+            ],
+            portarias: JSON.parse(localStorage.getItem('geapo_portarias')) || [
+                { id: 1, numero: 'Portaria Nº 12/2026', emisso: 'Diretoria Geral', assunto: 'Designação de Fiscais de Contrato GEAPO', data: '2026-01-05', status: 'Vigente' }
+            ],
+            leis: JSON.parse(localStorage.getItem('geapo_leis')) || [
+                { id: 1, norma: 'Instrução Normativa DETRAN nº 02/2026', assunto: 'Regras de Uso e Abastecimento de Veículos Oficiais', categoria: 'Frota', status: 'Vigente' }
+            ],
+            manuais: JSON.parse(localStorage.getItem('geapo_manuais')) || [
+                { id: 1, setor: 'Frota e Gestão de Veículos', titulo: 'POP - Abastecimento e Manutenção', responsavel: 'Gabriela Silva', data: '2026-01-15', status: 'Atualizado' }
+            ],
+            geapo: [
+                { id: 1, setor: 'Geral', descricao: 'Estrutura Organizacional e Regimento Interno GEAPO', responsavel: 'Ingrid / Gabriela', status: 'Ativo' }
+            ]
+        };
+
+        document.addEventListener("DOMContentLoaded", function() {
+            atualizarFiltrosDinamicos();
+            gerarRelatorio();
+        });
+
+        function atualizarFiltrosDinamicos() {
+            const mod = document.getElementById('selectModulo').value;
+            const container = document.getElementById('containerFiltroEspecifico');
+
+            let html = '';
+            if (mod === 'frota') {
+                html = `<label class="form-label small fw-bold">Placa / Modelo</label>
+                        <input type="text" id="filtroEspecifico" class="form-control form-control-sm" placeholder="Ex: QHA-4321 / Duster">`;
+            } else if (mod === 'efetivo') {
+                html = `<label class="form-label small fw-bold">Cargo / Matrícula</label>
+                        <input type="text" id="filtroEspecifico" class="form-control form-control-sm" placeholder="Ex: Analista / Matrícula">`;
+            } else if (mod === 'sgpe' || mod === 'oficios' || mod === 'processos') {
+                html = `<label class="form-label small fw-bold">Número de Registro / Protocolo</label>
+                        <input type="text" id="filtroEspecifico" class="form-control form-control-sm" placeholder="Ex: DETRAN 12345/2026">`;
+            } else if (mod === 'compras') {
+                html = `<label class="form-label small fw-bold">Modalidade / Objeto</label>
+                        <input type="text" id="filtroEspecifico" class="form-control form-control-sm" placeholder="Ex: CPESC / Licitação">`;
+            } else {
+                html = `<label class="form-label small fw-bold">Filtro do Módulo</label>
+                        <input type="text" id="filtroEspecifico" class="form-control form-control-sm" placeholder="Filtro específico...">`;
+            }
+
+            container.innerHTML = html;
+        }
+
+        function gerarRelatorio(event) {
+            if(event) event.preventDefault();
+
+            const moduloChave = document.getElementById('selectModulo').value;
+            const dataIni = document.getElementById('dataInicio').value;
+            const dataFim = document.getElementById('dataFim').value;
+            const buscaTxt = document.getElementById('inputBusca').value.toLowerCase().trim();
+            const elemEsp = document.getElementById('filtroEspecifico');
+            const buscaEsp = elemEsp ? elemEsp.value.toLowerCase().trim() : '';
+            const statusFiltro = document.getElementById('selectStatus').value;
+
+            const lista = dadosBase[moduloChave] || [];
+
+            // Filtragem dos Dados
+            const resultados = lista.filter(item => {
+                // Converte objeto em string para busca geral de texto
+                const itemStr = JSON.stringify(item).toLowerCase();
+                const bateTexto = !buscaTxt || itemStr.includes(buscaTxt);
+                const bateEsp = !buscaEsp || itemStr.includes(buscaEsp);
+
+                // Filtro de Data caso exista campo de data no registro
+                let bateData = true;
+                const campoData = item.data || item.dataAteste || item.vigencia;
+                if(campoData) {
+                    if(dataIni && campoData < dataIni) bateData = false;
+                    if(dataFim && campoData > dataFim) bateData = false;
+                }
+
+                return bateTexto && bateEsp && bateData;
+            });
+
+            // Atualização dos Cards
+            document.getElementById('cardTotal').innerText = resultados.length;
+            const selectElem = document.getElementById('selectModulo');
+            document.getElementById('cardModuloNome').innerText = selectElem.options[selectElem.selectedIndex].text;
+
+            if(dataIni || dataFim) {
+                document.getElementById('cardPeriodo').innerText = `De ${dataIni || 'Início'} Até ${dataFim || 'Hoje'}`;
+            } else {
+                document.getElementById('cardPeriodo').innerText = 'Todos os registros cadastrados';
+            }
+
+            renderizarTabelaRelatorio(moduloChave, resultados);
+        }
+
+        function renderizarTabelaRelatorio(modulo, dados) {
+            const thead = document.getElementById('theadRelatorio');
+            const tbody = document.getElementById('tbodyRelatorio');
+
+            thead.innerHTML = '';
+            tbody.innerHTML = '';
+
+            if(dados.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center text-muted p-4"><i class="fas fa-exclamation-triangle text-warning me-2"></i>Nenhum registro encontrado para o módulo selecionado com os filtros aplicados.</td></tr>`;
+                return;
+            }
+
+            // Mapeamento dinâmico de colunas e propriedades por Módulo
+            let colunas = [];
+            if (modulo === 'sgpe') {
+                colunas = [
+                    { t: 'Nº SGPE', p: 'numero' },
+                    { t: 'Assunto / Objeto', p: 'assunto' },
+                    { t: 'Setor Pertinente', p: 'setor' },
+                    { t: 'Data Registro', p: 'data' },
+                    { t: 'Status', p: 'status' }
+                ];
+            } else if (modulo === 'frota') {
+                colunas = [
+                    { t: 'Placa', p: 'placa' },
+                    { t: 'Modelo Veículo', p: 'modelo' },
+                    { t: 'Setor Alocado', p: 'setor' },
+                    { t: 'Motorista Responsável', p: 'motorista' },
+                    { t: 'Status', p: 'status' }
+                ];
+            } else if (modulo === 'efetivo') {
+                colunas = [
+                    { t: 'Nome do Servidor', p: 'nome' },
+                    { t: 'Cargo / Função', p: 'cargo' },
+                    { t: 'Matrícula', p: 'matricula' },
+                    { t: 'Setor GEAPO', p: 'setor' },
+                    { t: 'Status', p: 'status' }
+                ];
+            } else {
+                // Colunas genéricas padronizadas para os demais módulos
+                const chaves = Object.keys(dados[0]).filter(k => k !== 'id');
+                colunas = chaves.map(c => ({ t: c.toUpperCase(), p: c }));
+            }
+
+            // Gerar Cabeçalho
+            let trHead = '<tr>';
+            colunas.forEach(col => { trHead += `<th>${col.t}</th>`; });
+            trHead += '</tr>';
+            thead.innerHTML = trHead;
+
+            // Gerar Linhas
+            dados.forEach(item => {
+                let trBody = '<tr>';
+                colunas.forEach(col => {
+                    let val = item[col.p] || '-';
+                    if(col.p === 'status') {
+                        trBody += `<td class="text-center"><span class="badge bg-success">${val}</span></td>`;
+                    } else {
+                        trBody += `<td>${val}</td>`;
+                    }
+                });
+                trBody += '</tr>';
+                tbody.innerHTML += trBody;
+            });
+        }
+
+        function limparFiltros() {
+            document.getElementById('dataInicio').value = '';
+            document.getElementById('dataFim').value = '';
+            document.getElementById('inputBusca').value = '';
+            document.getElementById('selectStatus').value = '';
+            const elemEsp = document.getElementById('filtroEspecifico');
+            if(elemEsp) elemEsp.value = '';
+            gerarRelatorio();
+        }
+
+        function exportarCSV() {
+            const mod = document.getElementById('selectModulo').value;
+            const dados = dadosBase[mod] || [];
+            if(dados.length === 0) {
+                alert("Não há dados para exportar.");
+                return;
+            }
+
+            let csv = '\uFEFF'; // BOM UTF-8
+            const chaves = Object.keys(dados[0]);
+            csv += chaves.join(';') + '\n';
+
+            dados.forEach(row => {
+                const valores = chaves.map(k => `"${(row[k] || '').toString().replace(/"/g, '""')}"`);
+                csv += valores.join(';') + '\n';
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Relatorio_GEAPO_${mod}_2026.csv`;
+            a.click();
+        }
+    </script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+      // Caso não exista a sessão gravada pelo index.html, redireciona o usuário para o Login
+      if (!sessionStorage.getItem('sicage_usuario')) {
+          alert("Acesso restrito! Por favor, realize o login primeiro na tela inicial.");
+          window.location.href = "index.html";
+      }
+  });
+</script>
+<!-- CÓDIGO DE PROTEÇÃO E MODO VISUALIZADOR -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const usuarioAtivo = sessionStorage.getItem('sicage_usuario');
+        const nivelAtivo = sessionStorage.getItem('sicage_nivel');
+
+        // 1. Se tentar entrar sem logar, manda de volta para o index.html
+        if (!usuarioAtivo) {
+            alert("Acesso restrito! Por favor, faça login na página inicial.");
+            window.location.href = "index.html";
+            return;
+        }
+
+        // 2. Se for Visualizador, bloqueia os botões da página atual
+        if (nivelAtivo === 'Visualizador') {
+            const elementos = document.querySelectorAll('button, input, select, textarea');
+
+            elementos.forEach(el => {
+                const eSidebar = el.closest('.sidebar');
+                const eExercicio = el.id === 'anoExercicio';
+                const eSair = el.getAttribute('onclick') && el.getAttribute('onclick').includes('fazerLogout');
+                const eLink = el.tagName === 'A' || el.classList.contains('btn-whatsapp') || el.classList.contains('btn-email');
+
+                if (!eSidebar && !eExercicio && !eSair && !eLink) {
+                    el.disabled = true;
+                    el.classList.add('disabled');
+                    el.style.pointerEvents = 'none';
+                    el.style.opacity = '0.6';
+                }
+            });
+        }
+    });
+
+    function fazerLogout() {
+        sessionStorage.removeItem('sicage_usuario');
+        sessionStorage.removeItem('sicage_nivel');
+        window.location.href = "index.html";
+    }
+</script>
+</body>
+</body>
+</html>

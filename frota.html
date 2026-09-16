@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DETRAN/GEAPO - Frota e Multas</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome (Ícones) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            background-color: #f4f7f6;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        /* --- ESTILOS DO PAINEL LATERAL --- */
+        .sidebar {
+            height: 100vh;
+            background-color: #343a40;
+            color: white;
+            position: fixed;
+            width: 260px;
+            overflow-y: auto;
+            z-index: 100;
+        }
+        .sidebar::-webkit-scrollbar { width: 6px; }
+        .sidebar::-webkit-scrollbar-thumb { background-color: #6c757d; border-radius: 4px; }
+        .sidebar .nav-link { color: #d1d8e0; margin-bottom: 5px; font-size: 0.9rem; }
+        .sidebar .nav-link:hover { background-color: #495057; color: white; border-radius: 5px; }
+        .sidebar i { width: 25px; text-align: center; margin-right: 10px; font-size: 1.1rem; }
+        
+        .main-content {
+            margin-left: 260px;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        .card-header {
+            background-color: transparent;
+            font-weight: bold;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        /* TABELAS */
+        .table-responsive {
+            max-height: 520px;
+            overflow-y: auto;
+        }
+        .table-docs th, .table-docs td {
+            vertical-align: middle;
+            font-size: 0.82rem;
+            white-space: nowrap;
+        }
+        .table-docs th {
+            position: sticky;
+            top: 0;
+            background-color: #343a40;
+            color: white;
+            z-index: 10;
+            text-align: center;
+        }
+        .col-obs, .col-desc {
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* Destaque de linha ativada (Multas) */
+        .row-destacada {
+            background-color: #d1e7dd !important;
+        }
+
+        /* BADGES DE SITUAÇÃO DE VEÍCULOS */
+        .badge-circulacao { background-color: #198754; color: white; } /* Verde */
+        .badge-multa { background-color: #fd7e14; color: white; }      /* Laranja */
+        .badge-baixado { background-color: #dc3545; color: white; }    /* Vermelho */
+        .badge-outro { background-color: #0d6efd; color: white; }      /* Azul */
+
+        /* ESTILO DAS ABAS */
+        .nav-tabs .nav-link {
+            font-weight: 600;
+            color: #495057;
+        }
+        .nav-tabs .nav-link.active {
+            color: #6c757d;
+            border-bottom: 3px solid #343a40;
+        }
+
+        /* FOOTER */
+        .footer {
+            margin-top: auto;
+            text-align: center;
+            padding: 20px 0;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="dashboard-screen">
+        <!-- MENU LATERAL -->
+        <nav class="sidebar p-3">
+            <div class="text-center mb-4 mt-2">
+                <h5 class="text-white m-0">DETRAN/GEAPO</h5>
+                <small class="text-secondary">Apoio Operacional</small>
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item"><a class="nav-link" href="index.html"><i class="fas fa-chart-line text-info"></i> Painel Geral</a></li>
+                <li class="nav-item"><a class="nav-link" href="geapo.html"><i class="fas fa-building text-primary"></i> GEAPO Institucional</a></li>
+                <li class="nav-item"><a class="nav-link" href="contrato.html"><i class="fas fa-file-signature text-warning"></i> Contrato Geral/Orbenk</a></li>
+                <li class="nav-item"><a class="nav-link" href="ateste.html"><i class="fas fa-check-double text-success"></i> Ateste Serviço/Orbenk</a></li>
+                <li class="nav-item"><a class="nav-link" href="sgpe.html"><i class="fas fa-folder-open text-danger"></i> Controle SGPE</a></li>
+                <li class="nav-item"><a class="nav-link" href="oficios.html"><i class="fas fa-envelope-open-text text-info"></i> Ofícios/Despachos</a></li>
+                <li class="nav-item"><a class="nav-link" href="processos.html"><i class="fas fa-balance-scale text-primary"></i> Processos Jurídicos</a></li>
+                <li class="nav-item"><a class="nav-link active fw-bold text-white" href="frota.html"><i class="fas fa-car text-secondary"></i> Frota e Multas</a></li>
+                <li class="nav-item"><a class="nav-link" href="compras.html"><i class="fas fa-shopping-cart text-success"></i> Compras e CPESC</a></li>
+                <li class="nav-item"><a class="nav-link" href="diarias.html"><i class="fas fa-plane text-info"></i> Diárias e Passagem</a></li>
+                <li class="nav-item"><a class="nav-link" href="efetivo.html"><i class="fas fa-users text-warning"></i> Efetivo</a></li>
+                <li class="nav-item"><a class="nav-link" href="agenda.html"><i class="fas fa-calendar-alt text-danger"></i> Agenda e Prazos</a></li>
+                <li class="nav-item"><a class="nav-link" href="agencias.html"><i class="fas fa-map-marker-alt text-primary"></i> Agências</a></li>
+                <li class="nav-item"><a class="nav-link" href="portarias.html"><i class="fas fa-file-alt text-secondary"></i> Portarias</a></li>
+                <li class="nav-item"><a class="nav-link" href="leis.html"><i class="fas fa-gavel text-warning"></i> Leis e Instruções</a></li>
+                <li class="nav-item"><a class="nav-link" href="manuais.html"><i class="fas fa-book text-success"></i> Manuais/Funções</a></li>
+                <li class="nav-item"><a class="nav-link" href="relatorios.html"><i class="fas fa-chart-pie text-info"></i> Relatorios Gerenciais</a></li>
+            </ul>
+        </nav>
+
+        <!-- CONTEÚDO PRINCIPAL -->
+        <div class="main-content">
+            
+            <!-- CABEÇALHO DO MÓDULO -->
+            <div class="d-flex justify-content-between align-items-center mb-4 pt-2">
+                <div>
+                    <h3 class="m-0"><i class="fas fa-car text-secondary me-2"></i>Gestão de Frota e Multas</h3>
+                    <small class="text-muted">Controle completo de veículos, infrações, condutores habilitados e isenções de pedágio</small>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                    <div class="input-group input-group-sm" style="width: 180px;">
+                        <span class="input-group-text bg-light fw-bold"><i class="fas fa-calendar-alt me-1"></i> Exer.</span>
+                        <input type="number" id="anoExercicio" class="form-control fw-bold text-primary" value="2026" min="1900" max="2100" onchange="trocarAno(this.value)">
+                    </div>
+                    <span class="border-start ps-3"><i class="fas fa-user-circle"></i> <strong>GEAPO (Admin)</strong></span>
+                </div>
+            </div>
+
+            <!-- NAVEGAÇÃO POR ABAS -->
+            <ul class="nav nav-tabs mb-4" id="frotaTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="tab-veiculos-tab" data-bs-toggle="tab" data-bs-target="#tab-veiculos" type="button" role="tab"><i class="fas fa-car me-2"></i>Veículos</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="tab-multas-tab" data-bs-toggle="tab" data-bs-target="#tab-multas" type="button" role="tab"><i class="fas fa-exclamation-triangle me-2"></i>Multas</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="tab-condutores-tab" data-bs-toggle="tab" data-bs-target="#tab-condutores" type="button" role="tab"><i class="fas fa-id-card me-2"></i>Condutores</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="tab-pedagio-tab" data-bs-toggle="tab" data-bs-target="#tab-pedagio" type="button" role="tab"><i class="fas fa-road me-2"></i>Pedágio</button>
+                </li>
+            </ul>
+
+            <!-- CONTEÚDO DAS ABAS -->
+            <div class="tab-content" id="frotaTabContent">
+
+                <!-- ABA 1: VEÍCULOS -->
+                <div class="tab-pane fade show active" id="tab-veiculos" role="tabpanel">
+                    <div class="card mb-4">
+                        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                            <span><i class="fas fa-plus-circle text-secondary me-2"></i>Cadastrar Novo Veículo</span>
+                            <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#formVeiculoCollapse">
+                                <i class="fas fa-chevron-down me-1"></i> Recolher / Expandir
+                            </button>
+                        </div>
+                        <div class="collapse" id="formVeiculoCollapse">
+                            <div class="card-body">
+                                <form onsubmit="salvarVeiculo(event)">
+                                    <div class="row g-3">
+                                        <div class="col-md-2">
+                                            <label class="form-label small fw-bold">Placa</label>
+                                            <input type="text" id="vPlaca" class="form-control form-control-sm" placeholder="Ex: ABC-1D23" required>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label small fw-bold">Modelo</label>
+                                            <input type="text" id="vModelo" class="form-control form-control-sm" placeholder="Ex: Fiat Cronos 1.3" required>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label small fw-bold">Cor</label>
+                                            <input type="text" id="vCor" class="form-control form-control-sm" placeholder="Ex: Branco" required>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <label class="form-label small fw-bold m-0">Município (SC)</label>
+                                                <button type="button" class="btn btn-link btn-xs p-0 text-decoration-none" onclick="adicionarNovoMunicipio()">+ Adicionar</button>
+                                            </div>
+                                            <select id="vMunicipio" class="form-select form-select-sm select-municipio mt-1" required></select>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label small fw-bold">Setor</label>
+                                            <input type="text" id="vSetor" class="form-control form-control-sm" placeholder="Ex: Fiscalização" required>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label small fw-bold">Placa Segurança?</label>
+                                            <select id="vPlacaSeguranca" class="form-select form-select-sm" required>
+                                                <option value="Não">Não</option>
+                                                <option value="Sim">Sim</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label small fw-bold">Proprietário</label>
+                                            <select id="vProprietario" class="form-select form-select-sm" onchange="toggleEmpresaContrato(this.value)" required>
+                                                <option value="DETRAN">DETRAN</option>
+                                                <option value="Contrato">Contrato (Terceirizado)</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3 d-none" id="divEmpresaContrato">
+                                            <label class="form-label small fw-bold">Nome da Empresa (Contrato)</label>
+                                            <input type="text" id="vEmpresaContrato" class="form-control form-control-sm" placeholder="Ex: Localiza Fleet">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label small fw-bold">Empresa / Seguro</label>
+                                            <input type="text" id="vEmpresaSeguro" class="form-control form-control-sm" placeholder="Ex: Porto Seguro / Apólice #123">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label small fw-bold">Data Vigência Seguro</label>
+                                            <input type="date" id="vVigenciaSeguro" class="form-control form-control-sm" required>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label small fw-bold">Situação</label>
+                                            <select id="vSituacao" class="form-select form-select-sm" onchange="toggleSituacaoOutro(this.value)" required>
+                                                <option value="Em circulação">Em circulação (Verde)</option>
+                                                <option value="Com multa">Com multa (Laranja)</option>
+                                                <option value="Baixado">Baixado (Vermelho)</option>
+                                                <option value="Outro">Outro/Qual (Azul)</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3 d-none" id="divSituacaoOutro">
+                                            <label class="form-label small fw-bold">Especifique a Situação</label>
+                                            <input type="text" id="vSituacaoOutro" class="form-control form-control-sm" placeholder="Ex: Manutenção na oficina">
+                                        </div>
+                                        <div class="col-md-9">
+                                            <label class="form-label small fw-bold">Observações (OBS)</label>
+                                            <input type="text" id="vOBS" class="form-control form-control-sm" placeholder="Observações do veículo">
+                                        </div>
+                                        <div class="col-md-12 text-end">
+                                            <button type="submit" class="btn btn-sm btn-secondary px-4"><i class="fas fa-save me-1"></i> Salvar Veículo</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                            <span><i class="fas fa-table me-2"></i> Planilha de Veículos</span>
+                            <span class="badge bg-secondary" id="cntVeiculos">0 registros</span>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover align-middle table-docs mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Placa</th>
+                                            <th>Modelo / Cor</th>
+                                            <th>Município</th>
+                                            <th>Setor</th>
+                                            <th>Placa Seg.</th>
+                                            <th>Proprietário</th>
+                                            <th>Empresa / Seguro</th>
+                                            <th>Vigência Seguro</th>
+                                            <th>Situação</th>
+                                            <th>OBS</th>
+                                            <th style="width: 60px;">Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbodyVeiculos"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ABA 2: MULTAS -->
+                <div class="tab-pane fade" id="tab-multas" role="tabpanel">
+                    <div class="card mb-4">
+                        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                            <span><i class="fas fa-plus-circle text-warning me-2"></i>Cadastrar Nova Multa</span>
+                            <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#formMultaCollapse">
+                                <i class="fas fa-chevron-down me-1"></i> Recolher / Expandir
+                            </button>
+                        </div>
+                        <div class="collapse" id="formMultaCollapse">
+                            <div class="card-body">
+                                <form onsubmit="salvarMulta(event)">
+                                    <div class="row g-3">
+                                        <div class="col-md-2">
+                                            <label class="form-label small fw-bold">Placa</label>
+                                            <input type="text" id="mPlaca" class="form-control form-control-sm" placeholder="Ex: ABC-1D23" required>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label small fw-bold">Modelo</label>
+                                            <input type="text" id="mModelo" class="form-control form-control-sm" placeholder="Ex: Fiat Cronos" required>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label small fw-bold">Cor</label>
+                                            <input type="text" id="mCor" class="form-control form-control-sm" placeholder="Ex: Branco" required>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label small fw-bold">Mun. Agência/Detran</label>
+                                            <select id="mMunicipioDetran" class="form-select form-select-sm select-municipio" required></select>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label small fw-bold">Mun. da Infração</label>
+                                            <select id="mMunicipioInfracao" class="form-select form-select-sm select-municipio" required></select>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label small fw-bold">AIT</label>
+                                            <input type="text" id="mAIT" class="form-control form-control-sm" placeholder="Nº Auto Infração" required>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label small fw-bold">Cód. Infração</label>
+                                            <input type="text" id="mCodInfracao" class="form-control form-control-sm" placeholder="Ex: 745-50" required>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label small fw-bold">Hora Infração</label>
+                                            <input type="time" id="mHora" class="form-control form-control-sm" required>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <label class="form-label small fw-bold m-0">Tipo de Infração</label>
+                                                <button type="button" class="btn btn-link btn-xs p-0 text-decoration-none" onclick="adicionarTipoInfracao()">+ Adicionar</button>
+                                            </div>
+                                            <select id="mTipoInfracao" class="form-select form-select-sm mt-1" required></select>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label small fw-bold">Valor (R$)</label>
+                                            <input type="number" step="0.01" id="mValor" class="form-control form-control-sm" placeholder="130.16" required>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label small fw-bold">Situação</label>
+                                            <select id="mSituacao" class="form-select form-select-sm" required>
+                                                <option value="Em aberto">Em aberto</option>
+                                                <option value="Paga">Paga</option>
+                                                <option value="Recurso">Recurso</option>
+                                                <option value="Advertida">Advertida</option>
+                                                <option value="Efeito suspensivo">Efeito suspensivo</option>
+                                                <option value="Aguardando">Aguardando</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label small fw-bold">Condutor</label>
+                                            <input type="text" id="mCondutor" class="form-control form-control-sm" placeholder="Nome do Condutor">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label small fw-bold">Indicação Condutor</label>
+                                            <select id="mIndicacao" class="form-select form-select-sm" onchange="toggleIndicacaoOutro(this.value)" required>
+                                                <option value="Sim">Sim</option>
+                                                <option value="Não">Não</option>
+                                                <option value="Encaminhado">Encaminhado</option>
+                                                <option value="Outro">Outro/Qual</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3 d-none" id="divIndicacaoOutro">
+                                            <label class="form-label small fw-bold">Especifique Indicação</label>
+                                            <input type="text" id="mIndicacaoOutro" class="form-control form-control-sm" placeholder="Ex: Prazo expirado">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label small fw-bold">Defesa Prévia</label>
+                                            <select id="mDefesa" class="form-select form-select-sm" required>
+                                                <option value="Sim">Sim</option>
+                                                <option value="Não">Não</option>
+                                                <option value="Não consta">Não consta</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-12 text-end">
+                                            <button type="submit" class="btn btn-sm btn-warning px-4"><i class="fas fa-save me-1"></i> Salvar Multa</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                            <span><i class="fas fa-table me-2"></i> Planilha de Multas Registradas</span>
+                            <span class="badge bg-secondary" id="cntMultas">0 registros</span>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover align-middle table-docs mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 40px;" title="Marcar como Concluída/Resolvida">OK</th>
+                                            <th>Placa / Modelo</th>
+                                            <th>Mun. Detran</th>
+                                            <th>Mun. Infração</th>
+                                            <th>AIT / Cód.</th>
+                                            <th>Hora</th>
+                                            <th>Tipo de Infração</th>
+                                            <th>Valor</th>
+                                            <th>Situação</th>
+                                            <th>Condutor / Indicação</th>
+                                            <th>Defesa Prévia</th>
+                                            <th style="width: 60px;">Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbodyMultas"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ABA 3: CONDUTORES -->
+                <div class="tab-pane fade" id="tab-condutores" role="tabpanel">
+                    <div class="card mb-4">
+                        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                            <span><i class="fas fa-plus-circle text-primary me-2"></i>Cadastrar Novo Condutor</span>
+                            <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#formCondutorCollapse">
+                                <i class="fas fa-chevron-down me-1"></i> Recolher / Expandir
+                            </button>
+                        </div>
+                        <div class="collapse" id="formCondutorCollapse">
+                            <div class="card-body">
+                                <form onsubmit="salvarCondutor(event)">
+                                    <div class="row g-3">
+                                        <div class="col-md-4">
+                                            <label class="form-label small fw-bold">Nome do Condutor</label>
+                                            <input type="text" id="cNome" class="form-control form-control-sm" required>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label small fw-bold">Matrícula</label>
+                                            <input type="text" id="cMatricula" class="form-control form-control-sm" required>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label small fw-bold">E-mail</label>
+                                            <input type="email" id="cEmail" class="form-control form-control-sm" required>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label small fw-bold">Telefone</label>
+                                            <input type="text" id="cTelefone" class="form-control form-control-sm" placeholder="(48) 99999-9999" required>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label small fw-bold">Unidade</label>
+                                            <input type="text" id="cUnidade" class="form-control form-control-sm" placeholder="Ex: GEAPO / Sede" required>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label small fw-bold">Cargo</label>
+                                            <input type="text" id="cCargo" class="form-control form-control-sm" placeholder="Ex: Agente de Trânsito" required>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label small fw-bold">Rua / Logradouro</label>
+                                            <input type="text" id="cRua" class="form-control form-control-sm" required>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label small fw-bold">Nº / Comp.</label>
+                                            <input type="text" id="cNumero" class="form-control form-control-sm" required>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label small fw-bold">CEP</label>
+                                            <input type="text" id="cCEP" class="form-control form-control-sm" placeholder="88000-000" required>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label small fw-bold">Bairro</label>
+                                            <input type="text" id="cBairro" class="form-control form-control-sm" required>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label small fw-bold">Município Residencial (SC)</label>
+                                            <select id="cMunicipio" class="form-select form-select-sm select-municipio" required></select>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label small fw-bold">Nº Registro CNH</label>
+                                            <input type="text" id="cCNHRegistro" class="form-control form-control-sm" required>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label small fw-bold">Categoria CNH</label>
+                                            <input type="text" id="cCNHCategoria" class="form-control form-control-sm" placeholder="Ex: AB" required>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label small fw-bold">Data 1ª Habilitação</label>
+                                            <input type="date" id="cCNHPrimeira" class="form-control form-control-sm" required>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label small fw-bold text-danger"><i class="fas fa-exclamation-circle me-1"></i>Data Vencimento CNH</label>
+                                            <input type="date" id="cCNHVencimento" class="form-control form-control-sm border-danger" required>
+                                        </div>
+                                        <div class="col-md-12 text-end">
+                                            <button type="submit" class="btn btn-sm btn-primary px-4"><i class="fas fa-save me-1"></i> Salvar Condutor</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                            <span><i class="fas fa-table me-2"></i> Planilha de Condutores e Status de CNH</span>
+                            <span class="badge bg-secondary" id="cntCondutores">0 registros</span>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover align-middle table-docs mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Nome / Matrícula</th>
+                                            <th>Contato / E-mail</th>
+                                            <th>Unidade / Cargo</th>
+                                            <th>Endereço Residencial</th>
+                                            <th>Nº CNH / Cat.</th>
+                                            <th>1ª Habilitação</th>
+                                            <th>Vencimento CNH</th>
+                                            <th>Alerta E-mail (30 dias)</th>
+                                            <th style="width: 60px;">Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbodyCondutores"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ABA 4: PEDÁGIO -->
+                <div class="tab-pane fade" id="tab-pedagio" role="tabpanel">
+                    <div class="card mb-4">
+                        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                            <span><i class="fas fa-plus-circle text-info me-2"></i>Cadastrar Concessão / Isenção de Pedágio</span>
+                            <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#formPedagioCollapse">
+                                <i class="fas fa-chevron-down me-1"></i> Recolher / Expandir
+                            </button>
+                        </div>
+                        <div class="collapse" id="formPedagioCollapse">
+                            <div class="card-body">
+                                <form onsubmit="salvarPedagio(event)">
+                                    <div class="row g-3">
+                                        <div class="col-md-4">
+                                            <label class="form-label small fw-bold">Empresa / Concessão</label>
+                                            <input type="text" id="pEmpresa" class="form-control form-control-sm" placeholder="Ex: Arteris Litoral Sul" required>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label small fw-bold">Região</label>
+                                            <input type="text" id="pRegiao" class="form-control form-control-sm" placeholder="Ex: BR-101 Norte/Sul" required>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <label class="form-label small fw-bold">Descrição da Região</label>
+                                            <input type="text" id="pDescricao" class="form-control form-control-sm" placeholder="Trecho Palhoça a Garuva (Praças de Pedágio)" required>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label small fw-bold">Forma de Isenção</label>
+                                            <input type="text" id="pIsencao" class="form-control form-control-sm" placeholder="Ex: Tag Automático / Credenciamento Oficial" required>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label small fw-bold">Prazo Vigente</label>
+                                            <input type="text" id="pPrazo" class="form-control form-control-sm" placeholder="Ex: Dec. 1234/26 - Até 31/12/2026" required>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <label class="form-label small fw-bold">Anexar Documento / Comprovante</label>
+                                            <input type="file" id="pAnexo" class="form-control form-control-sm">
+                                        </div>
+                                        <div class="col-md-12 text-end">
+                                            <button type="submit" class="btn btn-sm btn-info text-white px-4"><i class="fas fa-save me-1"></i> Salvar Pedágio</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                            <span><i class="fas fa-table me-2"></i> Planilha de Isenções e Regiões de Pedágio em SC</span>
+                            <span class="badge bg-secondary" id="cntPedagios">0 registros</span>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover align-middle table-docs mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Empresa / Concessão</th>
+                                            <th>Região</th>
+                                            <th>Descrição da Região</th>
+                                            <th>Forma de Isenção</th>
+                                            <th>Prazo Vigente</th>
+                                            <th>Anexo</th>
+                                            <th style="width: 60px;">Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbodyPedagios"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- RODAPÉ ASSINADO -->
+            <footer class="footer">
+                SICAGE - Sistema de Controle Administrativo da GEAPO.<br>
+                ⓒ 2026 Desenvolvido por [Ingrid/Gabriela].
+            </footer>
+        </div>
+    </div>
+
+    <!-- MODAL PARA NOVO MUNICÍPIO -->
+    <div class="modal fade" id="modalMunicipio" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content">
+                <div class="modal-header py-2">
+                    <h6 class="modal-title fw-bold">Adicionar Município (SC)</h6>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" id="inputNovoMunicipio" class="form-control form-control-sm" placeholder="Nome do Município">
+                </div>
+                <div class="modal-footer py-2">
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-sm btn-primary" onclick="confirmarNovoMunicipio()">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PARA NOVO TIPO DE INFRAÇÃO -->
+    <div class="modal fade" id="modalTipoInfracao" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content">
+                <div class="modal-header py-2">
+                    <h6 class="modal-title fw-bold">Adicionar Tipo de Infração</h6>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" id="inputNovoTipoInfracao" class="form-control form-control-sm" placeholder="Ex: Transitar em faixa exclusiva">
+                </div>
+                <div class="modal-footer py-2">
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-sm btn-warning" onclick="confirmarNovoTipoInfracao()">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts Bootstrap e Lógica JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let anoAtual = 2026;
+
+        // BASE DE MUNICÍPIOS DE SANTA CATARINA EM ORDEM ALFABÉTICA
+        const municipiosPadraoSC = [
+            "Abdon Batista", "Abelardo Luz", "Agrolândia", "Agronômica", "Água Doce", "Águas de Chapecó", "Águas Frias", "Águas Mornas",
+            "Alfredo Wagner", "Alto Bela Vista", "Anchieta", "Angelina", "Anita Garibaldi", "Anitápolis", "Antônio Carlos", "Apiúna",
+            "Arabutã", "Araquari", "Araranguá", "Armazém", "Arroio Trinta", "Arvoredo", "Ascurra", "Atalanta", "Balneário Arroio do Silva",
+            "Balneário Barra do Sul", "Balneário Camboriú", "Balneário Gaivota", "Balneário Piçarras", "Balneário Rincão", "Bandeirante",
+            "Barra Bonita", "Barra Velha", "Bela Vista do Toldo", "Belmonte", "Benedito Novo", "Biguaçu", "Blumenau", "Bocaina do Sul",
+            "Bom Jardim da Serra", "Bom Jesus", "Bom Jesus do Oeste", "Bom Retiro", "Bombinhas", "Botuverá", "Braço do Norte", "Braço do Trombudo",
+            "Brunópolis", "Brusque", "Caçador", "Caibi", "Calmon", "Camboriú", "Campo Alegre", "Campo Belo do Sul", "Campo Erê",
+            "Campos Novos", "Canelinha", "Canoinhas", "Capão Alto", "Capinzal", "Capivari de Baixo", "Catanduvas", "Caxambu do Sul",
+            "Celso Ramos", "Cerro Negro", "Chapecó", "Cocal do Sul", "Concórdia", "Cordilheira Alta", "Coronel Freitas", "Coronel Martins",
+            "Correia Pinto", "Corupá", "Criciúma", "Cunha Porã", "Cunhataí", "Curitibanos", "Descanso", "Dionísio Cerqueira", "Dona Emma",
+            "Doutor Pedrinho", "Entre Rios", "Ermo", "Erval Velho", "Faxinal dos Guedes", "Flor do Sertão", "Florianópolis", "Formosa do Sul",
+            "Forquilhinha", "Fraiburgo", "Frei Rogério", "Galvão", "Garopaba", "Garuva", "Gaspar", "Governador Celso Ramos", "Grão-Pará",
+            "Gravatal", "Guabiruba", "Guaraciaba", "Guaramirim", "Guarujá do Sul", "Guatambu", "Herval d'Oeste", "Ibiam", "Ibicaré",
+            "Ibirama", "Içara", "Ilhota", "Imaruí", "Imbituba", "Imbuia", "Indaial", "Iomerê", "Ipê em Flores", "Ipuaçu", "Ipumirim",
+            "Iraceminha", "Irani", "Irati", "Irineópolis", "Itá", "Itaiópolis", "Itajaí", "Itapema", "Itapiranga", "Itapoá", "Ituporanga",
+            "Jaborá", "Jacinto Machado", "Jaguaruna", "Jaraguá do Sul", "Jardinópolis", "Joaçaba", "Joinville", "José Boiteux", "Jupiá",
+            "Lages", "Laguna", "Lajeado Grande", "Laurentino", "Lauro Müller", "Lebon Régis", "Leoberto Leal", "Lindóia do Sul", "Lontras",
+            "Luiz Alves", "Luzerna", "Macieira", "Mafra", "Major Gercino", "Major Vieira", "Maracajá", "Maravilha", "Marema", "Massaranduba",
+            "Matos Costa", "Meleiro", "Mirim Doce", "Modelo", "Mondaí", "Monte Carlo", "Monte Castelo", "Morro da Fumaça", "Morro Grande",
+            "Navegantes", "Nova Erechim", "Nova Itaberaba", "Nova Trento", "Nova Veneza", "Novo Horizonte", "Orleans", "Otacílio Costa",
+            "Ouro", "Ouro Verde", "Paial", "Painel", "Palhoça", "Palma Sola", "Palmeira", "Palmitos", "Papanduva", "Paraíso", "Passo de Torres",
+            "Passos Maia", "Paulo Lopes", "Pedras Grandes", "Penha", "Peritiba", "Pescaria Brava", "Petrolândia", "Pinhalzinho",
+            "Pinheiro Preto", "Piratuba", "Planalto Alegre", "Pomerode", "Ponte Alta", "Ponte Alta do Norte", "Ponte Serrada", "Porto Belo",
+            "Porto União", "Pouso Redondo", "Praia Grande", "Presidente Castello Branco", "Presidente Getúlio", "Presidente Nereu",
+            "Princesa", "Quilombo", "Rancho Queimado", "Rio das Antas", "Rio do Campo", "Rio do Oeste", "Rio do Sul", "Rio dos Cedros",
+            "Rio Fortuna", "Rio Negrinho", "Rio Rufino", "Riqueza", "Rodeio", "Romelândia", "Salete", "Saltinho", "Salto Veloso", "Sangão",
+            "Santa Cecília", "Santa Helena", "Santa Rosa de Lima", "Santa Rosa do Sul", "Santa Terezinha", "Santa Terezinha do Progresso",
+            "Santiago do Sul", "Santo Amaro da Imperatriz", "São Bento do Sul", "São Bernardino", "São Carlos", "São Cristóvão do Sul",
+            "São Domingos", "São Francisco do Sul", "São João Batista", "São João do Itaperiú", "São João do Oeste", "São João do Sul",
+            "São Joaquim", "São José", "São José do Cedro", "São José do Cerrito", "São Lourenço do Oeste", "São Ludgero", "São Martinho",
+            "São Miguel da Boa Vista", "São Miguel do Oeste", "São Pedro de Alcântara", "Saudades", "Seara", "Serra Alta", "Siderópolis",
+            "Sombrio", "Sul Brasil", "Taió", "Tangará", "Tigrinhos", "Timbó", "Timbó Grande", "Timbé do Sul", "Três Barras", "Treviso",
+            "Treze de Maio", "Treze Tílias", "Trombudo Central", "Tubarão", "Tunápolis", "Turvo", "Urubici", "Urupema", "Urussanga",
+            "Vargeão", "Vargem", "Vargem Bonita", "Vidal Ramos", "Videira", "Vitor Meireles", "Witmarsum", "Xanxerê", "Xavantina",
+            "Xaxim", "Zortéa"
+        ];
+
+        // TIPOS DE INFRAÇÃO PADRÃO A-Z
+        const tiposInfracaoPadrao = [
+            "Avançar o sinal vermelho do semáforo",
+            "Dirigir manuseando telefone celular",
+            "Dirigir sem atenção ou sem os cuidados indispensáveis à segurança",
+            "Estacionar em local/horário proibido pela sinalização",
+            "Não usar o cinto de segurança",
+            "Parar sobre a faixa de pedestres",
+            "Transitar em velocidade superior à máxima em até 20%",
+            "Transitar em velocidade superior à máxima em mais de 20% até 50%",
+            "Transitar em velocidade superior à máxima em mais de 50%",
+            "Transitar pelo acostamento",
+            "Ultrapassar pela contramão linha contínua"
+        ];
+
+        let listaMunicipios = JSON.parse(localStorage.getItem('geapo_municipios_sc')) || municipiosPadraoSC;
+        let listaTiposInfracao = JSON.parse(localStorage.getItem('geapo_tipos_infracao')) || tiposInfracaoPadrao;
+
+        // BANCO DE DADOS EM LOCALSTORAGE
+        let veiculos = JSON.parse(localStorage.getItem('geapo_frota_veiculos')) || [
+            { id: 1, ano: 2026, placa: 'QIX-4A12', modelo: 'Fiat Cronos 1.3', cor: 'Branco', municipio: 'Florianópolis', setor: 'Fiscalização', placaSeguranca: 'Não', proprietario: 'DETRAN', empresaContrato: '', empresaSeguro: 'Porto Seguro', vigenciaSeguro: '2026-12-31', situacao: 'Em circulação', situacaoOutro: '', obs: 'Vistoriado' }
+        ];
+
+        let multas = JSON.parse(localStorage.getItem('geapo_frota_multas')) || [
+            { id: 1, ano: 2026, concluido: false, placa: 'QIX-4A12', modelo: 'Fiat Cronos', cor: 'Branco', municipioDetran: 'Florianópolis', municipioInfracao: 'São José', ait: 'FT099812', codInfracao: '745-50', hora: '14:30', tipo: 'Transitar em velocidade superior à máxima em até 20%', valor: 130.16, situacao: 'Em aberto', condutor: 'João da Silva', indicacao: 'Sim', indicacaoOutro: '', defesa: 'Não' }
+        ];
+
+        let condutores = JSON.parse(localStorage.getItem('geapo_frota_condutores')) || [
+            { id: 1, ano: 2026, nome: 'Marcos Roberto Vieira', matricula: '958.123-1', email: 'marcos.vieira@detran.sc.gov.br', telefone: '(48) 99881-2233', unidade: 'GEAPO / Sede', cargo: 'Agente de Trânsito', rua: 'Av. Ivo Silveira', numero: '1500', cep: '88085-001', bairro: 'Capoeiras', municipio: 'Florianópolis', cnhRegistro: '01234567890', cnhCategoria: 'AB', cnhPrimeira: '2010-04-15', cnhVencimento: '2026-10-05' }
+        ];
+
+        let pedagios = JSON.parse(localStorage.getItem('geapo_frota_pedagios')) || [
+            { id: 1, ano: 2026, empresa: 'Arteris Litoral Sul', regiao: 'BR-101 Norte/Sul', descricao: 'Praças de Palhoça, Porto Belo, Araquari e Garuva', isencao: 'Tag Isenção Oficial DETRAN', prazo: 'Até 31/12/2026', anexo: 'Oficio_Isencao_2026.pdf' }
+        ];
+
+        let modalMunInstancia, modalInfInstancia;
+
+        document.addEventListener("DOMContentLoaded", function() {
+            modalMunInstancia = new bootstrap.Modal(document.getElementById('modalMunicipio'));
+            modalInfInstancia = new bootstrap.Modal(document.getElementById('modalTipoInfracao'));
+            
+            carregarSelectsMunicipios();
+            carregarSelectsTiposInfracao();
+            renderizarTodasTabelas();
+        });
+
+        function trocarAno(novoAno) {
+            if(novoAno) {
+                anoAtual = parseInt(novoAno);
+                renderizarTodasTabelas();
+            }
+        }
+
+        /* --- MANIPULAÇÃO DE MUNICÍPIOS E TIPOS DE INFRAÇÃO --- */
+        function carregarSelectsMunicipios(selecionado = "") {
+            listaMunicipios.sort((a, b) => a.localeCompare(b, 'pt-BR'));
+            const selects = document.querySelectorAll('.select-municipio');
+            selects.forEach(select => {
+                const valAtual = select.value;
+                select.innerHTML = '<option value="">Selecione o Município...</option>';
+                listaMunicipios.forEach(m => {
+                    const opt = document.createElement('option');
+                    opt.value = m;
+                    opt.textContent = m;
+                    select.appendChild(opt);
+                });
+                if(selecionado) select.value = selecionado;
+                else if(valAtual) select.value = valAtual;
+            });
+        }
+
+        function carregarSelectsTiposInfracao(selecionado = "") {
+            listaTiposInfracao.sort((a, b) => a.localeCompare(b, 'pt-BR'));
+            const select = document.getElementById('mTipoInfracao');
+            select.innerHTML = '<option value="">Selecione a Infração...</option>';
+            listaTiposInfracao.forEach(t => {
+                const opt = document.createElement('option');
+                opt.value = t;
+                opt.textContent = t;
+                select.appendChild(opt);
+            });
+            if(selecionado) select.value = selecionado;
+        }
+
+        function adicionarNovoMunicipio() {
+            document.getElementById('inputNovoMunicipio').value = '';
+            modalMunInstancia.show();
+        }
+
+        function confirmarNovoMunicipio() {
+            const mun = document.getElementById('inputNovoMunicipio').value.trim();
+            if(mun) {
+                if(!listaMunicipios.includes(mun)) {
+                    listaMunicipios.push(mun);
+                    localStorage.setItem('geapo_municipios_sc', JSON.stringify(listaMunicipios));
+                }
+                carregarSelectsMunicipios(mun);
+                modalMunInstancia.hide();
+            }
+        }
+
+        function adicionarTipoInfracao() {
+            document.getElementById('inputNovoTipoInfracao').value = '';
+            modalInfInstancia.show();
+        }
+
+        function confirmarNovoTipoInfracao() {
+            const tipo = document.getElementById('inputNovoTipoInfracao').value.trim();
+            if(tipo) {
+                if(!listaTiposInfracao.includes(tipo)) {
+                    listaTiposInfracao.push(tipo);
+                    localStorage.setItem('geapo_tipos_infracao', JSON.stringify(listaTiposInfracao));
+                }
+                carregarSelectsTiposInfracao(tipo);
+                modalInfInstancia.hide();
+            }
+        }
+
+        /* --- MANIPULAÇÃO DE FORMULÁRIOS DINÂMICOS --- */
+        function toggleEmpresaContrato(val) {
+            const div = document.getElementById('divEmpresaContrato');
+            if(val === 'Contrato') div.classList.remove('d-none');
+            else div.classList.add('d-none');
+        }
+
+        function toggleSituacaoOutro(val) {
+            const div = document.getElementById('divSituacaoOutro');
+            if(val === 'Outro') div.classList.remove('d-none');
+            else div.classList.add('d-none');
+        }
+
+        function toggleIndicacaoOutro(val) {
+            const div = document.getElementById('divIndicacaoOutro');
+            if(val === 'Outro') div.classList.remove('d-none');
+            else div.classList.add('d-none');
+        }
+
+        /* --- ABA 1: VEÍCULOS --- */
+        function salvarVeiculo(e) {
+            e.preventDefault();
+            const novoId = veiculos.length > 0 ? Math.max(...veiculos.map(v => v.id)) + 1 : 1;
+            const obj = {
+                id: novoId,
+                ano: anoAtual,
+                placa: document.getElementById('vPlaca').value.toUpperCase(),
+                modelo: document.getElementById('vModelo').value,
+                cor: document.getElementById('vCor').value,
+                municipio: document.getElementById('vMunicipio').value,
+                setor: document.getElementById('vSetor').value,
+                placaSeguranca: document.getElementById('vPlacaSeguranca').value,
+                proprietario: document.getElementById('vProprietario').value,
+                empresaContrato: document.getElementById('vEmpresaContrato').value,
+                empresaSeguro: document.getElementById('vEmpresaSeguro').value,
+                vigenciaSeguro: document.getElementById('vVigenciaSeguro').value,
+                situacao: document.getElementById('vSituacao').value,
+                situacaoOutro: document.getElementById('vSituacaoOutro').value,
+                obs: document.getElementById('vOBS').value
+            };
+            veiculos.push(obj);
+            localStorage.setItem('geapo_frota_veiculos', JSON.stringify(veiculos));
+            e.target.reset();
+            toggleEmpresaContrato('DETRAN');
+            toggleSituacaoOutro('');
+            renderizarVeiculos();
+        }
+
+        function excluirVeiculo(id) {
+            if(confirm("Deseja excluir este veículo?")) {
+                veiculos = veiculos.filter(v => v.id !== id);
+                localStorage.setItem('geapo_frota_veiculos', JSON.stringify(veiculos));
+                renderizarVeiculos();
+            }
+        }
+
+        function renderizarVeiculos() {
+            const tbody = document.getElementById('tbodyVeiculos');
+            tbody.innerHTML = '';
+            const filtrados = veiculos.filter(v => v.ano === anoAtual);
+            document.getElementById('cntVeiculos').innerText = `${filtrados.length} registros`;
+
+            if(filtrados.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="11" class="text-center text-muted p-4">Nenhum veículo cadastrado em ${anoAtual}.</td></tr>`;
+                return;
+            }
+
+            filtrados.forEach(v => {
+                let badgeClass = 'badge-circulacao';
+                let situacaoTxt = v.situacao;
+                if(v.situacao === 'Com multa') badgeClass = 'badge-multa';
+                else if(v.situacao === 'Baixado') badgeClass = 'badge-baixado';
+                else if(v.situacao === 'Outro') { badgeClass = 'badge-outro'; situacaoTxt = v.situacaoOutro || 'Outro'; }
+
+                const propTxt = v.proprietario === 'Contrato' ? `Contrato (${v.empresaContrato || 'S/N'})` : 'DETRAN';
+                const vigFmt = v.vigenciaSeguro ? v.vigenciaSeguro.split('-').reverse().join('/') : '-';
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="fw-bold text-center">${v.placa}</td>
+                        <td>${v.modelo} (${v.cor})</td>
+                        <td>${v.municipio}</td>
+                        <td>${v.setor}</td>
+                        <td class="text-center">${v.placaSeguranca}</td>
+                        <td>${propTxt}</td>
+                        <td>${v.empresaSeguro}</td>
+                        <td class="text-center">${vigFmt}</td>
+                        <td class="text-center"><span class="badge ${badgeClass}">${situacaoTxt}</span></td>
+                        <td class="col-obs" title="${v.obs}">${v.obs || '-'}</td>
+                        <td class="text-center">
+                            <button class="btn btn-sm btn-outline-danger" onclick="excluirVeiculo(${v.id})"><i class="fas fa-trash-alt"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        /* --- ABA 2: MULTAS --- */
+        function salvarMulta(e) {
+            e.preventDefault();
+            const novoId = multas.length > 0 ? Math.max(...multas.map(m => m.id)) + 1 : 1;
+            const obj = {
+                id: novoId,
+                ano: anoAtual,
+                concluido: false,
+                placa: document.getElementById('mPlaca').value.toUpperCase(),
+                modelo: document.getElementById('mModelo').value,
+                cor: document.getElementById('mCor').value,
+                municipioDetran: document.getElementById('mMunicipioDetran').value,
+                municipioInfracao: document.getElementById('mMunicipioInfracao').value,
+                ait: document.getElementById('mAIT').value,
+                codInfracao: document.getElementById('mCodInfracao').value,
+                hora: document.getElementById('mHora').value,
+                tipo: document.getElementById('mTipoInfracao').value,
+                valor: parseFloat(document.getElementById('mValor').value),
+                situacao: document.getElementById('mSituacao').value,
+                condutor: document.getElementById('mCondutor').value,
+                indicacao: document.getElementById('mIndicacao').value,
+                indicacaoOutro: document.getElementById('mIndicacaoOutro').value,
+                defesa: document.getElementById('mDefesa').value
+            };
+            multas.push(obj);
+            localStorage.setItem('geapo_frota_multas', JSON.stringify(multas));
+            e.target.reset();
+            toggleIndicacaoOutro('');
+            renderizarMultas();
+        }
+
+        function toggleConcluidoMulta(id, status) {
+            const idx = multas.findIndex(m => m.id === id);
+            if(idx !== -1) {
+                multas[idx].concluido = status;
+                localStorage.setItem('geapo_frota_multas', JSON.stringify(multas));
+                renderizarMultas();
+            }
+        }
+
+        function excluirMulta(id) {
+            if(confirm("Deseja excluir este registro de multa?")) {
+                multas = multas.filter(m => m.id !== id);
+                localStorage.setItem('geapo_frota_multas', JSON.stringify(multas));
+                renderizarMultas();
+            }
+        }
+
+        function renderizarMultas() {
+            const tbody = document.getElementById('tbodyMultas');
+            tbody.innerHTML = '';
+            const filtrados = multas.filter(m => m.ano === anoAtual);
+            document.getElementById('cntMultas').innerText = `${filtrados.length} registros`;
+
+            if(filtrados.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="12" class="text-center text-muted p-4">Nenhuma multa registrada em ${anoAtual}.</td></tr>`;
+                return;
+            }
+
+            filtrados.forEach(m => {
+                const classeDestaque = m.concluido ? 'row-destacada' : '';
+                const indTxt = m.indicacao === 'Outro' ? `Outro (${m.indicacaoOutro || ''})` : m.indicacao;
+                const valorFmt = m.valor ? `R$ ${m.valor.toFixed(2).replace('.', ',')}` : 'R$ 0,00';
+
+                tbody.innerHTML += `
+                    <tr class="${classeDestaque}">
+                        <td class="text-center">
+                            <input type="checkbox" class="form-check-input" ${m.concluido ? 'checked' : ''} onchange="toggleConcluidoMulta(${m.id}, this.checked)">
+                        </td>
+                        <td><strong>${m.placa}</strong><br><small class="text-muted">${m.modelo}</small></td>
+                        <td>${m.municipioDetran}</td>
+                        <td>${m.municipioInfracao}</td>
+                        <td><strong>${m.ait}</strong><br><small class="text-muted">${m.codInfracao}</small></td>
+                        <td class="text-center">${m.hora}</td>
+                        <td class="col-desc" title="${m.tipo}">${m.tipo}</td>
+                        <td class="fw-bold text-danger text-end">${valorFmt}</td>
+                        <td class="text-center"><span class="badge bg-secondary">${m.situacao}</span></td>
+                        <td>${m.condutor || '-'}<br><small class="text-muted">Ind: ${indTxt}</small></td>
+                        <td class="text-center">${m.defesa}</td>
+                        <td class="text-center">
+                            <button class="btn btn-sm btn-outline-danger" onclick="excluirMulta(${m.id})"><i class="fas fa-trash-alt"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        /* --- ABA 3: CONDUTORES --- */
+        function salvarCondutor(e) {
+            e.preventDefault();
+            const novoId = condutores.length > 0 ? Math.max(...condutores.map(c => c.id)) + 1 : 1;
+            const obj = {
+                id: novoId,
+                ano: anoAtual,
+                nome: document.getElementById('cNome').value,
+                matricula: document.getElementById('cMatricula').value,
+                email: document.getElementById('cEmail').value,
+                telefone: document.getElementById('cTelefone').value,
+                unidade: document.getElementById('cUnidade').value,
+                cargo: document.getElementById('cCargo').value,
+                rua: document.getElementById('cRua').value,
+                numero: document.getElementById('cNumero').value,
+                cep: document.getElementById('cCEP').value,
+                bairro: document.getElementById('cBairro').value,
+                municipio: document.getElementById('cMunicipio').value,
+                cnhRegistro: document.getElementById('cCNHRegistro').value,
+                cnhCategoria: document.getElementById('cCNHCategoria').value,
+                cnhPrimeira: document.getElementById('cCNHPrimeira').value,
+                cnhVencimento: document.getElementById('cCNHVencimento').value
+            };
+            condutores.push(obj);
+            localStorage.setItem('geapo_frota_condutores', JSON.stringify(condutores));
+            e.target.reset();
+            renderizarCondutores();
+        }
+
+        function excluirCondutor(id) {
+            if(confirm("Deseja excluir este condutor?")) {
+                condutores = condutores.filter(c => c.id !== id);
+                localStorage.setItem('geapo_frota_condutores', JSON.stringify(condutores));
+                renderizarCondutores();
+            }
+        }
+
+        function calcularStatusVencimentoCNH(dataVencStr) {
+            if(!dataVencStr) return { alerta: false, dias: 999 };
+            const hoje = new Date(2026, 8, 15); // Data base de 2026
+            const venc = new Date(dataVencStr);
+            const diffTime = venc - hoje;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            return { alerta: diffDays <= 30, dias: diffDays };
+        }
+
+        function renderizarCondutores() {
+            const tbody = document.getElementById('tbodyCondutores');
+            tbody.innerHTML = '';
+            const filtrados = condutores.filter(c => c.ano === anoAtual);
+            document.getElementById('cntCondutores').innerText = `${filtrados.length} registros`;
+
+            if(filtrados.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="9" class="text-center text-muted p-4">Nenhum condutor cadastrado em ${anoAtual}.</td></tr>`;
+                return;
+            }
+
+            filtrados.forEach(c => {
+                const statusCNH = calcularStatusVencimentoCNH(c.cnhVencimento);
+                const vencFmt = c.cnhVencimento ? c.cnhVencimento.split('-').reverse().join('/') : '-';
+                const primFmt = c.cnhPrimeira ? c.cnhPrimeira.split('-').reverse().join('/') : '-';
+                
+                let btnAlerta = '<span class="badge bg-success"><i class="fas fa-check-circle me-1"></i>Regular</span>';
+                
+                if(statusCNH.alerta) {
+                    const mailtoUrl = `mailto:geapo@detran.sc.gov.br?subject=ALERTA GEAPO - Vencimento CNH: ${encodeURIComponent(c.nome)}&body=Atenção GEAPO,%0A%0AA CNH do condutor ${encodeURIComponent(c.nome)} (Matrícula: ${c.matricula}) vence em ${vencFmt} (Faltam ${statusCNH.dias} dias).%0A%0AAtenciosamente,%0ASICAGE/GEAPO`;
+                    
+                    btnAlerta = `
+                        <a href="${mailtoUrl}" class="btn btn-xs btn-danger text-white py-0 px-2 fw-bold" title="Enviar e-mail para geapo@detran.sc.gov.br">
+                            <i class="fas fa-envelope-open-text me-1"></i>Alerta (${statusCNH.dias} dias)
+                        </a>
+                    `;
+                }
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${c.nome}</strong><br><small class="text-muted">Mat: ${c.matricula}</small></td>
+                        <td>${c.email}<br><small class="text-muted">${c.telefone}</small></td>
+                        <td>${c.unidade}<br><small class="text-muted">${c.cargo}</small></td>
+                        <td>${c.rua}, ${c.numero} - ${c.bairro}<br><small class="text-muted">${c.municipio}/SC - CEP: ${c.cep}</small></td>
+                        <td class="text-center fw-bold">${c.cnhRegistro} (${c.cnhCategoria})</td>
+                        <td class="text-center">${primFmt}</td>
+                        <td class="text-center fw-bold ${statusCNH.alerta ? 'text-danger' : ''}">${vencFmt}</td>
+                        <td class="text-center">${btnAlerta}</td>
+                        <td class="text-center">
+                            <button class="btn btn-sm btn-outline-danger" onclick="excluirCondutor(${c.id})"><i class="fas fa-trash-alt"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        /* --- ABA 4: PEDÁGIO --- */
+        function salvarPedagio(e) {
+            e.preventDefault();
+            const novoId = pedagios.length > 0 ? Math.max(...pedagios.map(p => p.id)) + 1 : 1;
+            const fileInput = document.getElementById('pAnexo');
+            const fileName = fileInput.files.length > 0 ? fileInput.files[0].name : 'Nenhum anexo';
+
+            const obj = {
+                id: novoId,
+                ano: anoAtual,
+                empresa: document.getElementById('pEmpresa').value,
+                regiao: document.getElementById('pRegiao').value,
+                descricao: document.getElementById('pDescricao').value,
+                isencao: document.getElementById('pIsencao').value,
+                prazo: document.getElementById('pPrazo').value,
+                anexo: fileName
+            };
+
+            pedagios.push(obj);
+            localStorage.setItem('geapo_frota_pedagios', JSON.stringify(pedagios));
+            e.target.reset();
+            renderizarPedagios();
+        }
+
+        function excluirPedagio(id) {
+            if(confirm("Deseja excluir este registro de isenção de pedágio?")) {
+                pedagios = pedagios.filter(p => p.id !== id);
+                localStorage.setItem('geapo_frota_pedagios', JSON.stringify(pedagios));
+                renderizarPedagios();
+            }
+        }
+
+        function renderizarPedagios() {
+            const tbody = document.getElementById('tbodyPedagios');
+            tbody.innerHTML = '';
+            const filtrados = pedagios.filter(p => p.ano === anoAtual);
+            document.getElementById('cntPedagios').innerText = `${filtrados.length} registros`;
+
+            if(filtrados.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center text-muted p-4">Nenhum pedágio registrado em ${anoAtual}.</td></tr>`;
+                return;
+            }
+
+            filtrados.forEach(p => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="fw-bold text-dark">${p.empresa}</td>
+                        <td class="fw-bold text-info">${p.regiao}</td>
+                        <td class="col-desc" title="${p.descricao}">${p.descricao}</td>
+                        <td>${p.isencao}</td>
+                        <td class="text-center">${p.prazo}</td>
+                        <td class="text-center">
+                            ${p.anexo !== 'Nenhum anexo' ? `<span class="badge bg-light text-dark border"><i class="fas fa-paperclip text-primary me-1"></i>${p.anexo}</span>` : '<span class="text-muted">-</span>'}
+                        </td>
+                        <td class="text-center">
+                            <button class="btn btn-sm btn-outline-danger" onclick="excluirPedagio(${p.id})"><i class="fas fa-trash-alt"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function renderizarTodasTabelas() {
+            renderizarVeiculos();
+            renderizarMultas();
+            renderizarCondutores();
+            renderizarPedagios();
+        }
+    </script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+      // Caso não exista a sessão gravada pelo index.html, redireciona o usuário para o Login
+      if (!sessionStorage.getItem('sicage_usuario')) {
+          alert("Acesso restrito! Por favor, realize o login primeiro na tela inicial.");
+          window.location.href = "index.html";
+      }
+  });
+</script>
+<!-- CÓDIGO DE PROTEÇÃO E MODO VISUALIZADOR -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const usuarioAtivo = sessionStorage.getItem('sicage_usuario');
+        const nivelAtivo = sessionStorage.getItem('sicage_nivel');
+
+        // 1. Se tentar entrar sem logar, manda de volta para o index.html
+        if (!usuarioAtivo) {
+            alert("Acesso restrito! Por favor, faça login na página inicial.");
+            window.location.href = "index.html";
+            return;
+        }
+
+        // 2. Se for Visualizador, bloqueia os botões da página atual
+        if (nivelAtivo === 'Visualizador') {
+            const elementos = document.querySelectorAll('button, input, select, textarea');
+
+            elementos.forEach(el => {
+                const eSidebar = el.closest('.sidebar');
+                const eExercicio = el.id === 'anoExercicio';
+                const eSair = el.getAttribute('onclick') && el.getAttribute('onclick').includes('fazerLogout');
+                const eLink = el.tagName === 'A' || el.classList.contains('btn-whatsapp') || el.classList.contains('btn-email');
+
+                if (!eSidebar && !eExercicio && !eSair && !eLink) {
+                    el.disabled = true;
+                    el.classList.add('disabled');
+                    el.style.pointerEvents = 'none';
+                    el.style.opacity = '0.6';
+                }
+            });
+        }
+    });
+
+    function fazerLogout() {
+        sessionStorage.removeItem('sicage_usuario');
+        sessionStorage.removeItem('sicage_nivel');
+        window.location.href = "index.html";
+    }
+</script>
+</body>
+</body>
+</html>

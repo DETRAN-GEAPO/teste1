@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DETRAN/GEAPO - Controle de Efetivo</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome (Ícones) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            background-color: #f4f7f6;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        /* --- ESTILOS DO PAINEL LATERAL --- */
+        .sidebar {
+            height: 100vh;
+            background-color: #343a40;
+            color: white;
+            position: fixed;
+            width: 260px;
+            overflow-y: auto;
+            z-index: 100;
+        }
+        .sidebar::-webkit-scrollbar { width: 6px; }
+        .sidebar::-webkit-scrollbar-thumb { background-color: #6c757d; border-radius: 4px; }
+        .sidebar .nav-link { color: #d1d8e0; margin-bottom: 5px; font-size: 0.9rem; }
+        .sidebar .nav-link:hover { background-color: #495057; color: white; border-radius: 5px; }
+        .sidebar i { width: 25px; text-align: center; margin-right: 10px; font-size: 1.1rem; }
+        
+        .main-content {
+            margin-left: 260px;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        .card-header {
+            background-color: transparent;
+            font-weight: bold;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        /* --- CARDS INFORMATIVOS --- */
+        .card-kpi {
+            border-left: 5px solid;
+            transition: transform 0.2s;
+        }
+        .card-kpi:hover { transform: translateY(-3px); }
+
+        /* --- TABELA PLANILHA COMPLETA --- */
+        .table-responsive {
+            max-height: 550px;
+            overflow-y: auto;
+            overflow-x: auto;
+        }
+        .table-docs th, .table-docs td {
+            vertical-align: middle;
+            font-size: 0.82rem;
+            white-space: nowrap;
+        }
+        .table-docs th {
+            position: sticky;
+            top: 0;
+            background-color: #343a40;
+            color: white;
+            z-index: 10;
+            text-align: center;
+        }
+        .col-obs, .col-email {
+            max-width: 180px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* FOOTER */
+        .footer {
+            margin-top: auto;
+            text-align: center;
+            padding: 20px 0;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="dashboard-screen">
+        <!-- MENU LATERAL DE NAVEGAÇÃO -->
+        <nav class="sidebar p-3">
+            <div class="text-center mb-4 mt-2">
+                <h5 class="text-white m-0">DETRAN/GEAPO</h5>
+                <small class="text-secondary">Apoio Operacional</small>
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item"><a class="nav-link" href="index.html"><i class="fas fa-chart-line text-info"></i> Painel Geral</a></li>
+                <li class="nav-item"><a class="nav-link" href="geapo.html"><i class="fas fa-building text-primary"></i> GEAPO Institucional</a></li>
+                <li class="nav-item"><a class="nav-link" href="contrato.html"><i class="fas fa-file-signature text-warning"></i> Contrato Geral/Orbenk</a></li>
+                <li class="nav-item"><a class="nav-link" href="ateste.html"><i class="fas fa-check-double text-success"></i> Ateste Serviço/Orbenk</a></li>
+                <li class="nav-item"><a class="nav-link" href="sgpe.html"><i class="fas fa-folder-open text-danger"></i> Controle SGPE</a></li>
+                <li class="nav-item"><a class="nav-link" href="oficios.html"><i class="fas fa-envelope-open-text text-info"></i> Ofícios/Despachos</a></li>
+                <li class="nav-item"><a class="nav-link" href="processos.html"><i class="fas fa-balance-scale text-primary"></i> Processos Jurídicos</a></li>
+                <li class="nav-item"><a class="nav-link" href="frota.html"><i class="fas fa-car text-secondary"></i> Frota e Multas</a></li>
+                <li class="nav-item"><a class="nav-link" href="compras.html"><i class="fas fa-shopping-cart text-success"></i> Compras e CPESC</a></li>
+                <li class="nav-item"><a class="nav-link" href="diarias.html"><i class="fas fa-plane text-info"></i> Diárias e Passagem</a></li>
+                <li class="nav-item"><a class="nav-link active fw-bold text-white" href="efetivo.html"><i class="fas fa-users text-warning"></i> Efetivo</a></li>
+                <li class="nav-item"><a class="nav-link" href="agenda.html"><i class="fas fa-calendar-alt text-danger"></i> Agenda e Prazos</a></li>
+                <li class="nav-item"><a class="nav-link" href="agencias.html"><i class="fas fa-map-marker-alt text-primary"></i> Agências</a></li>
+                <li class="nav-item"><a class="nav-link" href="portarias.html"><i class="fas fa-file-alt text-secondary"></i> Portarias</a></li>
+                <li class="nav-item"><a class="nav-link" href="leis.html"><i class="fas fa-gavel text-warning"></i> Leis e Instruções</a></li>
+                <li class="nav-item"><a class="nav-link" href="manuais.html"><i class="fas fa-book text-success"></i> Manuais/Funções</a></li>
+                <li class="nav-item"><a class="nav-link" href="relatorios.html"><i class="fas fa-chart-pie text-info"></i> Relatorios Gerenciais</a></li>
+            </ul>
+        </nav>
+
+        <!-- CONTEÚDO PRINCIPAL -->
+        <div class="main-content">
+            
+            <!-- CABEÇALHO DO MÓDULO -->
+            <div class="d-flex justify-content-between align-items-center mb-3 pt-2">
+                <div>
+                    <h3 class="m-0"><i class="fas fa-users text-warning me-2"></i>Controle de Efetivo GEAPO</h3>
+                    <small class="text-muted">Gestão de colaboradores, dados pessoais, funções e períodos de férias</small>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                    <span class="ps-3"><i class="fas fa-user-circle"></i> <strong>GEAPO (Admin)</strong></span>
+                </div>
+            </div>
+
+            <!-- CARDS DE MÉTRICAS RÁPIDAS -->
+            <div class="row g-3 mb-3">
+                <div class="col-md-4">
+                    <div class="card card-kpi p-3 bg-white" style="border-color: #ffc107;">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <small class="text-uppercase fw-bold text-warning">Total no Efetivo</small>
+                                <h3 class="fw-bold m-0 text-dark mt-1" id="kpiTotal">0</h3>
+                            </div>
+                            <div class="rounded-circle p-3 bg-light text-warning fs-4">
+                                <i class="fas fa-user-check"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card card-kpi p-3 bg-white" style="border-color: #0d6efd;">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <small class="text-uppercase fw-bold text-primary">Aniversariantes do Mês</small>
+                                <h3 class="fw-bold m-0 text-dark mt-1" id="kpiAniversariantes">0</h3>
+                            </div>
+                            <div class="rounded-circle p-3 bg-light text-primary fs-4">
+                                <i class="fas fa-birthday-cake"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card card-kpi p-3 bg-white" style="border-color: #198754;">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <small class="text-uppercase fw-bold text-success">Em Férias / Programadas</small>
+                                <h3 class="fw-bold m-0 text-dark mt-1" id="kpiFerias">0</h3>
+                            </div>
+                            <div class="rounded-circle p-3 bg-light text-success fs-4">
+                                <i class="fas fa-umbrella-beach"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAINEL RECOLHÍVEL DE CADASTRO -->
+            <div class="card mb-3">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center py-2">
+                    <span><i class="fas fa-user-plus text-warning me-2"></i>Cadastrar Novo Colaborador no Efetivo</span>
+                    <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#formEfetivoCollapse">
+                        <i class="fas fa-chevron-down me-1"></i> Recolher / Expandir
+                    </button>
+                </div>
+                <div class="collapse show" id="formEfetivoCollapse">
+                    <div class="card-body">
+                        <form onsubmit="salvarEfetivo(event)">
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold">Nome Completo</label>
+                                    <input type="text" id="inputNome" class="form-control form-control-sm" placeholder="Nome do colaborador" required>
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label small fw-bold">Matrícula</label>
+                                    <input type="text" id="inputMatricula" class="form-control form-control-sm" placeholder="Ex: 987654-1" required>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-bold">Setor / Função</label>
+                                    <select id="selectSetor" class="form-select form-select-sm" onchange="verificarOutroSetor(this.value)" required>
+                                        <option value="">Selecione...</option>
+                                        <option value="Chefia Geapo">Chefia Geapo</option>
+                                        <option value="Almoxarifado">Almoxarifado</option>
+                                        <option value="Patrimônio">Patrimônio</option>
+                                        <option value="Administração">Administração</option>
+                                        <option value="Diária e Compras">Diária e Compras</option>
+                                        <option value="Diária e Encarregado Orbenk">Diária e Encarregado Orbenk</option>
+                                        <option value="Faturas e Pagamentos">Faturas e Pagamentos</option>
+                                        <option value="Terceirizados">Terceirizados</option>
+                                        <option value="Compras">Compras</option>
+                                        <option value="Encarregado Orbenk">Encarregado Orbenk</option>
+                                        <option value="Veículos">Veículos</option>
+                                        <option value="Outros">Outros</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3" id="divOutroSetor" style="display: none;">
+                                    <label class="form-label small fw-bold text-danger">Especificar 'Outros'</label>
+                                    <input type="text" id="inputOutroSetor" class="form-control form-control-sm" placeholder="Informe qual o outro setor/função">
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label small fw-bold">Horário de Trabalho</label>
+                                    <input type="text" id="inputHorario" class="form-control form-control-sm" placeholder="Ex: 12h às 19h" required>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-bold">E-mail</label>
+                                    <input type="email" id="inputEmail" class="form-control form-control-sm" placeholder="exemplo@detran.sc.gov.br" required>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-bold">Telefone / Celular</label>
+                                    <input type="text" id="inputTelefone" class="form-control form-control-sm" placeholder="(48) 99999-0000" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold">Bairro</label>
+                                    <input type="text" id="inputBairro" class="form-control form-control-sm" placeholder="Bairro de residência" required>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-bold">Admissão GEAPO</label>
+                                    <input type="date" id="inputAdmissao" class="form-control form-control-sm" required>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-bold">Aniversário</label>
+                                    <input type="date" id="inputAniversario" class="form-control form-control-sm" required>
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label small fw-bold">Férias I</label>
+                                    <input type="date" id="inputFerias1" class="form-control form-control-sm">
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label small fw-bold">Férias II</label>
+                                    <input type="date" id="inputFerias2" class="form-control form-control-sm">
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label small fw-bold">Período de Férias</label>
+                                    <input type="text" id="inputPeriodoFerias" class="form-control form-control-sm" placeholder="Ex: 15 dias em Julho">
+                                </div>
+                                <div class="col-md-12">
+                                    <label class="form-label small fw-bold">Observações (OBS)</label>
+                                    <input type="text" id="inputOBS" class="form-control form-control-sm" placeholder="Informações adicionais sobre o servidor">
+                                </div>
+                                <div class="col-md-12 text-end">
+                                    <button type="submit" class="btn btn-sm btn-success px-4"><i class="fas fa-save me-1"></i> Salvar Colaborador</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAINEL DE PESQUISA E TABELA PLANILHA -->
+            <div class="card">
+                <div class="card-header bg-light d-flex flex-wrap justify-content-between align-items-center gap-2 py-2">
+                    <span class="fw-bold"><i class="fas fa-table me-2"></i> Planilha do Efetivo GEAPO</span>
+                    
+                    <!-- FILTROS DE PESQUISA -->
+                    <div class="d-flex flex-wrap gap-2">
+                        <input type="text" id="buscaNome" class="form-control form-control-sm" style="width: 170px;" placeholder="Buscar Nome/Matrícula..." oninput="filtrarTabela()">
+                        <select id="buscaSetor" class="form-select form-select-sm" style="width: 200px;" onchange="filtrarTabela()">
+                            <option value="">Todos os Setores</option>
+                            <option value="Chefia Geapo">Chefia Geapo</option>
+                            <option value="Almoxarifado">Almoxarifado</option>
+                            <option value="Patrimônio">Patrimônio</option>
+                            <option value="Administração">Administração</option>
+                            <option value="Diária e Compras">Diária e Compras</option>
+                            <option value="Diária e Encarregado Orbenk">Diária e Encarregado Orbenk</option>
+                            <option value="Faturas e Pagamentos">Faturas e Pagamentos</option>
+                            <option value="Terceirizados">Terceirizados</option>
+                            <option value="Compras">Compras</option>
+                            <option value="Encarregado Orbenk">Encarregado Orbenk</option>
+                            <option value="Veículos">Veículos</option>
+                            <option value="Outros">Outros</option>
+                        </select>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="limparFiltros()"><i class="fas fa-eraser"></i> Limpar</button>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover align-middle table-docs mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Matrícula</th>
+                                    <th>Setor / Função</th>
+                                    <th>Horário</th>
+                                    <th>E-mail</th>
+                                    <th>Telefone</th>
+                                    <th>Bairro</th>
+                                    <th>Admissão GEAPO</th>
+                                    <th>Aniversário</th>
+                                    <th>Férias I</th>
+                                    <th>Férias II</th>
+                                    <th>Período Férias</th>
+                                    <th>OBS</th>
+                                    <th style="width: 70px;">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbodyEfetivo"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RODAPÉ ASSINADO -->
+            <footer class="footer">
+                SICAGE - Sistema de Controle Administrativo da GEAPO.<br>
+                ⓒ 2026 Desenvolvido por [Ingrid/Gabriela].
+            </footer>
+        </div>
+    </div>
+
+    <!-- Scripts Bootstrap e Lógica JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let efetivoDados = JSON.parse(localStorage.getItem('geapo_efetivo')) || [
+            {
+                id: 1,
+                nome: 'Gabriela Silva',
+                matricula: '394812-1',
+                setor: 'Chefia Geapo',
+                outroSetor: '',
+                horario: '12h às 19h',
+                email: 'gabriela@detran.sc.gov.br',
+                telefone: '(48) 99888-1122',
+                bairro: 'Centro',
+                admissao: '2021-02-15',
+                aniversario: '1990-09-18',
+                ferias1: '2026-01-10',
+                ferias2: '2026-01-25',
+                periodoFerias: '15 dias em Janeiro',
+                obs: 'Gestora titular'
+            },
+            {
+                id: 2,
+                nome: 'Ingrid Souza',
+                matricula: '551234-2',
+                setor: 'Administração',
+                outroSetor: '',
+                horario: '12h às 19h',
+                email: 'ingrid@detran.sc.gov.br',
+                telefone: '(48) 99111-3344',
+                bairro: 'Estreito',
+                admissao: '2022-05-10',
+                aniversario: '1993-10-05',
+                ferias1: '2026-07-01',
+                ferias2: '2026-07-15',
+                periodoFerias: '15 dias em Julho',
+                obs: 'Supervisora administrativa'
+            },
+            {
+                id: 3,
+                nome: 'Carlos Eduardo',
+                matricula: '128900-3',
+                setor: 'Veículos',
+                outroSetor: '',
+                horario: '08h às 17h',
+                email: 'carlos.veiculos@detran.sc.gov.br',
+                telefone: '(48) 98444-5566',
+                bairro: 'Coqueiros',
+                admissao: '2020-11-03',
+                aniversario: '1988-09-22',
+                ferias1: '2026-11-03',
+                ferias2: '2026-11-18',
+                periodoFerias: '15 dias em Novembro',
+                obs: 'Responsável frota'
+            }
+        ];
+
+        document.addEventListener("DOMContentLoaded", function() {
+            renderizarModulo();
+        });
+
+        function salvarStorage() {
+            localStorage.setItem('geapo_efetivo', JSON.stringify(efetivoDados));
+            atualizarAniversariantesIndex();
+        }
+
+        // ATUALIZA A LISTA GLOBAL DE ANIVERSARIANTES COMPARTILHADA COM A INDEX.HTML
+        function atualizarAniversariantesIndex() {
+            const aniversariantes = efetivoDados.map(colab => ({
+                nome: colab.nome,
+                setor: colab.setor === 'Outros' ? colab.outroSetor : colab.setor,
+                dataNascimento: colab.aniversario
+            }));
+            localStorage.setItem('geapo_aniversariantes', JSON.stringify(aniversariantes));
+        }
+
+        function verificarOutroSetor(val) {
+            const divOutro = document.getElementById('divOutroSetor');
+            const inputOutro = document.getElementById('inputOutroSetor');
+            if(val === 'Outros') {
+                divOutro.style.display = 'block';
+                inputOutro.required = true;
+            } else {
+                divOutro.style.display = 'none';
+                inputOutro.required = false;
+                inputOutro.value = '';
+            }
+        }
+
+        function salvarEfetivo(event) {
+            event.preventDefault();
+
+            const novoId = efetivoDados.length > 0 ? Math.max(...efetivoDados.map(e => e.id)) + 1 : 1;
+            const setorSel = document.getElementById('selectSetor').value;
+
+            const novoColaborador = {
+                id: novoId,
+                nome: document.getElementById('inputNome').value,
+                matricula: document.getElementById('inputMatricula').value,
+                setor: setorSel,
+                outroSetor: setorSel === 'Outros' ? document.getElementById('inputOutroSetor').value : '',
+                horario: document.getElementById('inputHorario').value,
+                email: document.getElementById('inputEmail').value,
+                telefone: document.getElementById('inputTelefone').value,
+                bairro: document.getElementById('inputBairro').value,
+                admissao: document.getElementById('inputAdmissao').value,
+                aniversario: document.getElementById('inputAniversario').value,
+                ferias1: document.getElementById('inputFerias1').value || '',
+                ferias2: document.getElementById('inputFerias2').value || '',
+                periodoFerias: document.getElementById('inputPeriodoFerias').value || '-',
+                obs: document.getElementById('inputOBS').value || '-'
+            };
+
+            efetivoDados.push(novoColaborador);
+            salvarStorage();
+
+            event.target.reset();
+            document.getElementById('divOutroSetor').style.display = 'none';
+            renderizarModulo();
+        }
+
+        function excluirEfetivo(id) {
+            if(confirm("Deseja realmente remover este colaborador do efetivo?")) {
+                efetivoDados = efetivoDados.filter(e => e.id !== id);
+                salvarStorage();
+                renderizarModulo();
+            }
+        }
+
+        function formatarData(dataStr) {
+            if(!dataStr) return '-';
+            const partes = dataStr.split('-');
+            return `${partes[2]}/${partes[1]}/${partes[0]}`;
+        }
+
+        function formatarDiaMes(dataStr) {
+            if(!dataStr) return '-';
+            const partes = dataStr.split('-');
+            return `${partes[2]}/${partes[1]}`;
+        }
+
+        function calcularMétricas() {
+            document.getElementById('kpiTotal').innerText = efetivoDados.length;
+
+            const mesAtual = new Date().getMonth() + 1;
+            const niverMes = efetivoDados.filter(e => {
+                if(!e.aniversario) return false;
+                const m = parseInt(e.aniversario.split('-')[1]);
+                return m === mesAtual;
+            }).length;
+            document.getElementById('kpiAniversariantes').innerText = niverMes;
+
+            const comFerias = efetivoDados.filter(e => e.ferias1 || e.ferias2).length;
+            document.getElementById('kpiFerias').innerText = comFerias;
+        }
+
+        function renderizarModulo() {
+            calcularMétricas();
+            atualizarAniversariantesIndex();
+            filtrarTabela();
+        }
+
+        function filtrarTabela() {
+            const textoFiltro = document.getElementById('buscaNome').value.toLowerCase().trim();
+            const setorFiltro = document.getElementById('buscaSetor').value;
+
+            const tbody = document.getElementById('tbodyEfetivo');
+            tbody.innerHTML = '';
+
+            const filtrados = efetivoDados.filter(e => {
+                const bateTexto = !textoFiltro || e.nome.toLowerCase().includes(textoFiltro) || e.matricula.toLowerCase().includes(textoFiltro);
+                const bateSetor = !setorFiltro || e.setor === setorFiltro;
+                return bateTexto && bateSetor;
+            });
+
+            if(filtrados.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="14" class="text-center text-muted p-4">Nenhum colaborador encontrado para os filtros informados.</td></tr>`;
+                return;
+            }
+
+            filtrados.forEach(e => {
+                const setorExibicao = e.setor === 'Outros' ? `Outros (${e.outroSetor})` : e.setor;
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="fw-bold text-dark">${e.nome}</td>
+                        <td class="text-center fw-bold text-primary">${e.matricula}</td>
+                        <td><span class="badge bg-secondary">${setorExibicao}</span></td>
+                        <td class="text-center">${e.horario}</td>
+                        <td class="col-email" title="${e.email}">${e.email}</td>
+                        <td class="text-center">${e.telefone}</td>
+                        <td>${e.bairro}</td>
+                        <td class="text-center">${formatarData(e.admissao)}</td>
+                        <td class="text-center fw-bold text-success"><i class="fas fa-gift me-1"></i>${formatarDiaMes(e.aniversario)}</td>
+                        <td class="text-center">${formatarData(e.ferias1)}</td>
+                        <td class="text-center">${formatarData(e.ferias2)}</td>
+                        <td class="text-center">${e.periodoFerias}</td>
+                        <td class="col-obs" title="${e.obs}">${e.obs}</td>
+                        <td class="text-center">
+                            <button class="btn btn-sm btn-outline-danger" onclick="excluirEfetivo(${e.id})" title="Excluir Colaborador">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function limparFiltros() {
+            document.getElementById('buscaNome').value = '';
+            document.getElementById('buscaSetor').value = '';
+            filtrarTabela();
+        }
+    </script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+      // Caso não exista a sessão gravada pelo index.html, redireciona o usuário para o Login
+      if (!sessionStorage.getItem('sicage_usuario')) {
+          alert("Acesso restrito! Por favor, realize o login primeiro na tela inicial.");
+          window.location.href = "index.html";
+      }
+  });
+</script>
+<!-- CÓDIGO DE PROTEÇÃO E MODO VISUALIZADOR -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const usuarioAtivo = sessionStorage.getItem('sicage_usuario');
+        const nivelAtivo = sessionStorage.getItem('sicage_nivel');
+
+        // 1. Se tentar entrar sem logar, manda de volta para o index.html
+        if (!usuarioAtivo) {
+            alert("Acesso restrito! Por favor, faça login na página inicial.");
+            window.location.href = "index.html";
+            return;
+        }
+
+        // 2. Se for Visualizador, bloqueia os botões da página atual
+        if (nivelAtivo === 'Visualizador') {
+            const elementos = document.querySelectorAll('button, input, select, textarea');
+
+            elementos.forEach(el => {
+                const eSidebar = el.closest('.sidebar');
+                const eExercicio = el.id === 'anoExercicio';
+                const eSair = el.getAttribute('onclick') && el.getAttribute('onclick').includes('fazerLogout');
+                const eLink = el.tagName === 'A' || el.classList.contains('btn-whatsapp') || el.classList.contains('btn-email');
+
+                if (!eSidebar && !eExercicio && !eSair && !eLink) {
+                    el.disabled = true;
+                    el.classList.add('disabled');
+                    el.style.pointerEvents = 'none';
+                    el.style.opacity = '0.6';
+                }
+            });
+        }
+    });
+
+    function fazerLogout() {
+        sessionStorage.removeItem('sicage_usuario');
+        sessionStorage.removeItem('sicage_nivel');
+        window.location.href = "index.html";
+    }
+</script>
+</body>
+</body>
+</html>

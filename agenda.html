@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DETRAN/GEAPO - Agenda e Prazos</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome (Ícones) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            background-color: #f4f7f6;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        /* --- ESTILOS DO PAINEL LATERAL --- */
+        .sidebar {
+            height: 100vh;
+            background-color: #343a40;
+            color: white;
+            position: fixed;
+            width: 260px;
+            overflow-y: auto;
+            z-index: 100;
+        }
+        .sidebar::-webkit-scrollbar { width: 6px; }
+        .sidebar::-webkit-scrollbar-thumb { background-color: #6c757d; border-radius: 4px; }
+        .sidebar .nav-link { color: #d1d8e0; margin-bottom: 5px; font-size: 0.9rem; }
+        .sidebar .nav-link:hover { background-color: #495057; color: white; border-radius: 5px; }
+        .sidebar i { width: 25px; text-align: center; margin-right: 10px; font-size: 1.1rem; }
+        
+        .main-content {
+            margin-left: 260px;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        .card-header {
+            background-color: transparent;
+            font-weight: bold;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        /* --- CARDS INFORMATIVOS --- */
+        .card-kpi {
+            border-left: 5px solid;
+            transition: transform 0.2s;
+        }
+        .card-kpi:hover { transform: translateY(-3px); }
+
+        /* --- TABELA E BADGES --- */
+        .table-responsive {
+            max-height: 600px;
+            overflow-y: auto;
+            overflow-x: auto;
+        }
+        .table-docs th, .table-docs td {
+            vertical-align: middle;
+            font-size: 0.85rem;
+            white-space: nowrap;
+        }
+        .table-docs th {
+            position: sticky;
+            top: 0;
+            background-color: #343a40;
+            color: white;
+            z-index: 10;
+            text-align: center;
+        }
+
+        /* FOOTER */
+        .footer {
+            margin-top: auto;
+            text-align: center;
+            padding: 20px 0;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="dashboard-screen">
+        <!-- MENU LATERAL DE NAVEGAÇÃO -->
+        <nav class="sidebar p-3">
+            <div class="text-center mb-4 mt-2">
+                <h5 class="text-white m-0">DETRAN/GEAPO</h5>
+                <small class="text-secondary">Apoio Operacional</small>
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item"><a class="nav-link" href="index.html"><i class="fas fa-chart-line text-info"></i> Painel Geral</a></li>
+                <li class="nav-item"><a class="nav-link" href="geapo.html"><i class="fas fa-building text-primary"></i> GEAPO Institucional</a></li>
+                <li class="nav-item"><a class="nav-link" href="contrato.html"><i class="fas fa-file-signature text-warning"></i> Contrato Geral/Orbenk</a></li>
+                <li class="nav-item"><a class="nav-link" href="ateste.html"><i class="fas fa-check-double text-success"></i> Ateste Serviço/Orbenk</a></li>
+                <li class="nav-item"><a class="nav-link" href="sgpe.html"><i class="fas fa-folder-open text-danger"></i> Controle SGPE</a></li>
+                <li class="nav-item"><a class="nav-link" href="oficios.html"><i class="fas fa-envelope-open-text text-info"></i> Ofícios/Despachos</a></li>
+                <li class="nav-item"><a class="nav-link" href="processos.html"><i class="fas fa-balance-scale text-primary"></i> Processos Jurídicos</a></li>
+                <li class="nav-item"><a class="nav-link" href="frota.html"><i class="fas fa-car text-secondary"></i> Frota e Multas</a></li>
+                <li class="nav-item"><a class="nav-link" href="compras.html"><i class="fas fa-shopping-cart text-success"></i> Compras e CPESC</a></li>
+                <li class="nav-item"><a class="nav-link" href="diarias.html"><i class="fas fa-plane text-info"></i> Diárias e Passagem</a></li>
+                <li class="nav-item"><a class="nav-link" href="efetivo.html"><i class="fas fa-users text-warning"></i> Efetivo</a></li>
+                <li class="nav-item"><a class="nav-link active fw-bold text-white" href="agenda.html"><i class="fas fa-calendar-alt text-danger"></i> Agenda e Prazos</a></li>
+                <li class="nav-item"><a class="nav-link" href="agencias.html"><i class="fas fa-map-marker-alt text-primary"></i> Agências</a></li>
+                <li class="nav-item"><a class="nav-link" href="portarias.html"><i class="fas fa-file-alt text-secondary"></i> Portarias</a></li>
+                <li class="nav-item"><a class="nav-link" href="leis.html"><i class="fas fa-gavel text-warning"></i> Leis e Instruções</a></li>
+                <li class="nav-item"><a class="nav-link" href="manuais.html"><i class="fas fa-book text-success"></i> Manuais/Funções</a></li>
+                <li class="nav-item"><a class="nav-link" href="relatorios.html"><i class="fas fa-chart-pie text-info"></i> Relatorios Gerenciais</a></li>
+            </ul>
+        </nav>
+
+        <!-- CONTEÚDO PRINCIPAL -->
+        <div class="main-content">
+            
+            <!-- CABEÇALHO DO MÓDULO -->
+            <div class="d-flex justify-content-between align-items-center mb-3 pt-2">
+                <div>
+                    <h3 class="m-0"><i class="fas fa-calendar-alt text-danger me-2"></i>Agenda e Prazos Consolidados</h3>
+                    <small class="text-muted">Painel Unificado de Monitoramento de Vencimentos e Prazos Cadastrados em Todos os Módulos</small>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                    <span class="ps-3"><i class="fas fa-user-circle"></i> <strong>GEAPO (Admin)</strong></span>
+                </div>
+            </div>
+
+            <!-- CARDS DE RESUMO DE PRAZOS -->
+            <div class="row g-3 mb-3">
+                <div class="col-md-3">
+                    <div class="card card-kpi p-3 bg-white" style="border-color: #dc3545;">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <small class="text-uppercase fw-bold text-danger">Prazos Vencidos</small>
+                                <h3 class="fw-bold m-0 text-dark mt-1" id="kpiVencidos">0</h3>
+                            </div>
+                            <div class="rounded-circle p-3 bg-light text-danger fs-4">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card card-kpi p-3 bg-white" style="border-color: #ffc107;">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <small class="text-uppercase fw-bold text-warning">Vencem em até 7 dias</small>
+                                <h3 class="fw-bold m-0 text-dark mt-1" id="kpiUrgentes">0</h3>
+                            </div>
+                            <div class="rounded-circle p-3 bg-light text-warning fs-4">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card card-kpi p-3 bg-white" style="border-color: #0d6efd;">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <small class="text-uppercase fw-bold text-primary">Próximos (30 dias)</small>
+                                <h3 class="fw-bold m-0 text-dark mt-1" id="kpiProximos">0</h3>
+                            </div>
+                            <div class="rounded-circle p-3 bg-light text-primary fs-4">
+                                <i class="fas fa-calendar-week"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card card-kpi p-3 bg-white" style="border-color: #198754;">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <small class="text-uppercase fw-bold text-success">Total Monitorado</small>
+                                <h3 class="fw-bold m-0 text-dark mt-1" id="kpiTotal">0</h3>
+                            </div>
+                            <div class="rounded-circle p-3 bg-light text-success fs-4">
+                                <i class="fas fa-tasks"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAINEL CENTRAL DE ACOMPANHAMENTO DE PRAZOS -->
+            <div class="card">
+                <div class="card-header bg-light d-flex flex-wrap justify-content-between align-items-center gap-2 py-2">
+                    <span class="fw-bold"><i class="fas fa-list-alt me-2"></i>Prazos e Compromissos a Vencer (Busca Global)</span>
+                    
+                    <!-- FILTROS DE PESQUISA -->
+                    <div class="d-flex flex-wrap gap-2">
+                        <input type="text" id="buscaTexto" class="form-control form-control-sm" style="width: 180px;" placeholder="Buscar assunto/doc..." oninput="filtrarPrazos()">
+                        <select id="buscaModulo" class="form-select form-select-sm" style="width: 170px;" onchange="filtrarPrazos()">
+                            <option value="">Todos os Módulos</option>
+                            <option value="Processos Jurídicos">Processos Jurídicos</option>
+                            <option value="Contrato Geral/Orbenk">Contrato Geral</option>
+                            <option value="Controle SGPE">Controle SGPE</option>
+                            <option value="Compras e CPESC">Compras e CPESC</option>
+                            <option value="Frota e Multas">Frota e Multas</option>
+                            <option value="Ateste Serviço">Ateste Serviço</option>
+                            <option value="Ofícios/Despachos">Ofícios/Despachos</option>
+                            <option value="Efetivo GEAPO">Efetivo (Férias)</option>
+                            <option value="Outros">Demais Módulos</option>
+                        </select>
+                        <select id="buscaStatus" class="form-select form-select-sm" style="width: 150px;" onchange="filtrarPrazos()">
+                            <option value="">Todos os Status</option>
+                            <option value="Vencido">Vencido</option>
+                            <option value="Urgente">Urgente (<= 7 dias)</option>
+                            <option value="Próximo">Próximo (<= 30 dias)</option>
+                            <option value="Regular">Regular (> 30 dias)</option>
+                        </select>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="carregarPrazosGlobais()"><i class="fas fa-sync-alt"></i> Atualizar</button>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover align-middle table-docs mb-0">
+                            <thead>
+                                <tr>
+                                    <th style="width: 110px;">Data Vencimento</th>
+                                    <th>Módulo de Origem</th>
+                                    <th>Identificação / Documento</th>
+                                    <th>Assunto / Descrição do Prazo</th>
+                                    <th>Responsável / Destinatário</th>
+                                    <th style="width: 120px;">Status / Urgência</th>
+                                    <th style="width: 90px;">Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbodyPrazos"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RODAPÉ ASSINADO -->
+            <footer class="footer">
+                SICAGE - Sistema de Controle Administrativo da GEAPO.<br>
+                ⓒ 2026 Desenvolvido por [Ingrid/Gabriela].
+            </footer>
+        </div>
+    </div>
+
+    <!-- Scripts Bootstrap e Lógica JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let todosPrazos = [];
+
+        document.addEventListener("DOMContentLoaded", function() {
+            carregarPrazosGlobais();
+        });
+
+        // CONSOLIDA TODOS OS PRAZOS CADASTRADOS NOS DEMAIS MÓDULOS
+        function carregarPrazosGlobais() {
+            todosPrazos = [];
+
+            // 1. Processos Jurídicos
+            const processos = JSON.parse(localStorage.getItem('geapo_processos')) || [
+                { id: 1, numero: '2026/00189', assunto: 'Resposta à Notificação Judicial', prazo: '2026-09-20', responsavel: 'Dr. Marcos', link: 'processos.html' }
+            ];
+            processos.forEach(p => {
+                if(p.prazo) {
+                    todosPrazos.push({
+                        data: p.prazo,
+                        modulo: 'Processos Jurídicos',
+                        doc: p.numero || 'Proc. Jurídico',
+                        descricao: p.assunto || 'Prazo de Manifestação Judicial',
+                        responsavel: p.responsavel || 'GEAPO Jurídico',
+                        link: 'processos.html'
+                    });
+                }
+            });
+
+            // 2. Contratos
+            const contratos = JSON.parse(localStorage.getItem('geapo_contratos')) || [
+                { id: 1, numero: 'CT 042/2024', empresa: 'Orbenk Serviços', vigenciaFim: '2026-10-15', link: 'contrato.html' }
+            ];
+            contratos.forEach(c => {
+                if(c.vigenciaFim) {
+                    todosPrazos.push({
+                        data: c.vigenciaFim,
+                        modulo: 'Contrato Geral/Orbenk',
+                        doc: c.numero || 'Contrato',
+                        descricao: `Vencimento da Vigência Contratual (${c.empresa || 'Contratada'})`,
+                        responsavel: 'Gestor do Contrato',
+                        link: 'contrato.html'
+                    });
+                }
+            });
+
+            // 3. SGPE
+            const sgpe = JSON.parse(localStorage.getItem('geapo_sgpe')) || [
+                { id: 1, sgpe: 'DETRAN 45892/2026', assunto: 'Análise de Defesa de Multa', prazo: '2026-09-25', responsavel: 'Ana Paula', link: 'sgpe.html' }
+            ];
+            sgpe.forEach(s => {
+                if(s.prazo) {
+                    todosPrazos.push({
+                        data: s.prazo,
+                        modulo: 'Controle SGPE',
+                        doc: s.sgpe || 'Processo SGPE',
+                        descricao: s.assunto || 'Prazo de Tramitação SGPE',
+                        responsavel: s.responsavel || 'Atendente GEAPO',
+                        link: 'sgpe.html'
+                    });
+                }
+            });
+
+            // 4. Compras e CPESC
+            const compras = JSON.parse(localStorage.getItem('geapo_compras')) || [
+                { id: 1, requisicao: 'REQ 104/2026', item: 'Aquisição de Cadeiras Ergonômicas', prazoEntrega: '2026-09-18', fornecedor: 'Móveis SC', link: 'compras.html' }
+            ];
+            compras.forEach(c => {
+                const dt = c.prazoEntrega || c.prazo;
+                if(dt) {
+                    todosPrazos.push({
+                        data: dt,
+                        modulo: 'Compras e CPESC',
+                        doc: c.requisicao || 'Ordem de Compra',
+                        descricao: `Entrega de Material / Serviço (${c.item || 'Compra'})`,
+                        responsavel: c.fornecedor || 'Setor de Compras',
+                        link: 'compras.html'
+                    });
+                }
+            });
+
+            // 5. Frota e Multas
+            const frota = JSON.parse(localStorage.getItem('geapo_frota')) || [
+                { id: 1, placa: 'RAK-4E12', modelo: 'Renegade', vencimentoAIT: '2026-09-14', condutor: 'Roberto V.', link: 'frota.html' }
+            ];
+            frota.forEach(f => {
+                const dt = f.vencimentoAIT || f.vencimento;
+                if(dt) {
+                    todosPrazos.push({
+                        data: dt,
+                        modulo: 'Frota e Multas',
+                        doc: f.placa || 'Veículo Frota',
+                        descricao: 'Prazo Limite para Indicação do Condutor / Recurso AIT',
+                        responsavel: f.condutor || 'Setor de Transportes',
+                        link: 'frota.html'
+                    });
+                }
+            });
+
+            // 6. Ofícios e Despachos
+            const oficios = JSON.parse(localStorage.getItem('geapo_oficios')) || [
+                { id: 1, numero: 'OF 882/2026', destino: 'SSP/SC', prazoResposta: '2026-09-28', link: 'oficios.html' }
+            ];
+            oficios.forEach(o => {
+                if(o.prazoResposta) {
+                    todosPrazos.push({
+                        data: o.prazoResposta,
+                        modulo: 'Ofícios/Despachos',
+                        doc: o.numero || 'Ofício Expedido',
+                        descricao: `Prazo Limite de Resposta / Atendimento ao Ofício (${o.destino || 'Destinatário'})`,
+                        responsavel: 'Secretaria GEAPO',
+                        link: 'oficios.html'
+                    });
+                }
+            });
+
+            // 7. Efetivo (Início de Férias Cadastradas)
+            const efetivo = JSON.parse(localStorage.getItem('geapo_efetivo')) || [];
+            efetivo.forEach(e => {
+                if(e.ferias1) {
+                    todosPrazos.push({
+                        data: e.ferias1,
+                        modulo: 'Efetivo GEAPO',
+                        doc: e.nome,
+                        descricao: `Início do 1º Período de Férias (${e.periodoFerias || 'Férias'})`,
+                        responsavel: e.setor || 'RH GEAPO',
+                        link: 'efetivo.html'
+                    });
+                }
+                if(e.ferias2) {
+                    todosPrazos.push({
+                        data: e.ferias2,
+                        modulo: 'Efetivo GEAPO',
+                        doc: e.nome,
+                        descricao: 'Início do 2º Período de Férias',
+                        responsavel: e.setor || 'RH GEAPO',
+                        link: 'efetivo.html'
+                    });
+                }
+            });
+
+            // Ordena os prazos da data mais antiga/próxima para a mais distante
+            todosPrazos.sort((a, b) => new Date(a.data) - new Date(b.data));
+
+            renderizarPrazos();
+        }
+
+        function calcularStatusUrgencia(dataStr) {
+            const hoje = new Date();
+            hoje.setHours(0,0,0,0);
+            
+            const partes = dataStr.split('-');
+            const dataPrazo = new Date(partes[0], partes[1] - 1, partes[2]);
+
+            const diffTempo = dataPrazo - hoje;
+            const diffDias = Math.ceil(diffTempo / (1000 * 60 * 60 * 24));
+
+            if(diffDias < 0) {
+                return { rotulo: 'Vencido', classe: 'bg-danger text-white', dias: diffDias };
+            } else if(diffDias <= 7) {
+                return { rotulo: 'Urgente', classe: 'bg-warning text-dark', dias: diffDias };
+            } else if(diffDias <= 30) {
+                return { rotulo: 'Próximo', classe: 'bg-primary text-white', dias: diffDias };
+            } else {
+                return { rotulo: 'Regular', classe: 'bg-success text-white', dias: diffDias };
+            }
+        }
+
+        function renderizarPrazos() {
+            let countVencidos = 0;
+            let countUrgentes = 0;
+            let countProximos = 0;
+
+            todosPrazos.forEach(p => {
+                const st = calcularStatusUrgencia(p.data);
+                if(st.rotulo === 'Vencido') countVencidos++;
+                else if(st.rotulo === 'Urgente') countUrgentes++;
+                else if(st.rotulo === 'Próximo') countProximos++;
+            });
+
+            document.getElementById('kpiVencidos').innerText = countVencidos;
+            document.getElementById('kpiUrgentes').innerText = countUrgentes;
+            document.getElementById('kpiProximos').innerText = countProximos;
+            document.getElementById('kpiTotal').innerText = todosPrazos.length;
+
+            filtrarPrazos();
+        }
+
+        function formatarData(dataStr) {
+            if(!dataStr) return '-';
+            const partes = dataStr.split('-');
+            return `${partes[2]}/${partes[1]}/${partes[0]}`;
+        }
+
+        function filtrarPrazos() {
+            const txt = document.getElementById('buscaTexto').value.toLowerCase().trim();
+            const mod = document.getElementById('buscaModulo').value;
+            const stFiltro = document.getElementById('buscaStatus').value;
+
+            const tbody = document.getElementById('tbodyPrazos');
+            tbody.innerHTML = '';
+
+            const filtrados = todosPrazos.filter(p => {
+                const statusObj = calcularStatusUrgencia(p.data);
+
+                const bateTexto = !txt || 
+                    p.doc.toLowerCase().includes(txt) || 
+                    p.descricao.toLowerCase().includes(txt) || 
+                    p.responsavel.toLowerCase().includes(txt);
+
+                const bateModulo = !mod || p.modulo === mod || (mod === 'Outros' && !['Processos Jurídicos', 'Contrato Geral/Orbenk', 'Controle SGPE', 'Compras e CPESC', 'Frota e Multas', 'Ofícios/Despachos', 'Efetivo GEAPO'].includes(p.modulo));
+                
+                const bateStatus = !stFiltro || statusObj.rotulo === stFiltro;
+
+                return bateTexto && bateModulo && bateStatus;
+            });
+
+            if(filtrados.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center text-muted p-4">Nenhum prazo ou compromisso encontrado para os critérios selecionados.</td></tr>`;
+                return;
+            }
+
+            filtrados.forEach(p => {
+                const st = calcularStatusUrgencia(p.data);
+                let textoDias = '';
+                if(st.dias < 0) textoDias = `(${Math.abs(st.dias)} dias atrás)`;
+                else if(st.dias === 0) textoDias = `(Hoje!)`;
+                else textoDias = `(em ${st.dias} dias)`;
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="text-center fw-bold text-dark">${formatarData(p.data)}</td>
+                        <td class="text-center"><span class="badge bg-secondary">${p.modulo}</span></td>
+                        <td class="fw-bold text-primary">${p.doc}</td>
+                        <td>${p.descricao}</td>
+                        <td>${p.responsavel}</td>
+                        <td class="text-center">
+                            <span class="badge ${st.classe}">${st.rotulo}</span>
+                            <div class="small text-muted mt-1" style="font-size: 0.72rem;">${textoDias}</div>
+                        </td>
+                        <td class="text-center">
+                            <a href="${p.link}" class="btn btn-sm btn-outline-primary" title="Ir para Módulo">
+                                <i class="fas fa-external-link-alt"></i> Ver
+                            </a>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+    </script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+      // Caso não exista a sessão gravada pelo index.html, redireciona o usuário para o Login
+      if (!sessionStorage.getItem('sicage_usuario')) {
+          alert("Acesso restrito! Por favor, realize o login primeiro na tela inicial.");
+          window.location.href = "index.html";
+      }
+  });
+</script>
+<!-- CÓDIGO DE PROTEÇÃO E MODO VISUALIZADOR -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const usuarioAtivo = sessionStorage.getItem('sicage_usuario');
+        const nivelAtivo = sessionStorage.getItem('sicage_nivel');
+
+        // 1. Se tentar entrar sem logar, manda de volta para o index.html
+        if (!usuarioAtivo) {
+            alert("Acesso restrito! Por favor, faça login na página inicial.");
+            window.location.href = "index.html";
+            return;
+        }
+
+        // 2. Se for Visualizador, bloqueia os botões da página atual
+        if (nivelAtivo === 'Visualizador') {
+            const elementos = document.querySelectorAll('button, input, select, textarea');
+
+            elementos.forEach(el => {
+                const eSidebar = el.closest('.sidebar');
+                const eExercicio = el.id === 'anoExercicio';
+                const eSair = el.getAttribute('onclick') && el.getAttribute('onclick').includes('fazerLogout');
+                const eLink = el.tagName === 'A' || el.classList.contains('btn-whatsapp') || el.classList.contains('btn-email');
+
+                if (!eSidebar && !eExercicio && !eSair && !eLink) {
+                    el.disabled = true;
+                    el.classList.add('disabled');
+                    el.style.pointerEvents = 'none';
+                    el.style.opacity = '0.6';
+                }
+            });
+        }
+    });
+
+    function fazerLogout() {
+        sessionStorage.removeItem('sicage_usuario');
+        sessionStorage.removeItem('sicage_nivel');
+        window.location.href = "index.html";
+    }
+</script>
+</body>
+</body>
+</html>

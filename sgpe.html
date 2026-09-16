@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DETRAN/GEAPO - Controle SGPE</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome (Ícones) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            background-color: #f4f7f6;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        /* --- ESTILOS DO PAINEL LATERAL --- */
+        .sidebar {
+            height: 100vh;
+            background-color: #343a40;
+            color: white;
+            position: fixed;
+            width: 260px;
+            overflow-y: auto;
+            z-index: 100;
+        }
+        .sidebar::-webkit-scrollbar { width: 6px; }
+        .sidebar::-webkit-scrollbar-thumb { background-color: #6c757d; border-radius: 4px; }
+        .sidebar .nav-link { color: #d1d8e0; margin-bottom: 5px; font-size: 0.9rem; }
+        .sidebar .nav-link:hover { background-color: #495057; color: white; border-radius: 5px; }
+        .sidebar i { width: 25px; text-align: center; margin-right: 10px; font-size: 1.1rem; }
+        
+        .main-content {
+            margin-left: 260px;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        .card-header {
+            background-color: transparent;
+            font-weight: bold;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        /* --- CORES EXCLUSIVAS DE SITUAÇÃO --- */
+        .badge-recebido { background-color: #198754 !important; color: #ffffff !important; } /* Verde */
+        .badge-nao-recebido { background-color: #dc3545 !important; color: #ffffff !important; } /* Vermelho */
+        .badge-em-andamento { background-color: #0d6efd !important; color: #ffffff !important; } /* Azul */
+        .badge-arquivado { background-color: #ffc107 !important; color: #000000 !important; } /* Amarelo */
+        .badge-rever { background-color: #6f42c1 !important; color: #ffffff !important; } /* Roxo */
+        .badge-fixo-anual { background-color: #fd7e14 !important; color: #ffffff !important; } /* Laranja */
+
+        /* SELECT ESTILIZADO DE SITUAÇÃO NA TABELA */
+        .select-situacao-tabela {
+            font-size: 0.78rem;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: none;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+
+        /* --- ESTILIZAÇÃO DA TABELA SGPE --- */
+        .table-responsive {
+            max-height: 550px;
+            overflow-y: auto;
+        }
+        .table-sgpe th, .table-sgpe td {
+            vertical-align: middle;
+            font-size: 0.82rem;
+            white-space: nowrap;
+        }
+        .table-sgpe th {
+            position: sticky;
+            top: 0;
+            background-color: #343a40;
+            color: white;
+            z-index: 10;
+            text-align: center;
+        }
+        .col-obs, .col-detalhes {
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* FOOTER */
+        .footer {
+            margin-top: auto;
+            text-align: center;
+            padding: 20px 0;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="dashboard-screen">
+        <!-- MENU LATERAL -->
+        <nav class="sidebar p-3">
+            <div class="text-center mb-4 mt-2">
+                <h5 class="text-white m-0">DETRAN/GEAPO</h5>
+                <small class="text-secondary">Apoio Operacional</small>
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item"><a class="nav-link" href="index.html"><i class="fas fa-chart-line text-info"></i> Painel Geral</a></li>
+                <li class="nav-item"><a class="nav-link" href="geapo.html"><i class="fas fa-building text-primary"></i> GEAPO Institucional</a></li>
+                <li class="nav-item"><a class="nav-link" href="contrato.html"><i class="fas fa-file-signature text-warning"></i> Contrato Geral/Orbenk</a></li>
+                <li class="nav-item"><a class="nav-link" href="ateste.html"><i class="fas fa-check-double text-success"></i> Ateste Serviço/Orbenk</a></li>
+                <li class="nav-item"><a class="nav-link active fw-bold text-white" href="sgpe.html"><i class="fas fa-folder-open text-danger"></i> Controle SGPE</a></li>
+                <li class="nav-item"><a class="nav-link" href="oficios.html"><i class="fas fa-envelope-open-text text-info"></i> Ofícios/Despachos</a></li>
+                <li class="nav-item"><a class="nav-link" href="processos.html"><i class="fas fa-balance-scale text-primary"></i> Processos Jurídicos</a></li>
+                <li class="nav-item"><a class="nav-link" href="frota.html"><i class="fas fa-car text-secondary"></i> Frota e Multas</a></li>
+                <li class="nav-item"><a class="nav-link" href="compras.html"><i class="fas fa-shopping-cart text-success"></i> Compras e CPESC</a></li>
+                <li class="nav-item"><a class="nav-link" href="diarias.html"><i class="fas fa-plane text-info"></i> Diárias e Passagem</a></li>
+                <li class="nav-item"><a class="nav-link" href="efetivo.html"><i class="fas fa-users text-warning"></i> Efetivo</a></li>
+                <li class="nav-item"><a class="nav-link" href="agenda.html"><i class="fas fa-calendar-alt text-danger"></i> Agenda e Prazos</a></li>
+                <li class="nav-item"><a class="nav-link" href="agencias.html"><i class="fas fa-map-marker-alt text-primary"></i> Agências</a></li>
+                <li class="nav-item"><a class="nav-link" href="portarias.html"><i class="fas fa-file-alt text-secondary"></i> Portarias</a></li>
+                <li class="nav-item"><a class="nav-link" href="leis.html"><i class="fas fa-gavel text-warning"></i> Leis e Instruções</a></li>
+                <li class="nav-item"><a class="nav-link" href="manuais.html"><i class="fas fa-book text-success"></i> Manuais/Funções</a></li>
+                <li class="nav-item"><a class="nav-link" href="relatorios.html"><i class="fas fa-chart-pie text-info"></i> Relatorios Gerenciais</a></li>
+            </ul>
+        </nav>
+
+        <!-- CONTEÚDO PRINCIPAL -->
+        <div class="main-content">
+            
+            <!-- CABEÇALHO DO MÓDULO -->
+            <div class="d-flex justify-content-between align-items-center mb-4 pt-2">
+                <div>
+                    <h3 class="m-0"><i class="fas fa-folder-open text-danger me-2"></i>Controle de Processos SGPE</h3>
+                    <small class="text-muted">Gerenciamento e recebimento de processos do sistema SGPE</small>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                    <div class="input-group input-group-sm" style="width: 180px;">
+                        <span class="input-group-text bg-light fw-bold"><i class="fas fa-calendar-alt me-1"></i> Exer.</span>
+                        <input type="number" id="anoExercicio" class="form-control fw-bold text-primary" value="2026" min="1900" max="2100" onchange="trocarAno(this.value)">
+                    </div>
+                    <span class="border-start ps-3"><i class="fas fa-user-circle"></i> <strong>GEAPO (Admin)</strong></span>
+                </div>
+            </div>
+
+            <!-- PAINEL DE RESUMO SIMPLIFICADO & ÚLTIMA ATUALIZAÇÃO -->
+            <div class="row mb-4">
+                <div class="col-lg-9">
+                    <div class="card h-100 mb-0">
+                        <div class="card-header bg-light">
+                            <i class="fas fa-chart-bar me-2"></i>Resumo Simplificado de Processos por Situação
+                        </div>
+                        <div class="card-body">
+                            <div class="row text-center g-2" id="painelResumoSituacao">
+                                <!-- Preenchido dinamicamente via JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CAIXA DE ÚLTIMA ATUALIZAÇÃO DO INFORMANTE -->
+                <div class="col-lg-3 mt-3 mt-lg-0">
+                    <div class="card h-100 mb-0 border-info">
+                        <div class="card-header bg-info text-white">
+                            <i class="fas fa-clock me-1"></i> Última Atualização
+                        </div>
+                        <div class="card-body p-2 d-flex flex-column justify-content-between">
+                            <div>
+                                <small class="text-muted d-block">Executado por:</small>
+                                <strong id="lblInformanteNome">Não informado</strong>
+                                <small class="text-muted d-block mt-1">Data e Hora:</small>
+                                <span class="badge bg-light text-dark border w-100" id="lblInformanteDataHora">--/--/---- --:--</span>
+                            </div>
+                            <button class="btn btn-sm btn-outline-info w-100 mt-2" data-bs-toggle="modal" data-bs-target="#modalAtualizacao">
+                                <i class="fas fa-user-edit me-1"></i> Registrar Atualização
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAINEL DE CADASTRO DE PROCESSO (RECOLHÍVEL) -->
+            <div class="card mb-4">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <span><i class="fas fa-plus-circle text-success me-2"></i>Cadastrar Novo Processo SGPE</span>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-sm btn-outline-primary" onclick="abrirModalAddMunicipio()">
+                            <i class="fas fa-map-marker-alt me-1"></i>+ Adicionar Novo Município
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCadastro" aria-expanded="false" aria-controls="collapseCadastro">
+                            <i class="fas fa-chevron-down me-1"></i> Recolher / Expandir
+                        </button>
+                    </div>
+                </div>
+                <div class="collapse" id="collapseCadastro">
+                    <div class="card-body">
+                        <form id="formNovoProcesso" class="row g-3">
+                            <div class="col-md-2">
+                                <label class="form-label small fw-bold">Data de Recebimento</label>
+                                <input type="date" id="cadDataRecebimento" class="form-control form-control-sm" required>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label small fw-bold">Situação</label>
+                                <select id="cadSituacao" class="form-select form-select-sm" required>
+                                    <option value="não recebido">não recebido</option>
+                                    <option value="recebido">recebido</option>
+                                    <option value="em andamento">em andamento</option>
+                                    <option value="rever">rever</option>
+                                    <option value="arquivado">arquivado</option>
+                                    <option value="fixo/anual">fixo/anual</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small fw-bold">Órgão</label>
+                                <select id="cadOrgaoSelect" class="form-select form-select-sm" onchange="toggleOrgaoOutro(this.value)">
+                                    <option value="DETRAN">DETRAN</option>
+                                    <option value="OUTRO">Digitar outro...</option>
+                                </select>
+                                <input type="text" id="cadOrgaoOutro" class="form-control form-control-sm mt-1 d-none" placeholder="Informe o órgão">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small fw-bold">Nº SGPE (somente números e /)</label>
+                                <input type="text" id="cadSgpe" class="form-control form-control-sm" placeholder="Ex: 12345/2026" oninput="validarNumeroSGPE(this)" required>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label small fw-bold">Setor de Abertura</label>
+                                <input type="text" id="cadSetorAbertura" class="form-control form-control-sm" placeholder="Ex: CIRETRAN" required>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label small fw-bold">Setor de Competência</label>
+                                <input type="text" id="cadSetorCompetencia" class="form-control form-control-sm" placeholder="Ex: GEAPO" required>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small fw-bold">Assunto</label>
+                                <input type="text" id="cadAssunto" class="form-control form-control-sm" placeholder="Assunto resumido" required>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small fw-bold">Interessado</label>
+                                <input type="text" id="cadInteressado" class="form-control form-control-sm" placeholder="Nome ou Razão Social" required>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small fw-bold">Município</label>
+                                <select id="cadMunicipio" class="form-select form-select-sm" required>
+                                    <!-- Preenchido dinamicamente com SC -->
+                                </select>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label small fw-bold">Setor Atual</label>
+                                <input type="text" id="cadSetorAtual" class="form-control form-control-sm" placeholder="Ex: GEAPO" required>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small fw-bold">Responsável</label>
+                                <input type="text" id="cadResponsavel" class="form-control form-control-sm" placeholder="Nome do técnico" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">Observações (OBS)</label>
+                                <input type="text" id="cadObs" class="form-control form-control-sm" placeholder="Observações adicionais">
+                            </div>
+
+                            <div class="col-md-12">
+                                <label class="form-label small fw-bold">Detalhamento do Processo</label>
+                                <textarea id="cadDetalhamento" class="form-control form-control-sm" rows="2" placeholder="Detalhamento do objeto do processo SGPE"></textarea>
+                            </div>
+
+                            <div class="col-md-12 text-end">
+                                <button type="submit" class="btn btn-sm btn-success px-4"><i class="fas fa-save me-1"></i> Cadastrar Processo</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FILTRO DE PESQUISA -->
+            <div class="card mb-4">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <span><i class="fas fa-search me-2"></i>Painel de Pesquisa / Filtro</span>
+                    <button class="btn btn-sm btn-secondary" onclick="limparFiltros()"><i class="fas fa-undo me-1"></i>Limpar Filtros</button>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold">Buscar Termo (Nº SGPE, Assunto, Interessado...)</label>
+                            <input type="text" id="filtroTexto" class="form-control form-control-sm" placeholder="Digite para buscar..." oninput="filtrarTabela()">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold">Filtrar por Situação</label>
+                            <select id="filtroSituacao" class="form-select form-select-sm" onchange="filtrarTabela()">
+                                <option value="">Todas as Situações</option>
+                                <option value="não recebido">não recebido</option>
+                                <option value="recebido">recebido</option>
+                                <option value="em andamento">em andamento</option>
+                                <option value="rever">rever</option>
+                                <option value="arquivado">arquivado</option>
+                                <option value="fixo/anual">fixo/anual</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold">Filtrar por Município</label>
+                            <select id="filtroMunicipio" class="form-select form-select-sm" onchange="filtrarTabela()">
+                                <option value="">Todos os Municípios</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TABELA DE PROCESSOS SGPE -->
+            <div class="card">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <span><i class="fas fa-list me-2"></i> Tabela de Processos SGPE Cadastrados</span>
+                    <small class="text-muted"><i class="fas fa-sort-amount-down me-1"></i>Ordenado por prioridade de Situação</small>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover align-middle table-sgpe mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Data de Recebimento</th>
+                                    <th>Situação</th>
+                                    <th>Órgão</th>
+                                    <th>Nº SGPE</th>
+                                    <th>Setor de Abertura</th>
+                                    <th>Setor de Competência</th>
+                                    <th>Assunto</th>
+                                    <th>Detalhamento</th>
+                                    <th>Interessado</th>
+                                    <th>Município</th>
+                                    <th>Setor Atual</th>
+                                    <th>Responsável</th>
+                                    <th>OBS</th>
+                                    <th style="min-width: 80px;">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelaSgpeBody">
+                                <!-- Gerado dinamicamente via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RODAPÉ ASSINADO -->
+            <footer class="footer">
+                SICAGE - Sistema de Controle Administrativo da GEAPO.<br>
+                ⓒ 2026 Desenvolvido por [Ingrid/Gabriela].
+            </footer>
+        </div>
+    </div>
+
+    <!-- MODAL REGISTRAR ÚLTIMA ATUALIZAÇÃO -->
+    <div class="modal fade" id="modalAtualizacao" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-info text-white">
+                    <h5 class="modal-title"><i class="fas fa-clock me-2"></i>Registrar Atualização</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="formAtualizacao">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Nome do Informante</label>
+                            <input type="text" id="infNome" class="form-control form-control-sm" placeholder="Seu nome completo" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Data e Hora da Execução</label>
+                            <input type="datetime-local" id="infDataHora" class="form-control form-control-sm" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-sm btn-info text-white"><i class="fas fa-save me-1"></i> Salvar Registro</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL ADICIONAR NOVO MUNICÍPIO -->
+    <div class="modal fade" id="modalAddMunicipio" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title"><i class="fas fa-map-marker-alt me-2"></i>Adicionar Novo Município</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="formAddMunicipio">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Nome do Município</label>
+                            <input type="text" id="novoMunicipioNome" class="form-control form-control-sm" placeholder="Ex: Novo Município SC" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-plus me-1"></i> Adicionar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts Bootstrap e Lógica da Aplicação -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // LISTA INICIAL DE MUNICÍPIOS DE SC
+        let municipiosSC = [
+            "Abdon Batista", "Abelardo Luz", "Agrolândia", "Agronômica", "Água Doce", "Águas de Chapecó", "Águas Frias", "Águas Mornas", 
+            "Alfredo Wagner", "Alto Bela Vista", "Anchieta", "Angelina", "Anita Garibaldi", "Anitápolis", "Antônio Carlos", "Apiúna", 
+            "Arabutã", "Araquari", "Araranguá", "Armazém", "Arroio Trinta", "Arvoredo", "Ascurra", "Atalanta", "Aurora", 
+            "Bal. Arroio do Silva", "Balneário Barra do Sul", "Balneário Camboriú", "Balneário Gaivota", "Balneário Piçarras", "Balneário Rincão", 
+            "Bandeirante", "Barra Bonita", "Barra Velha", "Bela Vista do Toldo", "Belmonte", "Benedito Novo", "Biguaçu", "Blumenau", 
+            "Bocaina do Sul", "Bom Jardim da Serra", "Bom Jesus", "Bom Jesus do Oeste", "Bom Retiro", "Bombinhas", "Botuverá", "Braço do Norte", 
+            "Braço do Trombudo", "Brunópolis", "Brusque", "Caçador", "Caibi", "Calmon", "Camboriú", "Campo Alegre", "Campo Belo do Sul", 
+            "Campo Erê", "Campos Novos", "Canelinha", "Canoinhas", "Capão Alto", "Capinzal", "Capivari de Baixo", "Catanduvas", 
+            "Caxambu do Sul", "Celso Ramos", "Cerro Negro", "Chapadão do Lageado", "Chapecó", "Cocal do Sul", "Concórdia", "Cordilheira Alta", 
+            "Coronel Freitas", "Coronel Martins", "Correia Pinto", "Corupá", "Criciúma", "Cunha Porã", "Cunhataí", "Curitibanos", "Descanso", 
+            "Dionísio Cerqueira", "Dona Emma", "Doutor Pedrinho", "Entre Rios", "Ermo", "Erval Velho", "Faxinal dos Guedes", "Flor do Sertão", 
+            "Florianópolis", "Formosa do Sul", "Forquilhinha", "Fraiburgo", "Frei Rogério", "Galvão", "Garopaba", "Garuva", "Gaspar", 
+            "Gov. Celso Ramos", "Grão-Pará", "Gravatal", "Guabiruba", "Guaraciaba", "Guaramirim", "Guarujá do Sul", "Guatambu", "Herval d’Oeste", 
+            "Ibiam", "Ibicaré", "Ibirama", "Içara", "Ilhota", "Imaruí", "Imbituba", "Imbuia", "Indaial", "Iomerê", "Ipira", "Iporã do Oeste", 
+            "Ipuaçu", "Ipumirim", "Iraceminha", "Irani", "Irati", "Irineópolis", "Itá", "Itaiópolis", "Itajaí", "Itapema", "Itapiranga", 
+            "Itapoá", "Ituporanga", "Jaborá", "Jacinto Machado", "Jaguaruna", "Jaraguá do Sul", "Jardinópolis", "Joaçaba", "Joinville", 
+            "José Boiteux", "Jupiá", "Lacerdópolis", "Lages", "Laguna", "Lajeado Grande", "Laurentino", "Lauro Müller", "Lebon Régis", 
+            "Leoberto Leal", "Lindóia do Sul", "Lontras", "Luiz Alves", "Luzerna", "Macieira", "Mafra", "Major Gercino", "Major Vieira", 
+            "Maracajá", "Maravilha", "Marema", "Massaranduba", "Matos Costa", "Meleiro", "Mirim Doce", "Modelo", "Mondaí", "Monte Carlo", 
+            "Monte Castelo", "Morro da Fumaça", "Morro Grande", "Navegantes", "Nova Erechim", "Nova Itaberaba", "Nova Trento", "Nova Veneza", 
+            "Novo Horizonte", "Orleans", "Otacílio Costa", "Ouro", "Ouro Verde", "Paial", "Painel", "Palhoça", "Palma Sola", "Palmeira", 
+            "Palmitos", "Papanduva", "Paraíso", "Passo de Torres", "Passos Maia", "Paulo Lopes", "Pedras Grandes", "Penha", "Peritiba", 
+            "Pescaria Brava", "Petrolândia", "Pinhalzinho", "Pinheiro Preto", "Piratuba", "Planalto Alegre", "Pomerode", "Ponte Alta", 
+            "Ponte Alta do Norte", "Ponte Serrada", "Porto Belo", "Porto União", "Pouso Redondo", "Praia Grande", "Presidente Castello Branco", 
+            "Presidente Getúlio", "Presidente Nereu", "Princesa", "Quilombo", "Rancho Queimado", "Rio das Antas", "Rio do Campo", 
+            "Rio do Oeste", "Rio do Sul", "Rio dos Cedros", "Rio Fortuna", "Rio Negrinho", "Rio Rufino", "Riqueza", "Rodeio", "Romelândia", 
+            "S. Amaro da Imperatriz", "S. Miguel da Boa Vista", "S. Pedro de Alcântara", "Salete", "Saltinho", "Salto Velho", "Sangão", 
+            "Santa Cecília", "Santa Helena", "Santa Rosa de Lima", "Santa Rosa do Sul", "Santa Terezinha", "Santiago do Sul", "São Bento do Sul", 
+            "São Bernardino", "São Bonifácio", "São Carlos", "São Cristóvão do Sul", "São Domingos", "São Francisco do Sul", "São João Batista", 
+            "São João do Itaperiú", "São João do Oeste", "São João do Sul", "São Joaquim", "São José", "São José do Cedro", "São José do Cerrito", 
+            "São Lourenço do Oeste", "São Ludgero", "São Martinho", "São Miguel do Oeste", "Saudades", "Schroeder", "Seara", "Serra Alta", 
+            "Siderópolis", "Sombrio", "Sta. Ter. do Progresso", "Sul Brasil", "Taió", "Tangará", "Tigrinhos", "Tijucas", "Timbé do Sul", 
+            "Timbó", "Timbó Grande", "Três Barras", "Treviso", "Treze de Maio", "Treze Tílias", "Trombudo Central", "Tubarão", "Tunápolis", 
+            "Turvo", "União do Oeste", "Urubici", "Urupema", "Urussanga", "Vargeão", "Vargem", "Vargem Bonita", "Vidal Ramos", "Videira", 
+            "Vitor Meireles", "Witmarsum", "Xanxerê", "Xavantina", "Xaxim", "Zortéa"
+        ];
+
+        // Mapeamento de prioridade para ordenação estrita
+        const prioridadeSituacao = {
+            "não recebido": 1,
+            "recebido": 2,
+            "em andamento": 3,
+            "rever": 4,
+            "arquivado": 5,
+            "fixo/anual": 6
+        };
+
+        // Mapeamento de classes de estilo para os badges de situação
+        const classeBadgeSituacao = {
+            "recebido": "badge-recebido",
+            "não recebido": "badge-nao-recebido",
+            "em andamento": "badge-em-andamento",
+            "arquivado": "badge-arquivado",
+            "rever": "badge-rever",
+            "fixo/anual": "badge-fixo-anual"
+        };
+
+        let anoAtual = 2026;
+
+        // ESTRUTURA DE DADOS PERSISTENTE
+        let processosSGPE = JSON.parse(localStorage.getItem('geapo_sgpe_processos')) || [
+            {
+                id: 1,
+                ano: 2026,
+                dataRecebimento: '2026-09-01',
+                situacao: 'não recebido',
+                orgao: 'DETRAN',
+                sgpe: '10023/2026',
+                setorAbertura: 'CIRETRAN Joinville',
+                setorCompetencia: 'GEAPO',
+                assunto: 'Aquisição de materiais',
+                detalhamento: 'Solicitação de compra de insumos de escritório para a Ciretran',
+                interessado: 'Ciretran Joinville',
+                municipio: 'Joinville',
+                setorAtual: 'GEAPO',
+                responsavel: 'Ingrid Silva',
+                obs: 'Aguardando envio físico'
+            },
+            {
+                id: 2,
+                ano: 2026,
+                dataRecebimento: '2026-09-05',
+                situacao: 'recebido',
+                orgao: 'DETRAN',
+                sgpe: '10450/2026',
+                setorAbertura: 'CIRETRAN Blumenau',
+                setorCompetencia: 'GEAPO',
+                assunto: 'Manutenção da Frota',
+                detalhamento: 'Conserto da viatura de placa ABC-1234',
+                interessado: 'Ciretran Blumenau',
+                municipio: 'Blumenau',
+                setorAtual: 'GEAPO',
+                responsavel: 'Gabriela Souza',
+                obs: 'Conferido'
+            }
+        ];
+
+        let dadosAtualizacao = JSON.parse(localStorage.getItem('geapo_sgpe_atualizacao')) || {
+            nome: 'GEAPO Admin',
+            dataHora: '2026-09-14T14:30'
+        };
+
+        const modalAddMun = new bootstrap.Modal(document.getElementById('modalAddMunicipio'));
+        const modalAtuz = new bootstrap.Modal(document.getElementById('modalAtualizacao'));
+
+        // INICIALIZAÇÃO
+        document.addEventListener("DOMContentLoaded", function() {
+            carregarMunicipiosEmSelects();
+            renderizarUltimaAtualizacao();
+            renderizarPainel();
+        });
+
+        function salvarStorage() {
+            localStorage.setItem('geapo_sgpe_processos', JSON.stringify(processosSGPE));
+            localStorage.setItem('geapo_sgpe_municipios', JSON.stringify(municipiosSC));
+            localStorage.setItem('geapo_sgpe_atualizacao', JSON.stringify(dadosAtualizacao));
+        }
+
+        function trocarAno(novoAno) {
+            if(novoAno) {
+                anoAtual = parseInt(novoAno);
+                renderizarPainel();
+            }
+        }
+
+        // VALIDAÇÃO EM TEMPO REAL: SOMENTE NÚMEROS E /
+        function validarNumeroSGPE(input) {
+            input.value = input.value.replace(/[^0-9/]/g, '');
+        }
+
+        // ALTERAÇÃO DIRETA DA SITUAÇÃO NA TABELA
+        function alterarSituacaoProcesso(id, novaSituacao) {
+            const proc = processosSGPE.find(p => p.id === id);
+            if(proc) {
+                proc.situacao = novaSituacao;
+                salvarStorage();
+                renderizarPainel();
+            }
+        }
+
+        // CARREGAR MUNICÍPIOS NOS SELECTS
+        function carregarMunicipiosEmSelects() {
+            const savedMun = JSON.parse(localStorage.getItem('geapo_sgpe_municipios'));
+            if(savedMun && Array.isArray(savedMun)) {
+                municipiosSC = savedMun;
+            }
+            municipiosSC.sort((a,b) => a.localeCompare(b));
+
+            const selectCad = document.getElementById('cadMunicipio');
+            const selectFiltro = document.getElementById('filtroMunicipio');
+
+            selectCad.innerHTML = '<option value="">Selecione o município...</option>';
+            selectFiltro.innerHTML = '<option value="">Todos os Municípios</option>';
+
+            municipiosSC.forEach(mun => {
+                selectCad.innerHTML += `<option value="${mun}">${mun}</option>`;
+                selectFiltro.innerHTML += `<option value="${mun}">${mun}</option>`;
+            });
+        }
+
+        function abrirModalAddMunicipio() {
+            modalAddMun.show();
+        }
+
+        // ADICIONAR NOVO MUNICÍPIO DINAMICAMENTE
+        document.getElementById('formAddMunicipio').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const novoMun = document.getElementById('novoMunicipioNome').value.trim();
+            if(novoMun && !municipiosSC.includes(novoMun)) {
+                municipiosSC.push(novoMun);
+                salvarStorage();
+                carregarMunicipiosEmSelects();
+                document.getElementById('cadMunicipio').value = novoMun;
+                modalAddMun.hide();
+                this.reset();
+            }
+        });
+
+        // TGL CAMPO OUTRO ÓRGÃO
+        function toggleOrgaoOutro(val) {
+            const inputOutro = document.getElementById('cadOrgaoOutro');
+            if(val === 'OUTRO') {
+                inputOutro.classList.remove('d-none');
+                inputOutro.required = true;
+            } else {
+                inputOutro.classList.add('d-none');
+                inputOutro.required = false;
+            }
+        }
+
+        // SALVAR NOVO PROCESSO
+        document.getElementById('formNovoProcesso').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            let orgaoFinal = document.getElementById('cadOrgaoSelect').value;
+            if(orgaoFinal === 'OUTRO') {
+                orgaoFinal = document.getElementById('cadOrgaoOutro').value;
+            }
+
+            const novoId = processosSGPE.length > 0 ? Math.max(...processosSGPE.map(p => p.id)) + 1 : 1;
+
+            const novoProcesso = {
+                id: novoId,
+                ano: anoAtual,
+                dataRecebimento: document.getElementById('cadDataRecebimento').value,
+                situacao: document.getElementById('cadSituacao').value,
+                orgao: orgaoFinal,
+                sgpe: document.getElementById('cadSgpe').value,
+                setorAbertura: document.getElementById('cadSetorAbertura').value,
+                setorCompetencia: document.getElementById('cadSetorCompetencia').value,
+                assunto: document.getElementById('cadAssunto').value,
+                detalhamento: document.getElementById('cadDetalhamento').value,
+                interessado: document.getElementById('cadInteressado').value,
+                municipio: document.getElementById('cadMunicipio').value,
+                setorAtual: document.getElementById('cadSetorAtual').value,
+                responsavel: document.getElementById('cadResponsavel').value,
+                obs: document.getElementById('cadObs').value
+            };
+
+            processosSGPE.push(novoProcesso);
+            salvarStorage();
+            this.reset();
+            document.getElementById('cadOrgaoOutro').classList.add('d-none');
+            renderizarPainel();
+        });
+
+        // EXCLUIR PROCESSO
+        function excluirProcesso(id) {
+            if(confirm("Deseja realmente excluir este processo do SGPE?")) {
+                processosSGPE = processosSGPE.filter(p => p.id !== id);
+                salvarStorage();
+                renderizarPainel();
+            }
+        }
+
+        // RENDERIZAÇÃO GERAL
+        function renderizarPainel() {
+            renderizarResumoSimplificado();
+            filtrarTabela();
+        }
+
+        // RENDERIZAÇÃO DO RESUMO SIMPLIFICADO POR SITUAÇÃO
+        function renderizarResumoSimplificado() {
+            const container = document.getElementById('painelResumoSituacao');
+            container.innerHTML = '';
+
+            const contagem = {
+                "não recebido": 0,
+                "recebido": 0,
+                "em andamento": 0,
+                "rever": 0,
+                "arquivado": 0,
+                "fixo/anual": 0
+            };
+
+            const procDoAno = processosSGPE.filter(p => p.ano === anoAtual);
+
+            procDoAno.forEach(p => {
+                if(contagem[p.situacao] !== undefined) {
+                    contagem[p.situacao]++;
+                }
+            });
+
+            const ordemExibicao = ["não recebido", "recebido", "em andamento", "rever", "arquivado", "fixo/anual"];
+
+            ordemExibicao.forEach(sit => {
+                const qtd = contagem[sit];
+                const badgeClass = classeBadgeSituacao[sit];
+
+                container.innerHTML += `
+                    <div class="col-4 col-md-2">
+                        <div class="p-2 border rounded bg-light">
+                            <span class="badge ${badgeClass} text-uppercase w-100 mb-1">${sit}</span>
+                            <span class="fs-4 fw-bold text-dark d-block">${qtd}</span>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // FILTRAGEM E ORDENAÇÃO DA TABELA
+        function filtrarTabela() {
+            const txt = document.getElementById('filtroTexto').value.toLowerCase();
+            const sit = document.getElementById('filtroSituacao').value.toLowerCase();
+            const mun = document.getElementById('filtroMunicipio').value.toLowerCase();
+
+            let listaFiltrada = processosSGPE.filter(p => p.ano === anoAtual);
+
+            if(txt) {
+                listaFiltrada = listaFiltrada.filter(p => 
+                    p.sgpe.toLowerCase().includes(txt) ||
+                    p.assunto.toLowerCase().includes(txt) ||
+                    p.interessado.toLowerCase().includes(txt) ||
+                    p.responsavel.toLowerCase().includes(txt)
+                );
+            }
+
+            if(sit) {
+                listaFiltrada = listaFiltrada.filter(p => p.situacao.toLowerCase() === sit);
+            }
+
+            if(mun) {
+                listaFiltrada = listaFiltrada.filter(p => p.municipio.toLowerCase() === mun);
+            }
+
+            // ORDENAÇÃO OBRIGATÓRIA DA TABELA: não recebido -> recebido -> em andamento -> rever -> arquivado -> fixo/anual
+            listaFiltrada.sort((a, b) => {
+                const prioA = prioridadeSituacao[a.situacao] || 99;
+                const prioB = prioridadeSituacao[b.situacao] || 99;
+                return prioA - prioB;
+            });
+
+            renderizarTabela(listaFiltrada);
+        }
+
+        function limparFiltros() {
+            document.getElementById('filtroTexto').value = '';
+            document.getElementById('filtroSituacao').value = '';
+            document.getElementById('filtroMunicipio').value = '';
+            filtrarTabela();
+        }
+
+        // RENDERIZAÇÃO DA TABELA SGPE (ORDEM RIGOROSA DE COLUNAS & ALTERAÇÃO DE SITUAÇÃO)
+        function renderizarTabela(lista) {
+            const tbody = document.getElementById('tabelaSgpeBody');
+            tbody.innerHTML = '';
+
+            if(lista.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="14" class="text-center text-muted p-4">Nenhum processo SGPE cadastrado ou encontrado para os filtros selecionados.</td></tr>`;
+                return;
+            }
+
+            const opcoesSituacao = ["não recebido", "recebido", "em andamento", "rever", "arquivado", "fixo/anual"];
+
+            lista.forEach(p => {
+                const dataFmt = p.dataRecebimento ? p.dataRecebimento.split('-').reverse().join('/') : '--/--/----';
+                const badgeClass = classeBadgeSituacao[p.situacao] || 'bg-secondary';
+
+                // CONSTRUÇÃO DO SELECT DE SITUAÇÃO PARA A TABELA
+                let selectSituacaoHtml = `<select class="select-situacao-tabela ${badgeClass}" onchange="alterarSituacaoProcesso(${p.id}, this.value)">`;
+                opcoesSituacao.forEach(opt => {
+                    const selected = (p.situacao === opt) ? 'selected' : '';
+                    selectSituacaoHtml += `<option value="${opt}" ${selected} class="bg-white text-dark">${opt.toUpperCase()}</option>`;
+                });
+                selectSituacaoHtml += `</select>`;
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="text-center fw-bold">${dataFmt}</td>
+                        <td class="text-center">${selectSituacaoHtml}</td>
+                        <td class="text-center"><span class="badge bg-light text-dark border">${p.orgao}</span></td>
+                        <td class="fw-bold text-primary">${p.sgpe}</td>
+                        <td>${p.setorAbertura}</td>
+                        <td>${p.setorCompetencia}</td>
+                        <td>${p.assunto}</td>
+                        <td class="col-detalhes" title="${p.detalhamento}">${p.detalhamento || '-'}</td>
+                        <td>${p.interessado}</td>
+                        <td>${p.municipio}</td>
+                        <td>${p.setorAtual}</td>
+                        <td>${p.responsavel}</td>
+                        <td class="col-obs" title="${p.obs}">${p.obs || '-'}</td>
+                        <td class="text-center">
+                            <button class="btn btn-sm btn-outline-danger" onclick="excluirProcesso(${p.id})" title="Excluir Processo">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        // REGISTRO DE ÚLTIMA ATUALIZAÇÃO
+        function renderizarUltimaAtualizacao() {
+            document.getElementById('lblInformanteNome').innerText = dadosAtualizacao.nome;
+            if(dadosAtualizacao.dataHora) {
+                const dt = new Date(dadosAtualizacao.dataHora);
+                const dtFmt = dt.toLocaleDateString('pt-BR') + ' ' + dt.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
+                document.getElementById('lblInformanteDataHora').innerText = dtFmt;
+            }
+        }
+
+        document.getElementById('formAtualizacao').addEventListener('submit', function(e) {
+            e.preventDefault();
+            dadosAtualizacao.nome = document.getElementById('infNome').value;
+            dadosAtualizacao.dataHora = document.getElementById('infDataHora').value;
+            salvarStorage();
+            renderizarUltimaAtualizacao();
+            modalAtuz.hide();
+        });
+    </script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+      // Caso não exista a sessão gravada pelo index.html, redireciona o usuário para o Login
+      if (!sessionStorage.getItem('sicage_usuario')) {
+          alert("Acesso restrito! Por favor, realize o login primeiro na tela inicial.");
+          window.location.href = "index.html";
+      }
+  });
+</script>
+<!-- CÓDIGO DE PROTEÇÃO E MODO VISUALIZADOR -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const usuarioAtivo = sessionStorage.getItem('sicage_usuario');
+        const nivelAtivo = sessionStorage.getItem('sicage_nivel');
+
+        // 1. Se tentar entrar sem logar, manda de volta para o index.html
+        if (!usuarioAtivo) {
+            alert("Acesso restrito! Por favor, faça login na página inicial.");
+            window.location.href = "index.html";
+            return;
+        }
+
+        // 2. Se for Visualizador, bloqueia os botões da página atual
+        if (nivelAtivo === 'Visualizador') {
+            const elementos = document.querySelectorAll('button, input, select, textarea');
+
+            elementos.forEach(el => {
+                const eSidebar = el.closest('.sidebar');
+                const eExercicio = el.id === 'anoExercicio';
+                const eSair = el.getAttribute('onclick') && el.getAttribute('onclick').includes('fazerLogout');
+                const eLink = el.tagName === 'A' || el.classList.contains('btn-whatsapp') || el.classList.contains('btn-email');
+
+                if (!eSidebar && !eExercicio && !eSair && !eLink) {
+                    el.disabled = true;
+                    el.classList.add('disabled');
+                    el.style.pointerEvents = 'none';
+                    el.style.opacity = '0.6';
+                }
+            });
+        }
+    });
+
+    function fazerLogout() {
+        sessionStorage.removeItem('sicage_usuario');
+        sessionStorage.removeItem('sicage_nivel');
+        window.location.href = "index.html";
+    }
+</script>
+</body>
+</body>
+</html>

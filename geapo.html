@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DETRAN/GEAPO - GEAPO Institucional</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome (Ícones) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            background-color: #f4f7f6;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .sidebar {
+            height: 100vh;
+            background-color: #343a40;
+            color: white;
+            position: fixed;
+            width: 260px;
+            overflow-y: auto;
+        }
+        .sidebar::-webkit-scrollbar { width: 6px; }
+        .sidebar::-webkit-scrollbar-thumb { background-color: #6c757d; border-radius: 4px; }
+        .sidebar .nav-link { color: #d1d8e0; margin-bottom: 5px; font-size: 0.9rem; }
+        .sidebar .nav-link:hover { background-color: #495057; color: white; border-radius: 5px; }
+        .sidebar .nav-link.active { background-color: #0d6efd; color: white; font-weight: bold; border-radius: 5px; }
+        .sidebar i { width: 25px; text-align: center; margin-right: 10px; font-size: 1.1rem; }
+        
+        .main-content {
+            margin-left: 260px;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        .card-header {
+            background-color: transparent;
+            font-weight: bold;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .footer {
+            margin-top: auto;
+            text-align: center;
+            padding: 20px 0;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVEGAÇÃO PRINCIPAL (MENU LATERAL) -->
+    <nav class="sidebar p-3">
+        <div class="text-center mb-4 mt-2">
+            <h5 class="text-white m-0">DETRAN/GEAPO</h5>
+            <small class="text-secondary">Gerência de Apoio Operacional</small>
+        </div>
+        <ul class="nav flex-column">
+            <li class="nav-item"><a class="nav-link" href="index.html"><i class="fas fa-chart-line text-info"></i> Painel Geral</a></li>
+            <li class="nav-item"><a class="nav-link active" href="geapo.html"><i class="fas fa-building text-white"></i> GEAPO Institucional</a></li>
+            <li class="nav-item"><a class="nav-link" href="contrato.html"><i class="fas fa-file-signature text-warning"></i> Contrato Geral e Orbenk</a></li>
+            <li class="nav-item"><a class="nav-link" href="ateste.html"><i class="fas fa-check-double text-success"></i> Ateste de Serviço/Orbenk</a></li>
+            <li class="nav-item"><a class="nav-link" href="sgpe.html"><i class="fas fa-folder-open text-danger"></i> Controle SGPE</a></li>
+            <li class="nav-item"><a class="nav-link" href="oficios.html"><i class="fas fa-envelope-open-text text-info"></i> Ofícios/Despachos</a></li>
+            <li class="nav-item"><a class="nav-link" href="processos.html"><i class="fas fa-balance-scale text-primary"></i> Processos Jurídicos</a></li>
+            <li class="nav-item"><a class="nav-link" href="frota.html"><i class="fas fa-car text-secondary"></i> Frota e Multas</a></li>
+            <li class="nav-item"><a class="nav-link" href="compras.html"><i class="fas fa-shopping-cart text-success"></i> Compras e CPESC</a></li>
+            <li class="nav-item"><a class="nav-link" href="diarias.html"><i class="fas fa-plane text-info"></i> Diárias e Passagem Aérea</a></li>
+            <li class="nav-item"><a class="nav-link" href="efetivo.html"><i class="fas fa-users text-warning"></i> Efetivo</a></li>
+            <li class="nav-item"><a class="nav-link" href="agenda.html"><i class="fas fa-calendar-alt text-danger"></i> Agenda e Prazos</a></li>
+            <li class="nav-item"><a class="nav-link" href="agencias.html"><i class="fas fa-map-marker-alt text-primary"></i> Agências</a></li>
+            <li class="nav-item"><a class="nav-link" href="portarias.html"><i class="fas fa-file-alt text-secondary"></i> Portarias</a></li>
+            <li class="nav-item"><a class="nav-link" href="leis.html"><i class="fas fa-gavel text-warning"></i> Leis e Instruções</a></li>
+            <li class="nav-item"><a class="nav-link" href="manuais.html"><i class="fas fa-book text-success"></i> Manuais/Funções</a></li>
+            <li class="nav-item"><a class="nav-link" href="relatorios.html"><i class="fas fa-chart-pie text-info"></i> Relatórios Gerenciais</a></li>
+        </ul>
+    </nav>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <div class="main-content">
+        
+        <!-- CABEÇALHO SUPERIOR -->
+        <div class="d-flex justify-content-between align-items-center mb-4 pt-2">
+            <div>
+                <h3 class="m-0">GEAPO Institucional</h3>
+                <small class="text-muted">Gerência de Apoio Operacional - DETRAN/SC</small>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <div class="input-group input-group-sm" style="width: 170px;">
+                    <span class="input-group-text bg-light fw-bold"><i class="fas fa-calendar-alt me-1"></i> Exer.</span>
+                    <input type="number" id="anoExercicio" class="form-control fw-bold text-primary" value="2026" min="1900" max="2100" onchange="atualizarExercicio(this.value)">
+                </div>
+                <span class="border-start ps-3"><i class="fas fa-user-circle"></i> GEAPO (Admin)</span>
+                <a href="index.html" class="btn btn-sm btn-outline-danger"><i class="fas fa-sign-out-alt"></i> Sair</a>
+            </div>
+        </div>
+
+        <!-- PAINEL DE MÉTRICAS DA GEAPO -->
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <div class="card bg-primary text-white">
+                    <div class="card-body d-flex align-items-center">
+                        <i class="fas fa-sitemap fa-3x me-3"></i>
+                        <div>
+                            <h6 class="card-title m-0">Setores Administrados</h6>
+                            <h2 class="m-0" id="totalSetoresCount">0</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-success text-white">
+                    <div class="card-body d-flex align-items-center">
+                        <i class="fas fa-user-check fa-3x me-3"></i>
+                        <div>
+                            <h6 class="card-title m-0">Efetivo Operacional Total</h6>
+                            <h2 class="m-0" id="totalEfetivoCount">0</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-dark text-white">
+                    <div class="card-body d-flex align-items-center">
+                        <i class="fas fa-user-shield fa-3x me-3"></i>
+                        <div>
+                            <h6 class="card-title m-0">Exercício Selecionado</h6>
+                            <h2 class="m-0" id="lblAnoMétricas">2026</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DADOS DA GERÊNCIA -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                        <span><i class="fas fa-user-tie text-primary me-2"></i> Dados da Gerência Responsável</span>
+                        <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalGerencia"><i class="fas fa-edit"></i> Editar Gerência</button>
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center text-md-start" id="dadosGerenciaDisplay">
+                            <div class="col-md-3"><strong>Gerente Responsável:</strong> <p class="text-muted" id="gNome">Ingrid / Gabriela</p></div>
+                            <div class="col-md-3"><strong>Portaria de Designação:</strong> <p class="text-muted" id="gPortaria">Portaria nº 102/2026</p></div>
+                            <div class="col-md-3"><strong>Período da Gestão:</strong> <p class="text-muted" id="gPeriodo">01/01/2026 a Atual</p></div>
+                            <div class="col-md-3"><strong>Contato / Ramal:</strong> <p class="text-muted" id="gContato">geapo@detran.sc.gov.br | (48) 3664-0000</p></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FUNÇÕES E ATIVIDADES PRINCIPAIS -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header bg-white"><i class="fas fa-bullhorn text-warning me-2"></i> Função Institucional e Atividades Principais</div>
+                    <div class="card-body">
+                        <p class="lead fs-6 text-justify">
+                            A <strong>Gerência de Apoio Operacional (GEAPO)</strong> do Departamento Estadual de Trânsito de Santa Catarina (DETRAN/SC) tem a função de planejar, organizar, coordenar e executar atividades administrativas de suporte interno, logístico e documental do órgão.
+                        </p>
+                        <hr>
+                        <h6 class="fw-bold mb-3 text-secondary">Atividades Principais da GEAPO:</h6>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item bg-transparent"><i class="fas fa-check-circle text-primary me-2"></i><strong>Administração de Materiais:</strong> Controle de estoque, aquisição de suprimentos e distribuição de insumos para as unidades.</li>
+                            <li class="list-group-item bg-transparent"><i class="fas fa-check-circle text-success me-2"></i><strong>Gestão Patrimonial:</strong> Tombamento, controle, inventário e movimentação de bens móveis e imóveis do órgão.</li>
+                            <li class="list-group-item bg-transparent"><i class="fas fa-check-circle text-warning me-2"></i><strong>Apoio Logístico e Contratos:</strong> Gestão de contratos de prestação de serviços terceirizados, manutenções prediais e infraestrutura para exames ou atendimentos.</li>
+                            <li class="list-group-item bg-transparent"><i class="fas fa-check-circle text-danger me-2"></i><strong>Gestão Documental:</strong> Controle de rotinas de protocolo, tramitação e arquivamento eletrônico ou físico de processos administrativos.</li>
+                            <li class="list-group-item bg-transparent"><i class="fas fa-check-circle text-info me-2"></i><strong>Alinhamento Normativo:</strong> Cumprimento de diretrizes dos sistemas administrativos estaduais de compras, frotas e serviços gerais.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAINEL DE CADASTRO E GESTÃO DOS SETORES ADMINISTRADOS -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                        <span><i class="fas fa-network-wired text-success me-2"></i> Painel de Setores Administrados</span>
+                        <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#modalNovoSetor"><i class="fas fa-plus"></i> Cadastrar Novo Setor</button>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle border">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Setor Administrado</th>
+                                        <th>Função / O que faz</th>
+                                        <th>Quem Executa (Responsáveis)</th>
+                                        <th class="text-center">Qtd. Executores</th>
+                                        <th class="text-center">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabelaSetoresBody">
+                                    <!-- Conteúdo carregado via Javascript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RODAPÉ -->
+        <footer class="footer">
+            SICAGE - Sistema de Controle Administrativo da GEAPO.<br>
+            ⓒ 2026 Desenvolvido por [Ingrid/Gabriela].
+        </footer>
+    </div>
+
+    <!-- MODAL EDITAR DADOS DA GERÊNCIA -->
+    <div class="modal fade" id="modalGerencia" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title"><i class="fas fa-user-edit"></i> Cadastrar / Editar Dados da Gerência</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="formGerencia">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Nome do Gerente / Responsáveis</label>
+                            <input type="text" id="inGNome" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Portaria de Designação</label>
+                            <input type="text" id="inGPortaria" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Período da Gestão</label>
+                            <input type="text" id="inGPeriodo" class="form-control" placeholder="Ex: 01/01/2026 a Atual" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Contato / Ramal</label>
+                            <input type="text" id="inGContato" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-save"></i> Salvar Gerência</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL CADASTRAR NOVO SETOR -->
+    <div class="modal fade" id="modalNovoSetor" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title"><i class="fas fa-folder-plus"></i> Cadastrar Setor Administrado pela GEAPO</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="formSetor">
+                    <div class="modal-body">
+                        <div class="row g-3">
+                            <div class="col-md-8">
+                                <label class="form-label">Nome do Setor Administrado</label>
+                                <input type="text" id="sNome" class="form-control" placeholder="Ex: Núcleo de Controle de Frota" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Qtd. de Executores (Efetivo)</label>
+                                <input type="number" id="sQtd" class="form-control" min="1" required>
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label">Atribuições / O que faz</label>
+                                <textarea id="sFuncao" class="form-control" rows="2" placeholder="Descreva as atribuições do setor..." required></textarea>
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label">Quem executa (Nomes/Equipe responsável)</label>
+                                <input type="text" id="sExecutores" class="form-control" placeholder="Ex: Carlos Andrade, Maria Lima" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-success btn-sm"><i class="fas fa-save"></i> Salvar Setor</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts Bootstrap e Lógica do Sistema -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // --- BANCO DE DADOS LOCAL DOS SETORES ADMINISTRADOS ---
+        let setoresGeapo = [
+            {
+                id: 1,
+                nome: 'Núcleo de Materiais e Estoque',
+                funcao: 'Controle de estoque, recebimento, aquisição e distribuição de insumos para as unidades do DETRAN/SC.',
+                executores: 'Roberto Alves, Ana Paula',
+                qtd: 2
+            },
+            {
+                id: 2,
+                nome: 'Núcleo de Gestão Patrimonial',
+                funcao: 'Tombamento, inventário anual, transferência e baixa de bens móveis e imóveis da autarquia.',
+                executores: 'Marcos Santos, Juliana Costa',
+                qtd: 2
+            },
+            {
+                id: 3,
+                nome: 'Núcleo de Contratos e Terceirizados (Orbenk)',
+                funcao: 'Acompanhamento do Contrato Geral, fiscalização de posto de trabalho terceirizado e ateste de faturas.',
+                executores: 'Ingrid Silva, Gabriela Souza, Lucas Prado',
+                qtd: 3
+            },
+            {
+                id: 4,
+                nome: 'Núcleo de Gestão Documental e Protocolo',
+                funcao: 'Tramitação, protocolo unificado, classificação arquivística e gestão do acervo físico e digital.',
+                executores: 'Fernanda Oliveira',
+                qtd: 1
+            }
+        ];
+
+        const modalGerenciaBS = new bootstrap.Modal(document.getElementById('modalGerencia'));
+        const modalSetorBS = new bootstrap.Modal(document.getElementById('modalNovoSetor'));
+
+        document.addEventListener("DOMContentLoaded", function() {
+            renderizarSetores();
+            carregarDadosGerenciaForm();
+        });
+
+        // Sincronização do Exercício Anual
+        function atualizarExercicio(ano) {
+            document.getElementById('lblAnoMétricas').innerText = ano;
+        }
+
+        // Renderização da tabela de setores e atualização dos indicadores automatizados
+        function renderizarSetores() {
+            const tbody = document.getElementById('tabelaSetoresBody');
+            tbody.innerHTML = '';
+
+            let totalEfetivo = 0;
+
+            setoresGeapo.forEach(s => {
+                totalEfetivo += parseInt(s.qtd);
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong class="text-primary">${s.nome}</strong></td>
+                        <td><small>${s.funcao}</small></td>
+                        <td><small><i class="fas fa-users text-secondary me-1"></i>${s.executores}</small></td>
+                        <td class="text-center"><span class="badge bg-secondary fs-6">${s.qtd}</span></td>
+                        <td class="text-center">
+                            <button class="btn btn-sm btn-outline-danger" onclick="excluirSetor(${s.id})" title="Excluir Setor"><i class="fas fa-trash-alt"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            // Atualização dos contadores dinâmicos
+            document.getElementById('totalSetoresCount').innerText = setoresGeapo.length;
+            document.getElementById('totalEfetivoCount').innerText = totalEfetivo;
+        }
+
+        // Adicionar novo setor
+        document.getElementById('formSetor').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const novoId = setoresGeapo.length > 0 ? setoresGeapo[setoresGeapo.length - 1].id + 1 : 1;
+            
+            setoresGeapo.push({
+                id: novoId,
+                nome: document.getElementById('sNome').value,
+                funcao: document.getElementById('sFuncao').value,
+                executores: document.getElementById('sExecutores').value,
+                qtd: parseInt(document.getElementById('sQtd').value)
+            });
+
+            renderizarSetores();
+            this.reset();
+            modalSetorBS.hide();
+        });
+
+        // Excluir setor
+        function excluirSetor(id) {
+            if(confirm("Confirma a remoção deste setor administrado?")) {
+                setoresGeapo = setoresGeapo.filter(s => s.id !== id);
+                renderizarSetores();
+            }
+        }
+
+        // Salvar / Editar Gerência
+        function carregarDadosGerenciaForm() {
+            document.getElementById('inGNome').value = document.getElementById('gNome').innerText;
+            document.getElementById('inGPortaria').value = document.getElementById('gPortaria').innerText;
+            document.getElementById('inGPeriodo').value = document.getElementById('gPeriodo').innerText;
+            document.getElementById('inGContato').value = document.getElementById('gContato').innerText;
+        }
+
+        document.getElementById('formGerencia').addEventListener('submit', function(e) {
+            e.preventDefault();
+            document.getElementById('gNome').innerText = document.getElementById('inGNome').value;
+            document.getElementById('gPortaria').innerText = document.getElementById('inGPortaria').value;
+            document.getElementById('gPeriodo').innerText = document.getElementById('inGPeriodo').value;
+            document.getElementById('gContato').innerText = document.getElementById('inGContato').value;
+            modalGerenciaBS.hide();
+        });
+    </script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+      // Caso não exista a sessão gravada pelo index.html, redireciona o usuário para o Login
+      if (!sessionStorage.getItem('sicage_usuario')) {
+          alert("Acesso restrito! Por favor, realize o login primeiro na tela inicial.");
+          window.location.href = "index.html";
+      }
+  });
+</script>
+<!-- CÓDIGO DE PROTEÇÃO E MODO VISUALIZADOR -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const usuarioAtivo = sessionStorage.getItem('sicage_usuario');
+        const nivelAtivo = sessionStorage.getItem('sicage_nivel');
+
+        // 1. Se tentar entrar sem logar, manda de volta para o index.html
+        if (!usuarioAtivo) {
+            alert("Acesso restrito! Por favor, faça login na página inicial.");
+            window.location.href = "index.html";
+            return;
+        }
+
+        // 2. Se for Visualizador, bloqueia os botões da página atual
+        if (nivelAtivo === 'Visualizador') {
+            const elementos = document.querySelectorAll('button, input, select, textarea');
+
+            elementos.forEach(el => {
+                const eSidebar = el.closest('.sidebar');
+                const eExercicio = el.id === 'anoExercicio';
+                const eSair = el.getAttribute('onclick') && el.getAttribute('onclick').includes('fazerLogout');
+                const eLink = el.tagName === 'A' || el.classList.contains('btn-whatsapp') || el.classList.contains('btn-email');
+
+                if (!eSidebar && !eExercicio && !eSair && !eLink) {
+                    el.disabled = true;
+                    el.classList.add('disabled');
+                    el.style.pointerEvents = 'none';
+                    el.style.opacity = '0.6';
+                }
+            });
+        }
+    });
+
+    function fazerLogout() {
+        sessionStorage.removeItem('sicage_usuario');
+        sessionStorage.removeItem('sicage_nivel');
+        window.location.href = "index.html";
+    }
+</script>
+</body>
+</body>
+</html>

@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DETRAN/GEAPO - Diárias e Passagens</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome (Ícones) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            background-color: #f4f7f6;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        /* --- ESTILOS DO PAINEL LATERAL --- */
+        .sidebar {
+            height: 100vh;
+            background-color: #343a40;
+            color: white;
+            position: fixed;
+            width: 260px;
+            overflow-y: auto;
+            z-index: 100;
+        }
+        .sidebar::-webkit-scrollbar { width: 6px; }
+        .sidebar::-webkit-scrollbar-thumb { background-color: #6c757d; border-radius: 4px; }
+        .sidebar .nav-link { color: #d1d8e0; margin-bottom: 5px; font-size: 0.9rem; }
+        .sidebar .nav-link:hover { background-color: #495057; color: white; border-radius: 5px; }
+        .sidebar i { width: 25px; text-align: center; margin-right: 10px; font-size: 1.1rem; }
+        
+        .main-content {
+            margin-left: 260px;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        .card-header {
+            background-color: transparent;
+            font-weight: bold;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        /* --- CORES DOS TIPOS DE DESLOCAMENTO --- */
+        .text-terrestre { color: #198754 !important; }  /* Verde */
+        .text-aerea { color: #0d6efd !important; }      /* Azul */
+        .text-rodoviario { color: #ffc107 !important; } /* Amarelo */
+
+        .badge-terrestre { background-color: #d1e7dd; color: #0f5132; border: 1px solid #badbcc; }
+        .badge-aerea { background-color: #cfe2ff; color: #084298; border: 1px solid #b6d4fe; }
+        .badge-rodoviario { background-color: #fff3cd; color: #664d03; border: 1px solid #ffecb5; }
+
+        /* CARDS RESUMO SUPERIOR */
+        .card-resumo {
+            border-left: 5px solid;
+            transition: transform 0.2s;
+        }
+        .card-resumo:hover { transform: translateY(-3px); }
+
+        /* TABELA PLANILHA */
+        .table-responsive {
+            max-height: 550px;
+            overflow-y: auto;
+        }
+        .table-docs th, .table-docs td {
+            vertical-align: middle;
+            font-size: 0.88rem;
+            white-space: nowrap;
+        }
+        .table-docs th {
+            position: sticky;
+            top: 0;
+            background-color: #343a40;
+            color: white;
+            z-index: 10;
+            text-align: center;
+        }
+
+        /* FOOTER */
+        .footer {
+            margin-top: auto;
+            text-align: center;
+            padding: 20px 0;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="dashboard-screen">
+        <!-- MENU LATERAL DE NAVEGAÇÃO -->
+        <nav class="sidebar p-3">
+            <div class="text-center mb-4 mt-2">
+                <h5 class="text-white m-0">DETRAN/GEAPO</h5>
+                <small class="text-secondary">Apoio Operacional</small>
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item"><a class="nav-link" href="index.html"><i class="fas fa-chart-line text-info"></i> Painel Geral</a></li>
+                <li class="nav-item"><a class="nav-link" href="geapo.html"><i class="fas fa-building text-primary"></i> GEAPO Institucional</a></li>
+                <li class="nav-item"><a class="nav-link" href="contrato.html"><i class="fas fa-file-signature text-warning"></i> Contrato Geral/Orbenk</a></li>
+                <li class="nav-item"><a class="nav-link" href="ateste.html"><i class="fas fa-check-double text-success"></i> Ateste Serviço/Orbenk</a></li>
+                <li class="nav-item"><a class="nav-link" href="sgpe.html"><i class="fas fa-folder-open text-danger"></i> Controle SGPE</a></li>
+                <li class="nav-item"><a class="nav-link" href="oficios.html"><i class="fas fa-envelope-open-text text-info"></i> Ofícios/Despachos</a></li>
+                <li class="nav-item"><a class="nav-link" href="processos.html"><i class="fas fa-balance-scale text-primary"></i> Processos Jurídicos</a></li>
+                <li class="nav-item"><a class="nav-link" href="frota.html"><i class="fas fa-car text-secondary"></i> Frota e Multas</a></li>
+                <li class="nav-item"><a class="nav-link" href="compras.html"><i class="fas fa-shopping-cart text-success"></i> Compras e CPESC</a></li>
+                <li class="nav-item"><a class="nav-link active fw-bold text-white" href="diarias.html"><i class="fas fa-plane text-info"></i> Diárias e Passagem</a></li>
+                <li class="nav-item"><a class="nav-link" href="efetivo.html"><i class="fas fa-users text-warning"></i> Efetivo</a></li>
+                <li class="nav-item"><a class="nav-link" href="agenda.html"><i class="fas fa-calendar-alt text-danger"></i> Agenda e Prazos</a></li>
+                <li class="nav-item"><a class="nav-link" href="agencias.html"><i class="fas fa-map-marker-alt text-primary"></i> Agências</a></li>
+                <li class="nav-item"><a class="nav-link" href="portarias.html"><i class="fas fa-file-alt text-secondary"></i> Portarias</a></li>
+                <li class="nav-item"><a class="nav-link" href="leis.html"><i class="fas fa-gavel text-warning"></i> Leis e Instruções</a></li>
+                <li class="nav-item"><a class="nav-link" href="manuais.html"><i class="fas fa-book text-success"></i> Manuais/Funções</a></li>
+                <li class="nav-item"><a class="nav-link" href="relatorios.html"><i class="fas fa-chart-pie text-info"></i> Relatorios Gerenciais</a></li>
+            </ul>
+        </nav>
+
+        <!-- CONTEÚDO PRINCIPAL -->
+        <div class="main-content">
+            
+            <!-- CABEÇALHO DO MÓDULO -->
+            <div class="d-flex justify-content-between align-items-center mb-3 pt-2">
+                <div>
+                    <h3 class="m-0"><i class="fas fa-plane-departure text-info me-2"></i>Diárias e Passagens</h3>
+                    <small class="text-muted">Gestão e controle de deslocamentos e indenizações</small>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                    <div class="input-group input-group-sm" style="width: 180px;">
+                        <span class="input-group-text bg-light fw-bold"><i class="fas fa-calendar-alt me-1"></i> Exer.</span>
+                        <input type="number" id="anoExercicio" class="form-control fw-bold text-primary" value="2026" min="1900" max="2100" onchange="trocarAno(this.value)">
+                    </div>
+                    <span class="border-start ps-3"><i class="fas fa-user-circle"></i> <strong>GEAPO (Admin)</strong></span>
+                </div>
+            </div>
+
+            <!-- PAINEL DE RESUMO DOS VALORES POR TIPO DE DESLOCAMENTO -->
+            <div class="row g-3 mb-3">
+                <div class="col-md-4">
+                    <div class="card card-resumo p-3 bg-white" style="border-color: #198754;">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <small class="text-uppercase fw-bold text-terrestre">Deslocamento Terrestre</small>
+                                <h4 class="fw-bold m-0 text-dark mt-1" id="valTotalTerrestre">R$ 0,00</h4>
+                            </div>
+                            <div class="rounded-circle p-3 bg-light text-terrestre fs-4">
+                                <i class="fas fa-car-side"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card card-resumo p-3 bg-white" style="border-color: #0d6efd;">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <small class="text-uppercase fw-bold text-aerea">Deslocamento Aéreo</small>
+                                <h4 class="fw-bold m-0 text-dark mt-1" id="valTotalAerea">R$ 0,00</h4>
+                            </div>
+                            <div class="rounded-circle p-3 bg-light text-aerea fs-4">
+                                <i class="fas fa-plane"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card card-resumo p-3 bg-white" style="border-color: #ffc107;">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <small class="text-uppercase fw-bold text-rodoviario">Deslocamento Rodoviário</small>
+                                <h4 class="fw-bold m-0 text-dark mt-1" id="valTotalRodoviario">R$ 0,00</h4>
+                            </div>
+                            <div class="rounded-circle p-3 bg-light text-rodoviario fs-4">
+                                <i class="fas fa-bus"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAINEL RECOLHÍVEL DE CADASTRO -->
+            <div class="card mb-3">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center py-2">
+                    <span><i class="fas fa-plus-circle text-info me-2"></i>Cadastrar Nova Diária / Passagem</span>
+                    <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#formDiariasCollapse">
+                        <i class="fas fa-chevron-down me-1"></i> Recolher / Expandir
+                    </button>
+                </div>
+                <div class="collapse show" id="formDiariasCollapse">
+                    <div class="card-body">
+                        <form onsubmit="salvarDiaria(event)">
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold">Mês</label>
+                                    <select id="selectMes" class="form-select form-select-sm" required>
+                                        <option value="">Selecione o Mês...</option>
+                                        <option value="Janeiro">Janeiro</option>
+                                        <option value="Fevereiro">Fevereiro</option>
+                                        <option value="Março">Março</option>
+                                        <option value="Abril">Abril</option>
+                                        <option value="Maio">Maio</option>
+                                        <option value="Junho">Junho</option>
+                                        <option value="Julho">Julho</option>
+                                        <option value="Agosto">Agosto</option>
+                                        <option value="Setembro">Setembro</option>
+                                        <option value="Outubro">Outubro</option>
+                                        <option value="Novembro">Novembro</option>
+                                        <option value="Dezembro">Dezembro</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold">Tipo de Deslocamento</label>
+                                    <select id="selectTipoDeslocamento" class="form-select form-select-sm" required>
+                                        <option value="">Selecione o Tipo...</option>
+                                        <option value="Terrestre" class="text-terrestre fw-bold">Terrestre (Verde)</option>
+                                        <option value="Aérea" class="text-aerea fw-bold">Aérea (Azul)</option>
+                                        <option value="Rodoviário" class="text-rodoviario fw-bold">Rodoviário (Amarelo)</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold">Valor (R$)</label>
+                                    <input type="number" step="0.01" min="0" id="inputValor" class="form-control form-control-sm" placeholder="0,00" required>
+                                </div>
+                                <div class="col-md-12 text-end">
+                                    <button type="submit" class="btn btn-sm btn-success px-4"><i class="fas fa-save me-1"></i> Salvar Registro</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAINEL DE PESQUISA E TABELA PLANILHA -->
+            <div class="card">
+                <div class="card-header bg-light d-flex flex-wrap justify-content-between align-items-center gap-2 py-2">
+                    <span class="fw-bold"><i class="fas fa-table me-2"></i> Planilha de Diárias e Passagens</span>
+                    
+                    <!-- FILTROS DE PESQUISA -->
+                    <div class="d-flex flex-wrap gap-2">
+                        <select id="buscaMes" class="form-select form-select-sm" style="width: 180px;" onchange="filtrarTabela()">
+                            <option value="">Todos os Meses</option>
+                            <option value="Janeiro">Janeiro</option>
+                            <option value="Fevereiro">Fevereiro</option>
+                            <option value="Março">Março</option>
+                            <option value="Abril">Abril</option>
+                            <option value="Maio">Maio</option>
+                            <option value="Junho">Junho</option>
+                            <option value="Julho">Julho</option>
+                            <option value="Agosto">Agosto</option>
+                            <option value="Setembro">Setembro</option>
+                            <option value="Outubro">Outubro</option>
+                            <option value="Novembro">Novembro</option>
+                            <option value="Dezembro">Dezembro</option>
+                        </select>
+
+                        <select id="buscaTipo" class="form-select form-select-sm" style="width: 210px;" onchange="filtrarTabela()">
+                            <option value="">Todos os Tipos</option>
+                            <option value="Terrestre" class="text-terrestre fw-bold">Terrestre</option>
+                            <option value="Aérea" class="text-aerea fw-bold">Aérea</option>
+                            <option value="Rodoviário" class="text-rodoviario fw-bold">Rodoviário</option>
+                        </select>
+
+                        <button class="btn btn-sm btn-outline-secondary" onclick="limparFiltros()"><i class="fas fa-eraser"></i> Limpar Filtros</button>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover align-middle table-docs mb-0">
+                            <thead>
+                                <tr>
+                                    <th style="width: 80px;">#</th>
+                                    <th>Mês</th>
+                                    <th>Tipo de Deslocamento</th>
+                                    <th>Valor (R$)</th>
+                                    <th style="width: 80px;">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbodyDiarias"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RODAPÉ ASSINADO -->
+            <footer class="footer">
+                SICAGE - Sistema de Controle Administrativo da GEAPO.<br>
+                ⓒ 2026 Desenvolvido por [Ingrid/Gabriela].
+            </footer>
+        </div>
+    </div>
+
+    <!-- Scripts Bootstrap e Lógica JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let anoAtual = 2026;
+
+        let diariasDados = JSON.parse(localStorage.getItem('geapo_diarias_passagens')) || [
+            {
+                id: 1,
+                ano: 2026,
+                mes: 'Janeiro',
+                tipo: 'Terrestre',
+                valor: 1250.00
+            },
+            {
+                id: 2,
+                ano: 2026,
+                mes: 'Fevereiro',
+                tipo: 'Aérea',
+                valor: 3400.50
+            },
+            {
+                id: 3,
+                ano: 2026,
+                mes: 'Março',
+                tipo: 'Rodoviário',
+                valor: 680.00
+            }
+        ];
+
+        document.addEventListener("DOMContentLoaded", function() {
+            renderizarModulo();
+        });
+
+        function salvarStorage() {
+            localStorage.setItem('geapo_diarias_passagens', JSON.stringify(diariasDados));
+        }
+
+        function trocarAno(novoAno) {
+            if(novoAno) {
+                anoAtual = parseInt(novoAno);
+                renderizarModulo();
+            }
+        }
+
+        function salvarDiaria(event) {
+            event.preventDefault();
+
+            const novoId = diariasDados.length > 0 ? Math.max(...diariasDados.map(d => d.id)) + 1 : 1;
+
+            const novaDiaria = {
+                id: novoId,
+                ano: anoAtual,
+                mes: document.getElementById('selectMes').value,
+                tipo: document.getElementById('selectTipoDeslocamento').value,
+                valor: parseFloat(document.getElementById('inputValor').value) || 0
+            };
+
+            diariasDados.push(novaDiaria);
+            salvarStorage();
+
+            event.target.reset();
+            renderizarModulo();
+        }
+
+        function excluirDiaria(id) {
+            if(confirm("Deseja realmente excluir este registro?")) {
+                diariasDados = diariasDados.filter(d => d.id !== id);
+                salvarStorage();
+                renderizarModulo();
+            }
+        }
+
+        function formatarMoeda(val) {
+            return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        }
+
+        function formatarEstiloTipo(tipo) {
+            switch(tipo) {
+                case 'Terrestre':
+                    return `<span class="fw-bold text-terrestre"><i class="fas fa-car-side me-1"></i> Terrestre</span>`;
+                case 'Aérea':
+                    return `<span class="fw-bold text-aerea"><i class="fas fa-plane me-1"></i> Aérea</span>`;
+                case 'Rodoviário':
+                    return `<span class="fw-bold text-rodoviario"><i class="fas fa-bus me-1"></i> Rodoviário</span>`;
+                default:
+                    return tipo;
+            }
+        }
+
+        function calcularTotaisPainel() {
+            const doAno = diariasDados.filter(d => d.ano === anoAtual);
+
+            const soma = (tipo) => doAno
+                .filter(d => d.tipo === tipo)
+                .reduce((acc, item) => acc + (item.valor || 0), 0);
+
+            document.getElementById('valTotalTerrestre').innerText = formatarMoeda(soma('Terrestre'));
+            document.getElementById('valTotalAerea').innerText = formatarMoeda(soma('Aérea'));
+            document.getElementById('valTotalRodoviario').innerText = formatarMoeda(soma('Rodoviário'));
+        }
+
+        function renderizarModulo() {
+            calcularTotaisPainel();
+            filtrarTabela();
+        }
+
+        function filtrarTabela() {
+            const mesFiltro = document.getElementById('buscaMes').value;
+            const tipoFiltro = document.getElementById('buscaTipo').value;
+
+            const tbody = document.getElementById('tbodyDiarias');
+            tbody.innerHTML = '';
+
+            const filtrados = diariasDados.filter(d => {
+                const bateAno = d.ano === anoAtual;
+                const bateMes = !mesFiltro || d.mes === mesFiltro;
+                const bateTipo = !tipoFiltro || d.tipo === tipoFiltro;
+                return bateAno && bateMes && bateTipo;
+            });
+
+            if(filtrados.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted p-4">Nenhum registro encontrado para os filtros selecionados.</td></tr>`;
+                return;
+            }
+
+            filtrados.forEach((d, index) => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="text-center text-muted">${index + 1}</td>
+                        <td class="fw-bold text-center">${d.mes}</td>
+                        <td class="text-center">${formatarEstiloTipo(d.tipo)}</td>
+                        <td class="fw-bold text-end text-dark">${formatarMoeda(d.valor)}</td>
+                        <td class="text-center">
+                            <button class="btn btn-sm btn-outline-danger" onclick="excluirDiaria(${d.id})" title="Excluir Registro">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function limparFiltros() {
+            document.getElementById('buscaMes').value = '';
+            document.getElementById('buscaTipo').value = '';
+            filtrarTabela();
+        }
+    </script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+      // Caso não exista a sessão gravada pelo index.html, redireciona o usuário para o Login
+      if (!sessionStorage.getItem('sicage_usuario')) {
+          alert("Acesso restrito! Por favor, realize o login primeiro na tela inicial.");
+          window.location.href = "index.html";
+      }
+  });
+</script>
+<!-- CÓDIGO DE PROTEÇÃO E MODO VISUALIZADOR -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const usuarioAtivo = sessionStorage.getItem('sicage_usuario');
+        const nivelAtivo = sessionStorage.getItem('sicage_nivel');
+
+        // 1. Se tentar entrar sem logar, manda de volta para o index.html
+        if (!usuarioAtivo) {
+            alert("Acesso restrito! Por favor, faça login na página inicial.");
+            window.location.href = "index.html";
+            return;
+        }
+
+        // 2. Se for Visualizador, bloqueia os botões da página atual
+        if (nivelAtivo === 'Visualizador') {
+            const elementos = document.querySelectorAll('button, input, select, textarea');
+
+            elementos.forEach(el => {
+                const eSidebar = el.closest('.sidebar');
+                const eExercicio = el.id === 'anoExercicio';
+                const eSair = el.getAttribute('onclick') && el.getAttribute('onclick').includes('fazerLogout');
+                const eLink = el.tagName === 'A' || el.classList.contains('btn-whatsapp') || el.classList.contains('btn-email');
+
+                if (!eSidebar && !eExercicio && !eSair && !eLink) {
+                    el.disabled = true;
+                    el.classList.add('disabled');
+                    el.style.pointerEvents = 'none';
+                    el.style.opacity = '0.6';
+                }
+            });
+        }
+    });
+
+    function fazerLogout() {
+        sessionStorage.removeItem('sicage_usuario');
+        sessionStorage.removeItem('sicage_nivel');
+        window.location.href = "index.html";
+    }
+</script>
+</body>
+</body>
+</html>

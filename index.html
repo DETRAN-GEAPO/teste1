@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DETRAN/GEAPO - Sistema Operacional</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome (Ícones) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            background-color: #f4f7f6;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* --- TELA DE LOGIN OVERLAY --- */
+        #loginOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .login-card {
+            width: 100%;
+            max-width: 400px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        /* ESTADO INICIAL DO SISTEMA */
+        #dashboard-screen {
+            display: none;
+        }
+        
+        /* --- ESTILOS DO PAINEL --- */
+        .sidebar {
+            height: 100vh;
+            background-color: #343a40;
+            color: white;
+            position: fixed;
+            width: 260px;
+            overflow-y: auto;
+        }
+        .sidebar::-webkit-scrollbar { width: 6px; }
+        .sidebar::-webkit-scrollbar-thumb { background-color: #6c757d; border-radius: 4px; }
+        .sidebar .nav-link { color: #d1d8e0; margin-bottom: 5px; font-size: 0.9rem; }
+        .sidebar .nav-link:hover { background-color: #495057; color: white; border-radius: 5px; }
+        .sidebar i { width: 25px; text-align: center; margin-right: 10px; font-size: 1.1rem; }
+        
+        .main-content {
+            margin-left: 260px;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        .card-header {
+            background-color: transparent;
+            font-weight: bold;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        /* --- CALENDÁRIO INTERATIVO REDUZIDO --- */
+        .calendar-box { max-width: 320px; margin: 0 auto; }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 3px;
+            text-align: center;
+        }
+        .calendar-day-header { font-size: 0.75rem; font-weight: bold; color: #6c757d; padding: 3px 0; }
+        .calendar-day-cell {
+            font-size: 0.8rem;
+            padding: 6px 0;
+            background-color: #fff;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .calendar-day-cell:hover { background-color: #e2e6ea; }
+        .calendar-day-cell.holiday { background-color: #ffeeba; color: #856404; font-weight: bold; border-color: #ffdf7e; }
+        .calendar-day-cell.has-event { background-color: #0d6efd; color: #ffffff; font-weight: bold; border-color: #0a58ca; }
+        .calendar-day-cell.empty { background-color: transparent; border: none; cursor: default; }
+
+        .footer {
+            margin-top: auto;
+            text-align: center;
+            padding: 20px 0;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        .btn-whatsapp { color: #25D366; }
+        .btn-email { color: #EA4335; }
+    </style>
+</head>
+<body>
+
+    <!-- TELA DE LOGIN OVERLAY -->
+    <div id="loginOverlay">
+        <div class="card login-card bg-white p-4">
+            <div class="text-center mb-4">
+                <h4 class="fw-bold text-primary mb-1">SICAGE</h4>
+                <small class="text-muted">Sistema de Controle Administrativo GEAPO</small>
+            </div>
+
+            <div id="loginAlert" class="alert alert-danger d-none py-2 small text-center" role="alert">
+                Usuário ou senha incorretos!
+            </div>
+
+            <form onsubmit="fazerLogin(event)">
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Usuário</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-user text-secondary"></i></span>
+                        <input type="text" id="loginUsuario" class="form-control" placeholder="Digite seu usuário" required autofocus>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label small fw-bold">Senha</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-lock text-secondary"></i></span>
+                        <input type="password" id="loginSenha" class="form-control" placeholder="Digite sua senha" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 fw-bold">
+                    <i class="fas fa-sign-in-alt me-2"></i>Acessar Sistema
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- TELA DO SISTEMA (DASHBOARD DIRETO) -->
+    <div id="dashboard-screen">
+        <!-- MENU LATERAL -->
+        <nav class="sidebar p-3">
+            <div class="text-center mb-4 mt-2">
+                <h5 class="text-white m-0">DETRAN/GEAPO</h5>
+                <small class="text-secondary">Apoio Operacional</small>
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item"><a class="nav-link active fw-bold text-white" href="index.html"><i class="fas fa-chart-line text-info"></i> Painel Geral</a></li>
+                <li class="nav-item"><a class="nav-link" href="geapo.html"><i class="fas fa-building text-primary"></i> GEAPO Institucional</a></li>
+                <li class="nav-item"><a class="nav-link" href="contrato.html"><i class="fas fa-file-signature text-warning"></i> Contrato Geral/Orbenk</a></li>
+                <li class="nav-item"><a class="nav-link" href="ateste.html"><i class="fas fa-check-double text-success"></i> Ateste Serviço/Orbenk</a></li>
+                <li class="nav-item"><a class="nav-link" href="sgpe.html"><i class="fas fa-folder-open text-danger"></i> Controle SGPE</a></li>
+                <li class="nav-item"><a class="nav-link" href="oficios.html"><i class="fas fa-envelope-open-text text-info"></i> Ofícios/Despachos</a></li>
+                <li class="nav-item"><a class="nav-link" href="processos.html"><i class="fas fa-balance-scale text-primary"></i> Processos Jurídicos</a></li>
+                <li class="nav-item"><a class="nav-link" href="frota.html"><i class="fas fa-car text-secondary"></i> Frota e Multas</a></li>
+                <li class="nav-item"><a class="nav-link" href="compras.html"><i class="fas fa-shopping-cart text-success"></i> Compras e CPESC</a></li>
+                <li class="nav-item"><a class="nav-link" href="diarias.html"><i class="fas fa-plane text-info"></i> Diárias e Passagem</a></li>
+                <li class="nav-item"><a class="nav-link" href="efetivo.html"><i class="fas fa-users text-warning"></i> Efetivo</a></li>
+                <li class="nav-item"><a class="nav-link" href="agenda.html"><i class="fas fa-calendar-alt text-danger"></i> Agenda e Prazos</a></li>
+                <li class="nav-item"><a class="nav-link" href="agencias.html"><i class="fas fa-map-marker-alt text-primary"></i> Agências</a></li>
+                <li class="nav-item"><a class="nav-link" href="portarias.html"><i class="fas fa-file-alt text-secondary"></i> Portarias</a></li>
+                <li class="nav-item"><a class="nav-link" href="leis.html"><i class="fas fa-gavel text-warning"></i> Leis e Instruções</a></li>
+                <li class="nav-item"><a class="nav-link" href="manuais.html"><i class="fas fa-book text-success"></i> Manuais/Funções</a></li>
+                <li class="nav-item"><a class="nav-link" href="relatorios.html"><i class="fas fa-chart-pie text-info"></i> Relatorios Gerenciais</a></li>
+            </ul>
+        </nav>
+
+        <!-- CONTEÚDO PRINCIPAL -->
+        <div class="main-content">
+            
+            <!-- CABEÇALHO DO SISTEMA -->
+            <div class="d-flex justify-content-between align-items-center mb-4 pt-2">
+                <h3 class="m-0">Painel Geral</h3>
+                <div class="d-flex align-items-center gap-3">
+                    
+                    <!-- Exercício Anual Infinito (Campo numérico sem limites) -->
+                    <div class="input-group input-group-sm" style="width: 170px;">
+                        <span class="input-group-text bg-light fw-bold"><i class="fas fa-calendar-alt me-1"></i> Exer.</span>
+                        <input type="number" id="anoExercicio" class="form-control fw-bold text-primary" value="2026" min="1900" max="2100" onchange="sincronizarAnoExercicio(this.value)">
+                    </div>
+
+                    <span class="border-start ps-3"><i class="fas fa-user-circle text-primary"></i> <strong id="lblUsuarioAtivo">GEAPO</strong></span>
+                    
+                    <button class="btn btn-sm btn-warning fw-bold d-none" id="btnAdmin" data-bs-toggle="modal" data-bs-target="#modalUsuarios">
+                        <i class="fas fa-users-cog"></i> Gerenciar Usuários
+                    </button>
+
+                    <button class="btn btn-sm btn-outline-danger" onclick="fazerLogout()">
+                        <i class="fas fa-sign-out-alt"></i> Sair
+                    </button>
+                </div>
+            </div>
+
+            <!-- CARDS DE MÉTRICAS -->
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="card bg-danger text-white">
+                        <div class="card-body d-flex align-items-center"><i class="fas fa-exclamation-triangle fa-3x me-3"></i><div><h5 class="card-title m-0">Prazos Críticos</h5><h2>3</h2></div></div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-warning text-dark">
+                        <div class="card-body d-flex align-items-center"><i class="fas fa-file-invoice-dollar fa-3x me-3"></i><div><h5 class="card-title m-0">Multas a Indicar</h5><h2>12</h2></div></div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-info text-white">
+                        <div class="card-body d-flex align-items-center"><i class="fas fa-file-signature fa-3x me-3"></i><div><h5 class="card-title m-0">Contratos a Vencer</h5><h2>2</h2></div></div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-success text-white">
+                        <div class="card-body d-flex align-items-center"><i class="fas fa-calendar-check fa-3x me-3"></i><div><h5 class="card-title m-0">Compromissos Hoje</h5><h2>5</h2></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ALERTAS E ANIVERSÁRIOS -->
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card h-100">
+                        <div class="card-header"><i class="fas fa-bell text-warning"></i> Alertas do Sistema & Próximos Compromissos</div>
+                        <div class="card-body">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">Reunião de alinhamento com a Orbenk <span class="badge bg-primary rounded-pill">Amanhã, 10h</span></li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">Entrega de relatórios CPESC <span class="badge bg-danger rounded-pill">Faltam 2 dias</span></li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">Revisão de frota regional <span class="badge bg-secondary rounded-pill">18/09</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-header"><i class="fas fa-birthday-cake text-danger"></i> Próximos Aniversários</div>
+                        <div class="card-body">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                    <span><strong>João Silva</strong> (Amanhã)</span>
+                                    <div>
+                                        <a href="https://wa.me/?text=Feliz Aniversário João! Em nome da GEAPO - DETRAN/SC, desejamos muita paz, saúde e sucesso!" target="_blank" class="btn-whatsapp fs-5 me-2"><i class="fab fa-whatsapp"></i></a>
+                                        <a href="mailto:joao@email.com?subject=Feliz Aniversário!" class="btn-email fs-5"><i class="fas fa-envelope"></i></a>
+                                    </div>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                    <span><strong>Maria Souza</strong> (20/09)</span>
+                                    <div>
+                                        <a href="https://wa.me/?text=Feliz Aniversário Maria! Em nome da GEAPO - DETRAN/SC..." target="_blank" class="btn-whatsapp fs-5 me-2"><i class="fab fa-whatsapp"></i></a>
+                                        <a href="mailto:maria@email.com?subject=Feliz Aniversário!" class="btn-email fs-5"><i class="fas fa-envelope"></i></a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CALENDÁRIO MENOR NAVEGÁVEL & EVENTOS -->
+            <div class="row mt-3">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <span><i class="fas fa-calendar-alt text-primary"></i> Calendário Operacional & Eventos</span>
+                            <span class="small text-muted"><span class="badge bg-warning text-dark me-1">Feriado</span> <span class="badge bg-primary me-1">Evento Cadastrado</span></span>
+                        </div>
+                        <div class="card-body row align-items-start">
+                            
+                            <!-- Widget do Calendário Compacto -->
+                            <div class="col-md-5 border-end">
+                                <div class="calendar-box">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <button class="btn btn-sm btn-outline-secondary" onclick="mudarMes(-1)"><i class="fas fa-chevron-left"></i></button>
+                                        <h6 class="m-0 fw-bold text-dark" id="calHeaderTitle">Setembro 2026</h6>
+                                        <button class="btn btn-sm btn-outline-secondary" onclick="mudarMes(1)"><i class="fas fa-chevron-right"></i></button>
+                                    </div>
+                                    <div class="calendar-grid">
+                                        <div class="calendar-day-header">Dom</div><div class="calendar-day-header">Seg</div><div class="calendar-day-header">Ter</div><div class="calendar-day-header">Qua</div><div class="calendar-day-header">Qui</div><div class="calendar-day-header">Sex</div><div class="calendar-day-header">Sáb</div>
+                                    </div>
+                                    <div class="calendar-grid" id="calendarDaysGrid">
+                                        <!-- Gerado dinamicamente via JavaScript -->
+                                    </div>
+                                    <p class="text-muted small text-center mt-2 mb-0"><em>Clique em um dia para cadastrar um evento.</em></p>
+                                </div>
+                            </div>
+
+                            <!-- Lista de Compromissos do Mês Selecionado -->
+                            <div class="col-md-7 ps-md-4 mt-3 mt-md-0">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h6 class="m-0 text-secondary">Eventos e Feriados do Mês</h6>
+                                    <button class="btn btn-sm btn-success" onclick="abrirModalEvento()"><i class="fas fa-plus"></i> Novo Compromisso</button>
+                                </div>
+                                <ul class="list-group list-group-flush" id="listaEventosMes">
+                                    <!-- Lista dinâmica -->
+                                </ul>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RODAPÉ -->
+            <footer class="footer">
+                SICAGE - Sistema de Controle Administrativo da GEAPO.<br>
+                ⓒ 2026 Desenvolvido por [Ingrid/Gabriela].
+            </footer>
+        </div>
+    </div>
+
+    <!-- MODAL PARA CADASTRAR EVENTOS / COMPROMISSOS -->
+    <div class="modal fade" id="modalEvento" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title"><i class="fas fa-calendar-plus"></i> Novo Evento / Compromisso</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="formEvento">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Data</label>
+                            <input type="date" id="eventoData" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Descrição do Evento/Compromisso</label>
+                            <input type="text" id="eventoTitulo" class="form-control" placeholder="Ex: Reunião GEAPO com Diretoria" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-save"></i> Salvar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE CADASTRO E ALTERAÇÃO DE SENHA DE USUÁRIOS (ADMIN) -->
+    <div class="modal fade" id="modalUsuarios" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title"><i class="fas fa-users-cog"></i> Gestão de Usuários & Alteração de Senhas</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Formulário para Criar Usuário -->
+                    <form id="formNovoUsuario" class="row g-3 mb-4 p-3 bg-light rounded border">
+                        <h6 class="fw-bold mb-1">Cadastrar Novo Usuário</h6>
+                        <div class="col-md-3"><input type="text" id="novoNome" class="form-control form-control-sm" placeholder="Nome Completo" required></div>
+                        <div class="col-md-3"><input type="text" id="novoLogin" class="form-control form-control-sm" placeholder="Login" required></div>
+                        <div class="col-md-2"><input type="password" id="novaSenha" class="form-control form-control-sm" placeholder="Senha" required></div>
+                        <div class="col-md-2">
+                            <select id="novoNivel" class="form-select form-select-sm">
+    <option value="Operador">Operador (Acesso Total)</option>
+    <option value="Gestor">Gestor (Acesso Total + Admin)</option>
+    <option value="Visualizador">Somente Visualização</option>
+</select>
+                            </select>
+                        </div>
+                        <div class="col-md-2"><button type="submit" class="btn btn-sm btn-success w-100"><i class="fas fa-plus"></i> Salvar</button></div>
+                    </form>
+
+                    <h6 class="fw-bold">Usuários Cadastrados</h6>
+                    <table class="table table-sm table-striped align-middle">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nome</th>
+                                <th>Login</th>
+                                <th>Nível</th>
+                                <th class="text-center">Alterar Senha</th>
+                                <th class="text-center">Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaUsuariosBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts Bootstrap e Lógica da Aplicação -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // --- BASE DE USUÁRIOS COM SUPORTE A ALTERAÇÃO DE SENHA (LOCALSTORAGE) ---
+        const usuariosPadrao = [
+            { id: 1, nome: 'Gestor 1', login: 'gestor 1', senha: '1126', nivel: 'Gestor' },
+            { id: 2, nome: 'Gestor 2', login: 'gestor 2', senha: '2226', nivel: 'Gestor' },
+            { id: 3, nome: 'Acesso Geral', login: 'geral', senha: '3326', nivel: 'Operador' }
+        ];
+
+        let usuarios = JSON.parse(localStorage.getItem('sicage_usuarios_db')) || usuariosPadrao;
+
+        function salvarUsuariosDB() {
+            localStorage.setItem('sicage_usuarios_db', JSON.stringify(usuarios));
+        }
+
+        // --- SISTEMA DE AUTENTICAÇÃO E CONTROLE DE SESSÃO ---
+        function fazerLogin(e) {
+            e.preventDefault();
+            const userIngressado = document.getElementById('loginUsuario').value.trim().toLowerCase();
+            const passIngressado = document.getElementById('loginSenha').value.trim();
+            const alertElem = document.getElementById('loginAlert');
+
+            // Busca pelo login (aceita variação 'gestor 1' ou 'gestor1')
+            const usuarioEncontrado = usuarios.find(u => {
+                const loginNormalizado = u.login.toLowerCase().replace(/\s+/g, '');
+                const entradaNormalizada = userIngressado.replace(/\s+/g, '');
+                return (u.login.toLowerCase() === userIngressado || loginNormalizado === entradaNormalizada) && u.senha === passIngressado;
+            });
+
+            if (usuarioEncontrado) {
+                sessionStorage.setItem('sicage_usuario', usuarioEncontrado.nome);
+                sessionStorage.setItem('sicage_nivel', usuarioEncontrado.nivel);
+                alertElem.classList.add('d-none');
+                liberarAcesso();
+            } else {
+                alertElem.classList.remove('d-none');
+            }
+        }
+
+        function liberarAcesso() {
+            const usuarioAtivo = sessionStorage.getItem('sicage_usuario');
+            const nivelAtivo = sessionStorage.getItem('sicage_nivel');
+
+            if (usuarioAtivo) {
+                document.getElementById('loginOverlay').style.display = 'none';
+                document.getElementById('dashboard-screen').style.display = 'block';
+                document.getElementById('lblUsuarioAtivo').innerText = usuarioAtivo;
+
+                // Exibe o botão de gerenciar usuários apenas para Gestores
+                if (nivelAtivo === 'Gestor' || nivelAtivo === 'Administrador') {
+                    document.getElementById('btnAdmin').classList.remove('d-none');
+                } else {
+                    document.getElementById('btnAdmin').classList.add('d-none');
+                }
+
+                renderizarCalendario();
+                renderizarUsuarios();
+                aplicarRestricoesAcesso();
+            }
+        }
+
+        // --- MODO SOMENTE VISUALIZAÇÃO ---
+        function aplicarRestricoesAcesso() {
+            const nivelAtivo = sessionStorage.getItem('sicage_nivel');
+
+            if (nivelAtivo === 'Visualizador') {
+                // Seleciona todos os botões e inputs interativos
+                const elementos = document.querySelectorAll('button, input, select, textarea');
+
+                elementos.forEach(el => {
+                    // MANTÉM PERMITIDOS: Sidebar (menu), Logout (Sair) e Ano de Exercício
+                    const ehSidebar = el.closest('.sidebar') !== null;
+                    const ehBotaoSair = el.getAttribute('onclick') === 'fazerLogout()';
+                    const ehAnoExercicio = el.id === 'anoExercicio';
+                    const ehLinkAnexo = el.tagName === 'A'; // Links normais permanecem funcionais
+
+                    if (!ehSidebar && !ehBotaoSair && !ehAnoExercicio && !ehLinkAnexo) {
+                        el.disabled = true;
+                        el.style.pointerEvents = 'none';
+                        el.style.opacity = '0.5';
+                    }
+                });
+            }
+        }
+
+        function fazerLogout() {
+            sessionStorage.removeItem('sicage_usuario');
+            sessionStorage.removeItem('sicage_nivel');
+            window.location.reload();
+        }
+
+        // --- ESTADO GLOBAL DO SISTEMA ---
+        let calDataAtual = new Date(2026, 8, 1); // Setembro 2026
+        let eventosCadastrados = [
+            { data: '2026-09-07', titulo: 'Independência do Brasil (Feriado)', tipo: 'feriado' },
+            { data: '2026-09-18', titulo: 'Revisão da Frota Regional', tipo: 'evento' },
+            { data: '2026-10-12', titulo: 'Nossa Sra. Aparecida (Feriado)', tipo: 'feriado' },
+            { data: '2026-11-02', titulo: 'Finados (Feriado)', tipo: 'feriado' },
+            { data: '2026-11-15', titulo: 'Proclamação da República (Feriado)', tipo: 'feriado' },
+            { data: '2026-12-25', titulo: 'Natal (Feriado)', tipo: 'feriado' }
+        ];
+
+        const nomesMeses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+        let bsModalEvento;
+
+        document.addEventListener("DOMContentLoaded", function() {
+            bsModalEvento = new bootstrap.Modal(document.getElementById('modalEvento'));
+            salvarUsuariosDB();
+
+            // Verifica se a sessão já está logada
+            if (sessionStorage.getItem('sicage_usuario')) {
+                liberarAcesso();
+            }
+        });
+
+        // --- SINCRONIZAÇÃO DO EXERCÍCIO ANUAL INFINITO ---
+        function sincronizarAnoExercicio(novoAno) {
+            if(novoAno) {
+                calDataAtual.setFullYear(parseInt(novoAno));
+                renderizarCalendario();
+            }
+        }
+
+        // --- LÓGICA DO CALENDÁRIO NAVEGÁVEL REDUZIDO ---
+        function mudarMes(delta) {
+            calDataAtual.setMonth(calDataAtual.getMonth() + delta);
+            document.getElementById('anoExercicio').value = calDataAtual.getFullYear();
+            renderizarCalendario();
+        }
+
+        function renderizarCalendario() {
+            const ano = calDataAtual.getFullYear();
+            const mes = calDataAtual.getMonth();
+
+            document.getElementById('calHeaderTitle').innerText = `${nomesMeses[mes]} ${ano}`;
+
+            const primeiroDiaSemana = new Date(ano, mes, 1).getDay();
+            const totalDiasMes = new Date(ano, mes + 1, 0).getDate();
+            const gridContainer = document.getElementById('calendarDaysGrid');
+            gridContainer.innerHTML = '';
+
+            for (let i = 0; i < primeiroDiaSemana; i++) {
+                gridContainer.innerHTML += `<div class="calendar-day-cell empty"></div>`;
+            }
+
+            for (let dia = 1; dia <= totalDiasMes; dia++) {
+                const mesFmt = String(mes + 1).padStart(2, '0');
+                const diaFmt = String(dia).padStart(2, '0');
+                const dataStr = `${ano}-${mesFmt}-${diaFmt}`;
+
+                const eventoDia = eventosCadastrados.filter(e => e.data === dataStr);
+                
+                let classeEstilo = "";
+                if (eventoDia.some(e => e.tipo === 'feriado')) {
+                    classeEstilo = "holiday";
+                } else if (eventoDia.some(e => e.tipo === 'evento')) {
+                    classeEstilo = "has-event";
+                }
+
+                gridContainer.innerHTML += `<div class="calendar-day-cell ${classeEstilo}" onclick="selecionarDiaData('${dataStr}')" title="${eventoDia.map(e => e.titulo).join(', ')}">${dia}</div>`;
+            }
+
+            renderizarListaEventosMes(ano, mes);
+        }
+
+        function renderizarListaEventosMes(ano, mes) {
+            const lista = document.getElementById('listaEventosMes');
+            lista.innerHTML = '';
+
+            const mesFmt = String(mes + 1).padStart(2, '0');
+            const prefixoData = `${ano}-${mesFmt}`;
+            const eventosDoMes = eventosCadastrados.filter(e => e.data.startsWith(prefixoData));
+
+            if(eventosDoMes.length === 0) {
+                lista.innerHTML = `<li class="list-group-item text-muted small fs-6">Nenhum compromisso ou feriado registrado para este mês.</li>`;
+                return;
+            }
+
+            eventosDoMes.sort((a,b) => a.data.localeCompare(b.data)).forEach(ev => {
+                const diaFormatado = ev.data.split('-')[2];
+                const badge = ev.tipo === 'feriado' ? `<span class="badge bg-warning text-dark">Feriado</span>` : `<span class="badge bg-primary">Compromisso</span>`;
+                lista.innerHTML += `
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong class="me-2">${diaFormatado}/${mesFmt}:</strong> ${ev.titulo}
+                        </div>
+                        ${badge}
+                    </li>
+                `;
+            });
+        }
+
+        function selecionarDiaData(dataStr) {
+            if (sessionStorage.getItem('sicage_nivel') === 'Visualizador') return;
+            document.getElementById('eventoData').value = dataStr;
+            bsModalEvento.show();
+        }
+
+        function abrirModalEvento() {
+            if (sessionStorage.getItem('sicage_nivel') === 'Visualizador') return;
+            const hojeStr = new Date().toISOString().split('T')[0];
+            document.getElementById('eventoData').value = hojeStr;
+            bsModalEvento.show();
+        }
+
+        document.getElementById('formEvento').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const dataVal = document.getElementById('eventoData').value;
+            const tituloVal = document.getElementById('eventoTitulo').value;
+
+            eventosCadastrados.push({ data: dataVal, titulo: tituloVal, tipo: 'evento' });
+            this.reset();
+            bsModalEvento.hide();
+            
+            const partesData = dataVal.split('-');
+            calDataAtual = new Date(parseInt(partesData[0]), parseInt(partesData[1]) - 1, 1);
+            document.getElementById('anoExercicio').value = partesData[0];
+            renderizarCalendario();
+        });
+
+        // --- GESTÃO DE USUÁRIOS E ALTERAÇÃO DE SENHA (ADMIN) ---
+        function renderizarUsuarios() {
+            const tbody = document.getElementById('tabelaUsuariosBody');
+            if(!tbody) return;
+            
+            tbody.innerHTML = '';
+            usuarios.forEach(u => {
+                let btnExcluir = `<button class="btn btn-sm btn-danger" onclick="excluirUsuario(${u.id})"><i class="fas fa-trash-alt"></i></button>`;
+
+                let badgeNivel = 'bg-info';
+                if(u.nivel === 'Gestor') badgeNivel = 'bg-dark';
+                if(u.nivel === 'Visualizador') badgeNivel = 'bg-secondary';
+
+                tbody.innerHTML += `<tr>
+                    <td>${u.id}</td>
+                    <td>${u.nome}</td>
+                    <td><strong>${u.login}</strong></td>
+                    <td><span class="badge ${badgeNivel}">${u.nivel}</span></td>
+                    <td class="text-center">
+                        <button class="btn btn-sm btn-outline-primary" onclick="alterarSenhaUsuario(${u.id})">
+                            <i class="fas fa-key me-1"></i> Mudar Senha
+                        </button>
+                    </td>
+                    <td class="text-center">${btnExcluir}</td>
+                </tr>`;
+            });
+        }
+
+        document.getElementById('formNovoUsuario').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const nome = document.getElementById('novoNome').value.trim();
+            const login = document.getElementById('novoLogin').value.trim();
+            const senha = document.getElementById('novaSenha').value.trim();
+            const nivel = document.getElementById('novoNivel').value;
+            
+            const novoId = usuarios.length > 0 ? Math.max(...usuarios.map(u => u.id)) + 1 : 1;
+            
+            usuarios.push({ id: novoId, nome: nome, login: login, senha: senha, nivel: nivel });
+            salvarUsuariosDB();
+            this.reset();
+            renderizarUsuarios();
+            alert("Novo usuário cadastrado com sucesso!");
+        });
+
+        function alterarSenhaUsuario(id) {
+            const idx = usuarios.findIndex(u => u.id === id);
+            if (idx !== -1) {
+                const novaSenhaIngressada = prompt(`Digite a nova senha para o usuário "${usuarios[idx].nome}":`);
+                if (novaSenhaIngressada && novaSenhaIngressada.trim() !== "") {
+                    usuarios[idx].senha = novaSenhaIngressada.trim();
+                    salvarUsuariosDB();
+                    alert("Senha alterada com sucesso!");
+                }
+            }
+        }
+
+        function excluirUsuario(id) {
+            if(confirm("Deseja realmente remover este usuário do sistema?")) {
+                usuarios = usuarios.filter(u => u.id !== id);
+                salvarUsuariosDB();
+                renderizarUsuarios();
+            }
+        }
+    </script>
+function aplicarModoVisualizacao() {
+    const nivelAtivo = sessionStorage.getItem('sicage_nivel');
+
+    // Se o usuário for do tipo "Visualizador", trava as ações da página
+    if (nivelAtivo === 'Visualizador') {
+        const elementos = document.querySelectorAll('button, input, select, textarea');
+
+        elementos.forEach(el => {
+            // PERMITE: Menu lateral, troca de ano (exercício), botão de sair e links
+            const eSidebar = el.closest('.sidebar');
+            const eExercicio = el.id === 'anoExercicio';
+            const eSair = el.getAttribute('onclick') && el.getAttribute('onclick').includes('fazerLogout');
+            const eLink = el.tagName === 'A' || el.classList.contains('btn-whatsapp') || el.classList.contains('btn-email');
+
+            // BLOQUEIA: Todo o resto (botões de salvar, excluir, novos cadastros)
+            if (!eSidebar && !eExercicio && !eSair && !eLink) {
+                el.disabled = true;
+                el.classList.add('disabled');
+                el.style.pointerEvents = 'none';
+                el.style.opacity = '0.6';
+            }
+        });
+    }
+}
+
+function liberarAcesso() {
+    const usuarioAtivo = sessionStorage.getItem('sicage_usuario');
+    const nivelAtivo = sessionStorage.getItem('sicage_nivel');
+
+    if (usuarioAtivo) {
+        document.getElementById('loginOverlay').style.display = 'none';
+        document.getElementById('dashboard-screen').style.display = 'block';
+        document.getElementById('lblUsuarioAtivo').innerText = usuarioAtivo;
+
+        if (nivelAtivo === 'Gestor' || nivelAtivo === 'Administrador') {
+            document.getElementById('btnAdmin').classList.remove('d-none');
+        } else {
+            document.getElementById('btnAdmin').classList.add('d-none');
+        }
+
+        // <<< ADICIONE ESTA LINHA AQUI >>>
+        aplicarModoVisualizacao();
+
+        renderizarCalendario();
+        renderizarUsuarios();
+    }
+}
+</body>
+</html>

@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DETRAN/GEAPO - Portarias</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome (Ícones) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            background-color: #f4f7f6;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        /* --- ESTILOS DO PAINEL LATERAL --- */
+        .sidebar {
+            height: 100vh;
+            background-color: #343a40;
+            color: white;
+            position: fixed;
+            width: 260px;
+            overflow-y: auto;
+            z-index: 100;
+        }
+        .sidebar::-webkit-scrollbar { width: 6px; }
+        .sidebar::-webkit-scrollbar-thumb { background-color: #6c757d; border-radius: 4px; }
+        .sidebar .nav-link { color: #d1d8e0; margin-bottom: 5px; font-size: 0.9rem; }
+        .sidebar .nav-link:hover { background-color: #495057; color: white; border-radius: 5px; }
+        .sidebar i { width: 25px; text-align: center; margin-right: 10px; font-size: 1.1rem; }
+        
+        .main-content {
+            margin-left: 260px;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        .card-header {
+            background-color: transparent;
+            font-weight: bold;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        /* --- CARDS INFORMATIVOS --- */
+        .card-kpi {
+            border-left: 5px solid;
+            transition: transform 0.2s;
+        }
+        .card-kpi:hover { transform: translateY(-3px); }
+
+        /* --- TABELA PLANILHA RESPONSIVA --- */
+        .table-responsive {
+            max-height: 550px;
+            overflow-y: auto;
+            overflow-x: auto;
+        }
+        .table-docs th, .table-docs td {
+            vertical-align: middle;
+            font-size: 0.85rem;
+            white-space: nowrap;
+        }
+        .table-docs th {
+            position: sticky;
+            top: 0;
+            background-color: #343a40;
+            color: white;
+            z-index: 10;
+            text-align: center;
+        }
+        .col-detalhes {
+            max-width: 220px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* FOOTER */
+        .footer {
+            margin-top: auto;
+            text-align: center;
+            padding: 20px 0;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="dashboard-screen">
+        <!-- MENU LATERAL DE NAVEGAÇÃO -->
+        <nav class="sidebar p-3">
+            <div class="text-center mb-4 mt-2">
+                <h5 class="text-white m-0">DETRAN/GEAPO</h5>
+                <small class="text-secondary">Apoio Operacional</small>
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item"><a class="nav-link" href="index.html"><i class="fas fa-chart-line text-info"></i> Painel Geral</a></li>
+                <li class="nav-item"><a class="nav-link" href="geapo.html"><i class="fas fa-building text-primary"></i> GEAPO Institucional</a></li>
+                <li class="nav-item"><a class="nav-link" href="contrato.html"><i class="fas fa-file-signature text-warning"></i> Contrato Geral/Orbenk</a></li>
+                <li class="nav-item"><a class="nav-link" href="ateste.html"><i class="fas fa-check-double text-success"></i> Ateste Serviço/Orbenk</a></li>
+                <li class="nav-item"><a class="nav-link" href="sgpe.html"><i class="fas fa-folder-open text-danger"></i> Controle SGPE</a></li>
+                <li class="nav-item"><a class="nav-link" href="oficios.html"><i class="fas fa-envelope-open-text text-info"></i> Ofícios/Despachos</a></li>
+                <li class="nav-item"><a class="nav-link" href="processos.html"><i class="fas fa-balance-scale text-primary"></i> Processos Jurídicos</a></li>
+                <li class="nav-item"><a class="nav-link" href="frota.html"><i class="fas fa-car text-secondary"></i> Frota e Multas</a></li>
+                <li class="nav-item"><a class="nav-link" href="compras.html"><i class="fas fa-shopping-cart text-success"></i> Compras e CPESC</a></li>
+                <li class="nav-item"><a class="nav-link" href="diarias.html"><i class="fas fa-plane text-info"></i> Diárias e Passagem</a></li>
+                <li class="nav-item"><a class="nav-link" href="efetivo.html"><i class="fas fa-users text-warning"></i> Efetivo</a></li>
+                <li class="nav-item"><a class="nav-link" href="agenda.html"><i class="fas fa-calendar-alt text-danger"></i> Agenda e Prazos</a></li>
+                <li class="nav-item"><a class="nav-link" href="agencias.html"><i class="fas fa-map-marker-alt text-primary"></i> Agências</a></li>
+                <li class="nav-item"><a class="nav-link active fw-bold text-white" href="portarias.html"><i class="fas fa-file-alt text-secondary"></i> Portarias</a></li>
+                <li class="nav-item"><a class="nav-link" href="leis.html"><i class="fas fa-gavel text-warning"></i> Leis e Instruções</a></li>
+                <li class="nav-item"><a class="nav-link" href="manuais.html"><i class="fas fa-book text-success"></i> Manuais/Funções</a></li>
+                <li class="nav-item"><a class="nav-link" href="relatorios.html"><i class="fas fa-chart-pie text-info"></i> Relatorios Gerenciais</a></li>
+            </ul>
+        </nav>
+
+        <!-- CONTEÚDO PRINCIPAL -->
+        <div class="main-content">
+            
+            <!-- CABEÇALHO DO MÓDULO -->
+            <div class="d-flex justify-content-between align-items-center mb-3 pt-2">
+                <div>
+                    <h3 class="m-0"><i class="fas fa-file-alt text-secondary me-2"></i>Gestão de Portarias e Atos Normativos</h3>
+                    <small class="text-muted">Mapeamento, publicação e controle de atos de nomeação, comissões e atos normativos</small>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                    <a href="https://portal.doe.sea.sc.gov.br/v2.44.07/#/portal/edicao/buscar-publicacao" target="_blank" class="btn btn-sm btn-outline-danger shadow-sm" title="Abrir Busca de Publicações do Diário Oficial de SC">
+                        <i class="fas fa-newspaper me-1"></i> Diário Oficial SC <i class="fas fa-external-link-alt ms-1 small"></i>
+                    </a>
+                    <span class="ps-2"><i class="fas fa-user-circle"></i> <strong>GEAPO (Admin)</strong></span>
+                </div>
+            </div>
+
+            <!-- CARDS DE RESUMO DE PORTARIAS -->
+            <div class="row g-3 mb-3">
+                <div class="col-md-3">
+                    <div class="card card-kpi p-3 bg-white" style="border-color: #6c757d;">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <small class="text-uppercase fw-bold text-secondary">Total de Publicações</small>
+                                <h3 class="fw-bold m-0 text-dark mt-1" id="kpiTotal">0</h3>
+                            </div>
+                            <div class="rounded-circle p-3 bg-light text-secondary fs-4">
+                                <i class="fas fa-file-invoice"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card card-kpi p-3 bg-white" style="border-color: #0d6efd;">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <small class="text-uppercase fw-bold text-primary">Atos de Nomeação</small>
+                                <h3 class="fw-bold m-0 text-dark mt-1" id="kpiNomeacao">0</h3>
+                            </div>
+                            <div class="rounded-circle p-3 bg-light text-primary fs-4">
+                                <i class="fas fa-user-plus"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card card-kpi p-3 bg-white" style="border-color: #198754;">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <small class="text-uppercase fw-bold text-success">Portarias de Resolve</small>
+                                <h3 class="fw-bold m-0 text-dark mt-1" id="kpiResolve">0</h3>
+                            </div>
+                            <div class="rounded-circle p-3 bg-light text-success fs-4">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card card-kpi p-3 bg-white" style="border-color: #ffc107;">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <small class="text-uppercase fw-bold text-warning">Editais e Termos</small>
+                                <h3 class="fw-bold m-0 text-dark mt-1" id="kpiEditaisTermos">0</h3>
+                            </div>
+                            <div class="rounded-circle p-3 bg-light text-warning fs-4">
+                                <i class="fas fa-scroll"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAINEL RECOLHÍVEL PARA CADASTRO DE PORTARIA -->
+            <div class="card mb-3">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center py-2">
+                    <span><i class="fas fa-plus-circle text-primary me-2"></i>Cadastrar Nova Portaria / Ato</span>
+                    <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#formPortariaCollapse">
+                        <i class="fas fa-chevron-down me-1"></i> Recolher / Expandir
+                    </button>
+                </div>
+                <div class="collapse" id="formPortariaCollapse">
+                    <div class="card-body">
+                        <form onsubmit="salvarPortaria(event)">
+                            <div class="row g-3">
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-bold">Data de Publicação</label>
+                                    <input type="date" id="inputDataPublicacao" class="form-control form-control-sm" required>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-bold">Edição</label>
+                                    <input type="text" id="inputEdicao" class="form-control form-control-sm" placeholder="Ex: DOE 22.100 ou N° Edição" required>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-bold">N° da Publicação / Portaria</label>
+                                    <input type="text" id="inputPublicacao" class="form-control form-control-sm" placeholder="Ex: Portaria N° 124/2026" required>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-bold">Categoria</label>
+                                    <select id="selectCategoria" class="form-select form-select-sm" required>
+                                        <option value="">Selecione...</option>
+                                        <option value="Administrativa">Administrativa</option>
+                                        <option value="Pessoal / RH">Pessoal / RH</option>
+                                        <option value="Operacional">Operacional</option>
+                                        <option value="Normativa">Normativa</option>
+                                        <option value="Disciplinar">Disciplinar</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold">Assunto</label>
+                                    <select id="selectAssunto" class="form-select form-select-sm" onchange="toggleOutroAssunto()" required>
+                                        <option value="">Selecione...</option>
+                                        <option value="Ato de Nomeação">Ato de Nomeação</option>
+                                        <option value="Portaria de Resolve">Portaria de Resolve</option>
+                                        <option value="Termo">Termo</option>
+                                        <option value="Edital">Edital</option>
+                                        <option value="Outro">Outro (Especificar)</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4" id="divOutroAssunto" style="display: none;">
+                                    <label class="form-label small fw-bold text-danger">Especificar Outro Assunto</label>
+                                    <input type="text" id="inputOutroAssunto" class="form-control form-control-sm" placeholder="Informe o tipo de ato...">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold">Servidor Referenciado</label>
+                                    <input type="text" id="inputServidor" class="form-control form-control-sm" placeholder="Nome do servidor (se aplicável)">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold">Comissão / Grupo de Trabalho</label>
+                                    <input type="text" id="inputComissao" class="form-control form-control-sm" placeholder="Ex: Comissão de Processo Disciplinar">
+                                </div>
+                                <div class="col-md-8">
+                                    <label class="form-label small fw-bold">Anexar Documentos / Link</label>
+                                    <input type="text" id="inputAnexo" class="form-control form-control-sm" placeholder="URL do documento no SGPE/Drive ou nome do arquivo">
+                                </div>
+                                <div class="col-md-12">
+                                    <label class="form-label small fw-bold">Detalhamento / Síntese do Ato</label>
+                                    <textarea id="inputDetalhamento" class="form-control form-control-sm" rows="2" placeholder="Resumo do conteúdo ou efeitos da portaria..." required></textarea>
+                                </div>
+                                <div class="col-md-12 text-end">
+                                    <button type="submit" class="btn btn-sm btn-success px-4"><i class="fas fa-save me-1"></i> Cadastrar Portaria</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAINEL CENTRAL DE CONSULTA DE PORTARIAS (PLANILHA) -->
+            <div class="card">
+                <div class="card-header bg-light d-flex flex-wrap justify-content-between align-items-center gap-2 py-2">
+                    <span class="fw-bold"><i class="fas fa-table me-2"></i> Relação Geral de Portarias e Atos (Planilha)</span>
+                    
+                    <!-- FILTROS DE PESQUISA -->
+                    <div class="d-flex flex-wrap gap-2">
+                        <input type="text" id="buscaTexto" class="form-control form-control-sm" style="width: 200px;" placeholder="Buscar edição, ato, servidor..." oninput="filtrarPortarias()">
+                        <select id="buscaAssunto" class="form-select form-select-sm" style="width: 170px;" onchange="filtrarPortarias()">
+                            <option value="">Todos os Assuntos</option>
+                            <option value="Ato de Nomeação">Ato de Nomeação</option>
+                            <option value="Portaria de Resolve">Portaria de Resolve</option>
+                            <option value="Termo">Termo</option>
+                            <option value="Edital">Edital</option>
+                            <option value="Outro">Outros Atos</option>
+                        </select>
+                        <select id="buscaCategoria" class="form-select form-select-sm" style="width: 160px;" onchange="filtrarPortarias()">
+                            <option value="">Todas Categorias</option>
+                            <option value="Administrativa">Administrativa</option>
+                            <option value="Pessoal / RH">Pessoal / RH</option>
+                            <option value="Operacional">Operacional</option>
+                            <option value="Normativa">Normativa</option>
+                            <option value="Disciplinar">Disciplinar</option>
+                        </select>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="limparFiltros()"><i class="fas fa-eraser"></i> Limpar</button>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover align-middle table-docs mb-0">
+                            <thead>
+                                <tr>
+                                    <th style="width: 100px;">Data Pub.</th>
+                                    <th>Edição</th>
+                                    <th>Publicação / Portaria</th>
+                                    <th>Categoria</th>
+                                    <th>Assunto</th>
+                                    <th>Detalhamento</th>
+                                    <th>Servidor</th>
+                                    <th>Comissão</th>
+                                    <th>Documento / Anexo</th>
+                                    <th style="width: 70px;">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbodyPortarias"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RODAPÉ ASSINADO -->
+            <footer class="footer">
+                SICAGE - Sistema de Controle Administrativo da GEAPO.<br>
+                ⓒ 2026 Desenvolvido por [Ingrid/Gabriela].
+            </footer>
+        </div>
+    </div>
+
+    <!-- Scripts Bootstrap e Lógica JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let portariasDados = JSON.parse(localStorage.getItem('geapo_portarias')) || [
+            {
+                id: 1,
+                dataPublicacao: '2026-02-10',
+                edicao: 'DOE 22.105',
+                publicacao: 'Portaria N° 088/2026',
+                categoria: 'Pessoal / RH',
+                assunto: 'Ato de Nomeação',
+                detalhamento: 'Nomeação do Servidor Ricardo para a função de Gerente Operacional de Frota.',
+                servidor: 'Ricardo Santos',
+                comissao: '-',
+                anexo: 'https://portal.doe.sea.sc.gov.br'
+            },
+            {
+                id: 2,
+                dataPublicacao: '2026-03-01',
+                edicao: 'DOE 22.120',
+                publicacao: 'Portaria N° 104/2026',
+                categoria: 'Operacional',
+                assunto: 'Portaria de Resolve',
+                detalhamento: 'Designação da comissão especial para inventário anual de bens móveis da GEAPO.',
+                servidor: 'Ana Paula / Marcos',
+                comissao: 'Comissão de Inventário 2026',
+                anexo: 'Portaria_104_2026.pdf'
+            },
+            {
+                id: 3,
+                dataPublicacao: '2026-03-15',
+                edicao: 'DOE 22.132',
+                publicacao: 'Edital N° 002/2026',
+                categoria: 'Administrativa',
+                assunto: 'Edital',
+                detalhamento: 'Edital de Chamamento Público para credenciamento de estagiários de graduação.',
+                servidor: '-',
+                comissao: 'Comissão de Seleção',
+                anexo: 'Edital_002_2026.pdf'
+            }
+        ];
+
+        document.addEventListener("DOMContentLoaded", function() {
+            renderizarModulo();
+        });
+
+        function salvarStorage() {
+            localStorage.setItem('geapo_portarias', JSON.stringify(portariasDados));
+        }
+
+        function toggleOutroAssunto() {
+            const select = document.getElementById('selectAssunto');
+            const divOutro = document.getElementById('divOutroAssunto');
+            const inputOutro = document.getElementById('inputOutroAssunto');
+
+            if (select.value === 'Outro') {
+                divOutro.style.display = 'block';
+                inputOutro.setAttribute('required', 'required');
+            } else {
+                divOutro.style.display = 'none';
+                inputOutro.removeAttribute('required');
+                inputOutro.value = '';
+            }
+        }
+
+        function salvarPortaria(event) {
+            event.preventDefault();
+
+            const novoId = portariasDados.length > 0 ? Math.max(...portariasDados.map(p => p.id)) + 1 : 1;
+
+            const assuntoSel = document.getElementById('selectAssunto').value;
+            let assuntoFinal = assuntoSel;
+
+            if (assuntoSel === 'Outro') {
+                const espec = document.getElementById('inputOutroAssunto').value.trim();
+                assuntoFinal = espec ? `Outro: ${espec}` : 'Outro';
+            }
+
+            const novaPortaria = {
+                id: novoId,
+                dataPublicacao: document.getElementById('inputDataPublicacao').value,
+                edicao: document.getElementById('inputEdicao').value,
+                publicacao: document.getElementById('inputPublicacao').value,
+                categoria: document.getElementById('selectCategoria').value,
+                assunto: assuntoFinal,
+                detalhamento: document.getElementById('inputDetalhamento').value,
+                servidor: document.getElementById('inputServidor').value || '-',
+                comissao: document.getElementById('inputComissao').value || '-',
+                anexo: document.getElementById('inputAnexo').value || '-'
+            };
+
+            portariasDados.push(novaPortaria);
+            salvarStorage();
+
+            event.target.reset();
+            toggleOutroAssunto();
+            renderizarModulo();
+
+            // Recolher formulário após salvar
+            const collapseElem = document.getElementById('formPortariaCollapse');
+            const bsCollapse = bootstrap.Collapse.getInstance(collapseElem);
+            if(bsCollapse) bsCollapse.hide();
+        }
+
+        function excluirPortaria(id) {
+            if(confirm("Deseja realmente excluir esta portaria da planilha?")) {
+                portariasDados = portariasDados.filter(p => p.id !== id);
+                salvarStorage();
+                renderizarModulo();
+            }
+        }
+
+        function calcularMetricas() {
+            document.getElementById('kpiTotal').innerText = portariasDados.length;
+            document.getElementById('kpiNomeacao').innerText = portariasDados.filter(p => p.assunto.includes('Ato de Nomeação')).length;
+            document.getElementById('kpiResolve').innerText = portariasDados.filter(p => p.assunto.includes('Portaria de Resolve')).length;
+            document.getElementById('kpiEditaisTermos').innerText = portariasDados.filter(p => p.assunto.includes('Edital') || p.assunto.includes('Termo')).length;
+        }
+
+        function formatarData(dataStr) {
+            if(!dataStr) return '-';
+            const partes = dataStr.split('-');
+            if(partes.length !== 3) return dataStr;
+            return `${partes[2]}/${partes[1]}/${partes[0]}`;
+        }
+
+        function renderizarModulo() {
+            calcularMetricas();
+            filtrarPortarias();
+        }
+
+        function filtrarPortarias() {
+            const txt = document.getElementById('buscaTexto').value.toLowerCase().trim();
+            const assFiltro = document.getElementById('buscaAssunto').value;
+            const catFiltro = document.getElementById('buscaCategoria').value;
+
+            const tbody = document.getElementById('tbodyPortarias');
+            tbody.innerHTML = '';
+
+            const filtradas = portariasDados.filter(p => {
+                const bateTexto = !txt || 
+                    p.edicao.toLowerCase().includes(txt) || 
+                    p.publicacao.toLowerCase().includes(txt) || 
+                    p.servidor.toLowerCase().includes(txt) ||
+                    p.detalhamento.toLowerCase().includes(txt) ||
+                    p.comissao.toLowerCase().includes(txt);
+
+                const bateAssunto = !assFiltro || 
+                    (assFiltro === 'Outro' ? (!['Ato de Nomeação', 'Portaria de Resolve', 'Termo', 'Edital'].includes(p.assunto)) : p.assunto.includes(assFiltro));
+                
+                const bateCategoria = !catFiltro || p.categoria === catFiltro;
+
+                return bateTexto && bateAssunto && bateCategoria;
+            });
+
+            if(filtradas.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="10" class="text-center text-muted p-4">Nenhuma portaria ou ato cadastrado encontrado para os critérios informados.</td></tr>`;
+                return;
+            }
+
+            // Ordena da publicação mais recente para a mais antiga
+            filtradas.sort((a,b) => new Date(b.dataPublicacao) - new Date(a.dataPublicacao));
+
+            filtradas.forEach(p => {
+                let badgeClass = 'bg-secondary';
+                if(p.assunto.includes('Ato de Nomeação')) badgeClass = 'bg-primary';
+                else if(p.assunto.includes('Portaria de Resolve')) badgeClass = 'bg-success';
+                else if(p.assunto.includes('Termo')) badgeClass = 'bg-info text-dark';
+                else if(p.assunto.includes('Edital')) badgeClass = 'bg-warning text-dark';
+
+                let anexoLink = '-';
+                if(p.anexo && p.anexo !== '-') {
+                    if(p.anexo.startsWith('http')) {
+                        anexoLink = `<a href="${p.anexo}" target="_blank" class="btn btn-sm btn-outline-primary py-0 px-2" title="Abrir link externo"><i class="fas fa-external-link-alt"></i> Visualizar</a>`;
+                    } else {
+                        anexoLink = `<span class="badge bg-light text-dark border" title="${p.anexo}"><i class="fas fa-paperclip text-muted me-1"></i>${p.anexo}</span>`;
+                    }
+                }
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="text-center fw-bold text-dark">${formatarData(p.dataPublicacao)}</td>
+                        <td class="text-center"><span class="badge bg-dark">${p.edicao}</span></td>
+                        <td class="fw-bold text-primary">${p.publicacao}</td>
+                        <td class="text-center"><span class="badge bg-light text-dark border">${p.categoria}</span></td>
+                        <td class="text-center"><span class="badge ${badgeClass}">${p.assunto}</span></td>
+                        <td class="col-detalhes" title="${p.detalhamento}">${p.detalhamento}</td>
+                        <td>${p.servidor}</td>
+                        <td>${p.comissao}</td>
+                        <td class="text-center">${anexoLink}</td>
+                        <td class="text-center">
+                            <button class="btn btn-sm btn-outline-danger" onclick="excluirPortaria(${p.id})" title="Excluir Portaria">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function limparFiltros() {
+            document.getElementById('buscaTexto').value = '';
+            document.getElementById('buscaAssunto').value = '';
+            document.getElementById('buscaCategoria').value = '';
+            filtrarPortarias();
+        }
+    </script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+      // Caso não exista a sessão gravada pelo index.html, redireciona o usuário para o Login
+      if (!sessionStorage.getItem('sicage_usuario')) {
+          alert("Acesso restrito! Por favor, realize o login primeiro na tela inicial.");
+          window.location.href = "index.html";
+      }
+  });
+</script>
+<!-- CÓDIGO DE PROTEÇÃO E MODO VISUALIZADOR -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const usuarioAtivo = sessionStorage.getItem('sicage_usuario');
+        const nivelAtivo = sessionStorage.getItem('sicage_nivel');
+
+        // 1. Se tentar entrar sem logar, manda de volta para o index.html
+        if (!usuarioAtivo) {
+            alert("Acesso restrito! Por favor, faça login na página inicial.");
+            window.location.href = "index.html";
+            return;
+        }
+
+        // 2. Se for Visualizador, bloqueia os botões da página atual
+        if (nivelAtivo === 'Visualizador') {
+            const elementos = document.querySelectorAll('button, input, select, textarea');
+
+            elementos.forEach(el => {
+                const eSidebar = el.closest('.sidebar');
+                const eExercicio = el.id === 'anoExercicio';
+                const eSair = el.getAttribute('onclick') && el.getAttribute('onclick').includes('fazerLogout');
+                const eLink = el.tagName === 'A' || el.classList.contains('btn-whatsapp') || el.classList.contains('btn-email');
+
+                if (!eSidebar && !eExercicio && !eSair && !eLink) {
+                    el.disabled = true;
+                    el.classList.add('disabled');
+                    el.style.pointerEvents = 'none';
+                    el.style.opacity = '0.6';
+                }
+            });
+        }
+    });
+
+    function fazerLogout() {
+        sessionStorage.removeItem('sicage_usuario');
+        sessionStorage.removeItem('sicage_nivel');
+        window.location.href = "index.html";
+    }
+</script>
+</body>
+</body>
+</html>

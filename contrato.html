@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DETRAN/GEAPO - Contrato Geral e Orbenk</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome (Ícones) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            background-color: #f4f7f6;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .sidebar {
+            height: 100vh;
+            background-color: #343a40;
+            color: white;
+            position: fixed;
+            width: 260px;
+            overflow-y: auto;
+        }
+        .sidebar::-webkit-scrollbar { width: 6px; }
+        .sidebar::-webkit-scrollbar-thumb { background-color: #6c757d; border-radius: 4px; }
+        .sidebar .nav-link { color: #d1d8e0; margin-bottom: 5px; font-size: 0.9rem; }
+        .sidebar .nav-link:hover { background-color: #495057; color: white; border-radius: 5px; }
+        .sidebar .nav-link.active { background-color: #0d6efd; color: white; font-weight: bold; border-radius: 5px; }
+        .sidebar i { width: 25px; text-align: center; margin-right: 10px; font-size: 1.1rem; }
+        
+        .main-content {
+            margin-left: 260px;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        .card-header {
+            background-color: transparent;
+            font-weight: bold;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .footer {
+            margin-top: auto;
+            text-align: center;
+            padding: 20px 0;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        .badge-vencimento {
+            font-size: 0.8rem;
+            padding: 5px 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVEGAÇÃO PRINCIPAL (MENU LATERAL) -->
+    <nav class="sidebar p-3">
+        <div class="text-center mb-4 mt-2">
+            <h5 class="text-white m-0">DETRAN/GEAPO</h5>
+            <small class="text-secondary">Gerência de Apoio Operacional</small>
+        </div>
+        <ul class="nav flex-column">
+            <li class="nav-item"><a class="nav-link" href="index.html"><i class="fas fa-chart-line text-info"></i> Painel Geral</a></li>
+            <li class="nav-item"><a class="nav-link" href="geapo.html"><i class="fas fa-building text-white"></i> GEAPO Institucional</a></li>
+            <li class="nav-item"><a class="nav-link active" href="contrato.html"><i class="fas fa-file-signature text-warning"></i> Contrato Geral e Orbenk</a></li>
+            <li class="nav-item"><a class="nav-link" href="ateste.html"><i class="fas fa-check-double text-success"></i> Ateste de Serviço/Orbenk</a></li>
+            <li class="nav-item"><a class="nav-link" href="sgpe.html"><i class="fas fa-folder-open text-danger"></i> Controle SGPE</a></li>
+            <li class="nav-item"><a class="nav-link" href="oficios.html"><i class="fas fa-envelope-open-text text-info"></i> Ofícios/Despachos</a></li>
+            <li class="nav-item"><a class="nav-link" href="processos.html"><i class="fas fa-balance-scale text-primary"></i> Processos Jurídicos</a></li>
+            <li class="nav-item"><a class="nav-link" href="frota.html"><i class="fas fa-car text-secondary"></i> Frota e Multas</a></li>
+            <li class="nav-item"><a class="nav-link" href="compras.html"><i class="fas fa-shopping-cart text-success"></i> Compras e CPESC</a></li>
+            <li class="nav-item"><a class="nav-link" href="diarias.html"><i class="fas fa-plane text-info"></i> Diárias e Passagem Aérea</a></li>
+            <li class="nav-item"><a class="nav-link" href="efetivo.html"><i class="fas fa-users text-warning"></i> Efetivo</a></li>
+            <li class="nav-item"><a class="nav-link" href="agenda.html"><i class="fas fa-calendar-alt text-danger"></i> Agenda e Prazos</a></li>
+            <li class="nav-item"><a class="nav-link" href="agencias.html"><i class="fas fa-map-marker-alt text-primary"></i> Agências</a></li>
+            <li class="nav-item"><a class="nav-link" href="portarias.html"><i class="fas fa-file-alt text-secondary"></i> Portarias</a></li>
+            <li class="nav-item"><a class="nav-link" href="leis.html"><i class="fas fa-gavel text-warning"></i> Leis e Instruções</a></li>
+            <li class="nav-item"><a class="nav-link" href="manuais.html"><i class="fas fa-book text-success"></i> Manuais/Funções</a></li>
+            <li class="nav-item"><a class="nav-link" href="relatorios.html"><i class="fas fa-chart-pie text-info"></i> Relatórios Gerenciais</a></li>
+        </ul>
+    </nav>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <div class="main-content">
+        
+        <!-- CABEÇALHO SUPERIOR -->
+        <div class="d-flex justify-content-between align-items-center mb-4 pt-2">
+            <div>
+                <h3 class="m-0">Gestão de Contratos</h3>
+                <small class="text-muted">Contratos Gerais & Contrato Terceirizado Orbenk</small>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <div class="input-group input-group-sm" style="width: 170px;">
+                    <span class="input-group-text bg-light fw-bold"><i class="fas fa-calendar-alt me-1"></i> Exer.</span>
+                    <input type="number" id="anoExercicio" class="form-control fw-bold text-primary" value="2026" min="1900" max="2100">
+                </div>
+                <span class="border-start ps-3"><i class="fas fa-user-circle"></i> GEAPO (Admin)</span>
+                <a href="index.html" class="btn btn-sm btn-outline-danger"><i class="fas fa-sign-out-alt"></i> Sair</a>
+            </div>
+        </div>
+
+        <!-- PAINEL FINANCEIRO DE MÉTRICAS COM BUSCA E FILTROS PERTINENTES -->
+        <div class="card bg-white p-3 mb-4">
+            <div class="row g-3 align-items-center">
+                <!-- Campo de Pesquisa Geral -->
+                <div class="col-md-4">
+                    <label class="form-label fw-bold text-secondary mb-1"><i class="fas fa-search me-1"></i> Pesquisar Contrato</label>
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text bg-light"><i class="fas fa-filter"></i></span>
+                        <input type="text" id="campoPesquisa" class="form-control" placeholder="Buscar por SGPE, Nº Contrato ou Empresa..." oninput="filtrarEBuscarContratos()">
+                    </div>
+                </div>
+
+                <!-- Filtro de Mês de Referência -->
+                <div class="col-md-2">
+                    <label class="form-label fw-bold text-secondary mb-1"><i class="fas fa-calendar me-1"></i> Mês Vencimento</label>
+                    <select id="filtroMes" class="form-select form-select-sm" onchange="filtrarEBuscarContratos()">
+                        <option value="todos" selected>Todos os Meses</option>
+                        <option value="01">Janeiro</option>
+                        <option value="02">Fevereiro</option>
+                        <option value="03">Março</option>
+                        <option value="04">Abril</option>
+                        <option value="05">Maio</option>
+                        <option value="06">Junho</option>
+                        <option value="07">Julho</option>
+                        <option value="08">Agosto</option>
+                        <option value="09">Setembro</option>
+                        <option value="10">Outubro</option>
+                        <option value="11">Novembro</option>
+                        <option value="12">Dezembro</option>
+                    </select>
+                </div>
+
+                <!-- Filtro Pertinente: Status Contratual -->
+                <div class="col-md-2">
+                    <label class="form-label fw-bold text-secondary mb-1"><i class="fas fa-info-circle me-1"></i> Status Contratual</label>
+                    <select id="filtroStatus" class="form-select form-select-sm" onchange="filtrarEBuscarContratos()">
+                        <option value="todos" selected>Todos os Status</option>
+                        <option value="Em vigência">Em vigência</option>
+                        <option value="Em renovação">Em renovação</option>
+                        <option value="Revisar">Revisar</option>
+                        <option value="Para vencer">Para vencer</option>
+                    </select>
+                </div>
+
+                <!-- Métricas Rápidas -->
+                <div class="col-md-2 text-center border-start">
+                    <small class="text-muted d-block">Valor Mensal (Filtrado)</small>
+                    <h5 class="text-primary fw-bold m-0" id="valTotalMensal">R$ 0,00</h5>
+                </div>
+                <div class="col-md-2 text-center border-start">
+                    <small class="text-muted d-block">Soma Total Acumulada</small>
+                    <h5 class="text-success fw-bold m-0" id="valTotalAnual">R$ 0,00</h5>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-md-12 text-end">
+                    <button class="btn btn-sm btn-warning fw-bold" onclick="verificarAlertasEmail()"><i class="fas fa-envelope me-1"></i> Alertar GEAPO sobre Vencimentos (<span id="qtdAlertas">0</span>)</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ABAS DE NAVEGAÇÃO ENTRE CONTRATOS GERAIS E ORBENK -->
+        <ul class="nav nav-tabs mb-3" id="tabContratos" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active fw-bold" id="gerais-tab" data-bs-toggle="tab" data-bs-target="#gerais" type="button" role="tab"><i class="fas fa-file-contract me-2"></i>Contratos Gerais</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link fw-bold" id="orbenk-tab" data-bs-toggle="tab" data-bs-target="#orbenk" type="button" role="tab"><i class="fas fa-building text-warning me-2"></i>Contratos Orbenk</button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="tabContratosContent">
+            
+            <!-- ABA 1: CONTRATOS GERAIS -->
+            <div class="tab-pane fade show active" id="gerais" role="tabpanel">
+                <div class="card">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                        <span><i class="fas fa-list text-primary me-2"></i> Planilha de Contratos Gerais</span>
+                        <button class="btn btn-sm btn-primary" onclick="abrirModalCadastro('Geral')"><i class="fas fa-plus"></i> Novo Contrato Geral</button>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover table-striped align-middle m-0" style="font-size: 0.82rem;">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Nº Contrato</th>
+                                        <th>Objeto</th>
+                                        <th>Município</th>
+                                        <th>Empresa Contratada</th>
+                                        <th>Situação</th>
+                                        <th>Status</th>
+                                        <th>Vigência Fim</th>
+                                        <th>Dias Venc.</th>
+                                        <th>Nº SGPE</th>
+                                        <th>Último Valor Mês</th>
+                                        <th>Valor Total (Soma Automática)</th>
+                                        <th>Fiscal / Suplente</th>
+                                        <th>Obs.</th>
+                                        <th class="text-center">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbodyGerais"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ABA 2: CONTRATOS ORBENK -->
+            <div class="tab-pane fade" id="orbenk" role="tabpanel">
+                <div class="card">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                        <span><i class="fas fa-list text-warning me-2"></i> Planilha de Contratos Orbenk</span>
+                        <button class="btn btn-sm btn-warning fw-bold" onclick="abrirModalCadastro('Orbenk')"><i class="fas fa-plus"></i> Novo Contrato Orbenk</button>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover table-striped align-middle m-0" style="font-size: 0.82rem;">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Nº Contrato</th>
+                                        <th>Objeto</th>
+                                        <th>Município</th>
+                                        <th>Empresa Contratada</th>
+                                        <th>Situação</th>
+                                        <th>Status</th>
+                                        <th>Vigência Fim</th>
+                                        <th>Dias Venc.</th>
+                                        <th>Nº SGPE</th>
+                                        <th>Último Valor Mês</th>
+                                        <th>Valor Total (Soma Automática)</th>
+                                        <th>Fiscal / Suplente</th>
+                                        <th>Obs.</th>
+                                        <th class="text-center">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbodyOrbenk"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- RODAPÉ -->
+        <footer class="footer">
+            SICAGE - Sistema de Controle Administrativo da GEAPO.<br>
+            ⓒ 2026 Desenvolvido por [Ingrid/Gabriela].
+        </footer>
+    </div>
+
+    <!-- MODAL DE CADASTRO DE CONTRATOS -->
+    <div class="modal fade" id="modalContrato" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white" id="modalHeaderBg">
+                    <h5 class="modal-title" id="modalTitulo"><i class="fas fa-file-signature me-2"></i> Cadastrar Contrato</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="formContrato">
+                    <input type="hidden" id="cTipoTarget" value="Geral">
+                    <div class="modal-body">
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <label class="form-label">Nº do Contrato</label>
+                                <input type="text" id="cNumero" class="form-control" placeholder="Ex: 045/2026" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Empresa Contratada</label>
+                                <input type="text" id="cEmpresa" class="form-control" placeholder="Ex: Orbenk Serviços ou Empresa X" required>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Município</label>
+                                <input type="text" id="cMunicipio" class="form-control" placeholder="Ex: Florianópolis" required>
+                            </div>
+
+                            <div class="col-md-12">
+                                <label class="form-label">Objeto do Contrato</label>
+                                <input type="text" id="cObjeto" class="form-control" placeholder="Ex: Prestação de serviços terceirizados" required>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">Situação</label>
+                                <select id="cSituacao" class="form-select" required>
+                                    <option value="Novo">Novo</option>
+                                    <option value="Renovação">Renovação</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Status</label>
+                                <select id="cStatus" class="form-select" required>
+                                    <option value="Em vigência">Em vigência</option>
+                                    <option value="Em renovação">Em renovação</option>
+                                    <option value="Revisar">Revisar</option>
+                                    <option value="Para vencer">Para vencer</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Data Final Vigência</label>
+                                <input type="date" id="cVigenciaFim" class="form-control" required>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Nº SGPE</label>
+                                <input type="text" id="cSgpe" class="form-control" placeholder="DETRAN 12345/2026" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Valor do Primeiro Mês (R$)</label>
+                                <input type="number" step="0.01" id="cValorInicial" class="form-control" placeholder="0.00" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Mês do Lançamento Inicial</label>
+                                <input type="month" id="cMesInicial" class="form-control" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Fiscal Gestor</label>
+                                <input type="text" id="cFiscal" class="form-control" placeholder="Ex: Carlos Santos" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Suplente Fiscal</label>
+                                <input type="text" id="cSuplente" class="form-control" placeholder="Ex: Maria Oliveira" required>
+                            </div>
+
+                            <div class="col-md-12">
+                                <label class="form-label">Observações (Obs.)</label>
+                                <textarea id="cObs" class="form-control" rows="2" placeholder="Observações e apontamentos contratuais..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-save"></i> Salvar Contrato</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PARA ADICIONAR VALORES MENSAIS (SOMATÓRIO AUTOMÁTICO) -->
+    <div class="modal fade" id="modalLancamentoMensal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title"><i class="fas fa-plus-circle me-2"></i> Lançar Valor Mensal</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="formLancamentoMensal">
+                    <input type="hidden" id="lContratoId">
+                    <input type="hidden" id="lContratoTipo">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Contrato Selecionado</label>
+                            <input type="text" id="lContratoInfo" class="form-control bg-light" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Mês do Lançamento</label>
+                            <input type="month" id="lMesRef" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Valor do Mês (R$)</label>
+                            <input type="number" step="0.01" id="lValorMes" class="form-control" placeholder="0.00" required>
+                        </div>
+                        <div class="alert alert-info py-2 small">
+                            <i class="fas fa-calculator me-1"></i> Este valor será adicionado ao histórico do contrato e o <strong>Valor Total</strong> será atualizado automaticamente na planilha.
+                        </div>
+                        
+                        <div class="border-top pt-2">
+                            <h6 class="fw-bold fs-7">Histórico de Valores Já Lançados:</h6>
+                            <ul class="list-group list-group-flush small" id="listaHistoricoValores" style="max-height: 150px; overflow-y: auto;">
+                                <!-- Itens carregados via JS -->
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Fechar</button>
+                        <button type="submit" class="btn btn-success btn-sm"><i class="fas fa-plus me-1"></i> Adicionar ao Total</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL ALERTA E-MAIL VENCIMENTOS -->
+    <div class="modal fade" id="modalAlertasEmail" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title"><i class="fas fa-envelope-open-text me-2"></i> Encaminhar Alerta para GEAPO (Vencimentos)</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info py-2">
+                        <strong>Destinatário Oficial:</strong> geapo@detran.sc.gov.br<br>
+                        <strong>Prazos Notificados:</strong> Contratos a vencer em 180, 120, 90, 60 e 30 dias.
+                    </div>
+                    <div id="listaContratosNotificar" class="list-group">
+                        <!-- Lista dinâmica -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-success btn-sm" onclick="dispararEmailNotificacao()"><i class="fas fa-paper-plane me-1"></i> Disparar Notificação por E-mail</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts Bootstrap e Lógica dos Contratos -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // BANCO DE DADOS LOCAL COM SUPORTE A LANÇAMENTOS MENSAIS E SOMATÓRIO AUTOMÁTICO
+        let contratosGerais = [
+            {
+                id: 1,
+                numero: '012/2025',
+                objeto: 'Manutenção Predial Preventiva e Corretiva',
+                municipio: 'Florianópolis',
+                empresa: 'Engenharia Silva Ltda',
+                situacao: 'Renovação',
+                status: 'Em vigência',
+                vigenciaFim: '2026-10-15',
+                sgpe: 'DETRAN 4512/2025',
+                fiscal: 'Roberto Alves',
+                suplente: 'Ingrid Silva',
+                obs: 'Aguardando reajuste de IGPM.',
+                lancamentos: [
+                    { mes: '2026-01', valor: 15000.00 },
+                    { mes: '2026-02', valor: 15000.00 },
+                    { mes: '2026-03', valor: 15500.00 }
+                ]
+            },
+            {
+                id: 2,
+                numero: '088/2024',
+                objeto: 'Locação de Impressoras e Suporte',
+                municipio: 'Joinville',
+                empresa: 'TechPrint Soluções',
+                situacao: 'Novo',
+                status: 'Para vencer',
+                vigenciaFim: '2026-11-13',
+                sgpe: 'DETRAN 8810/2024',
+                fiscal: 'Gabriela Souza',
+                suplente: 'Lucas Prado',
+                obs: 'Notificado para termo aditivo.',
+                lancamentos: [
+                    { mes: '2026-01', valor: 8500.00 },
+                    { mes: '2026-02', valor: 8500.00 }
+                ]
+            }
+        ];
+
+        let contratosOrbenk = [
+            {
+                id: 101,
+                numero: '001/ORB/2024',
+                objeto: 'Prestação de Serviços Terceirizados de Apontamento e Portaria',
+                municipio: 'Florianópolis',
+                empresa: 'Orbenk Administração e Serviços LTDA',
+                situacao: 'Renovação',
+                status: 'Em renovação',
+                vigenciaFim: '2026-12-13',
+                sgpe: 'DETRAN 9901/2024',
+                fiscal: 'Roberto Alves',
+                suplente: 'Gabriela Souza',
+                obs: 'Repactuação de convenção coletiva em análise.',
+                lancamentos: [
+                    { mes: '2026-01', valor: 145000.00 },
+                    { mes: '2026-02', valor: 145000.00 }
+                ]
+            }
+        ];
+
+        const modalContratoBS = new bootstrap.Modal(document.getElementById('modalContrato'));
+        const modalLancamentoBS = new bootstrap.Modal(document.getElementById('modalLancamentoMensal'));
+        const modalAlertasEmailBS = new bootstrap.Modal(document.getElementById('modalAlertasEmail'));
+
+        document.addEventListener("DOMContentLoaded", function() {
+            filtrarEBuscarContratos();
+        });
+
+        // CÁLCULO DE DIAS REGRESSIVOS
+        function calcularDiasParaVencer(dataFimStr) {
+            const dataFim = new Date(dataFimStr + 'T00:00:00');
+            const dataHoje = new Date('2026-09-14T00:00:00');
+            const diffTempo = dataFim - dataHoje;
+            return Math.ceil(diffTempo / (1000 * 60 * 60 * 24));
+        }
+
+        // CÁLCULO DA SOMA AUTOMÁTICA DO CONTRATO
+        function calcularSomaTotalContrato(lancamentos) {
+            if (!lancamentos || lancamentos.length === 0) return 0;
+            return lancamentos.reduce((acc, l) => acc + parseFloat(l.valor || 0), 0);
+        }
+
+        function obterUltimoValorMes(lancamentos) {
+            if (!lancamentos || lancamentos.length === 0) return 0;
+            return lancamentos[lancamentos.length - 1].valor;
+        }
+
+        // RENDERIZAÇÃO COM BUSCA POR SGPE, Nº CONTRATO, EMPRESA E FILTROS
+        function filtrarEBuscarContratos() {
+            const termoBusca = document.getElementById('campoPesquisa').value.toLowerCase().trim();
+            const mesFiltro = document.getElementById('filtroMes').value;
+            const statusFiltro = document.getElementById('filtroStatus').value;
+
+            renderizarTabela('tbodyGerais', contratosGerais, 'Geral', termoBusca, mesFiltro, statusFiltro);
+            renderizarTabela('tbodyOrbenk', contratosOrbenk, 'Orbenk', termoBusca, mesFiltro, statusFiltro);
+            calcularMetricasGerais();
+        }
+
+        function renderizarTabela(elementId, lista, tipo, busca, mesFiltro, statusFiltro) {
+            const tbody = document.getElementById(elementId);
+            tbody.innerHTML = '';
+
+            lista.forEach(c => {
+                // Filtro 1: Busca por SGPE, Número ou Empresa
+                const atendeBusca = !busca || 
+                    c.sgpe.toLowerCase().includes(busca) || 
+                    c.numero.toLowerCase().includes(busca) || 
+                    c.empresa.toLowerCase().includes(busca);
+
+                // Filtro 2: Mês de Vencimento
+                const mesVenc = c.vigenciaFim.split('-')[1];
+                const atendeMes = (mesFiltro === 'todos' || mesVenc === mesFiltro);
+
+                // Filtro 3: Status
+                const atendeStatus = (statusFiltro === 'todos' || c.status === statusFiltro);
+
+                if (atendeBusca && atendeMes && atendeStatus) {
+                    const dias = calcularDiasParaVencer(c.vigenciaFim);
+                    const valorTotalAutom = calcularSomaTotalContrato(c.lancamentos);
+                    const ultimoValorMes = obterUltimoValorMes(c.lancamentos);
+
+                    let badgeClass = 'bg-success';
+                    if (dias <= 30) badgeClass = 'bg-danger';
+                    else if (dias <= 90) badgeClass = 'bg-warning text-dark';
+                    else if (dias <= 180) badgeClass = 'bg-info text-dark';
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td><strong>${c.numero}</strong></td>
+                            <td>${c.objeto}</td>
+                            <td>${c.municipio}</td>
+                            <td>${c.empresa}</td>
+                            <td><span class="badge bg-secondary">${c.situacao}</span></td>
+                            <td><span class="badge bg-light text-dark border">${c.status}</span></td>
+                            <td>${formatarData(c.vigenciaFim)}</td>
+                            <td><span class="badge ${badgeClass} badge-vencimento">${dias} dias</span></td>
+                            <td><small class="fw-bold text-dark">${c.sgpe}</small></td>
+                            <td class="text-nowrap font-monospace fw-bold text-primary">R$ ${ultimoValorMes.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+                            <td class="text-nowrap font-monospace fw-bold text-success">
+                                R$ ${valorTotalAutom.toLocaleString('pt-BR', {minimumFractionDigits: 2})}
+                                <button class="btn btn-sm btn-outline-success border-0 py-0 px-1 ms-1" onclick="abrirModalLancamento(${c.id}, '${tipo}')" title="Adicionar Valor Mensal para Somar"><i class="fas fa-plus-circle"></i></button>
+                            </td>
+                            <td><small>${c.fiscal} / ${c.suplente}</small></td>
+                            <td><small class="text-muted">${c.obs || '-'}</small></td>
+                            <td class="text-center">
+                                <button class="btn btn-sm btn-outline-danger border-0 py-0" onclick="excluirContrato(${c.id}, '${tipo}')" title="Excluir Contrato"><i class="fas fa-trash-alt"></i></button>
+                            </td>
+                        </tr>
+                    `;
+                }
+            });
+        }
+
+        // CÁLCULO DAS MÉTRICAS GERAIS
+        function calcularMetricasGerais() {
+            const todos = [...contratosGerais, ...contratosOrbenk];
+            let somaMensalGeral = 0;
+            let somaTotalAcumulada = 0;
+            let alertasCount = 0;
+
+            todos.forEach(c => {
+                somaMensalGeral += obterUltimoValorMes(c.lancamentos);
+                somaTotalAcumulada += calcularSomaTotalContrato(c.lancamentos);
+
+                const dias = calcularDiasParaVencer(c.vigenciaFim);
+                if ([180, 120, 90, 60, 30].includes(dias) || (dias <= 180 && dias > 0)) {
+                    alertasCount++;
+                }
+            });
+
+            document.getElementById('valTotalMensal').innerText = 'R$ ' + somaMensalGeral.toLocaleString('pt-BR', {minimumFractionDigits: 2});
+            document.getElementById('valTotalAnual').innerText = 'R$ ' + somaTotalAcumulada.toLocaleString('pt-BR', {minimumFractionDigits: 2});
+            document.getElementById('qtdAlertas').innerText = alertasCount;
+        }
+
+        // AUXILIARES
+        function formatarData(dataISO) {
+            if (!dataISO) return '-';
+            const [ano, mes, dia] = dataISO.split('-');
+            return `${dia}/${mes}/${ano}`;
+        }
+
+        // LANÇAMENTO MENSAL E SOMA AUTOMÁTICA
+        function abrirModalLancamento(id, tipo) {
+            const lista = tipo === 'Orbenk' ? contratosOrbenk : contratosGerais;
+            const contrato = lista.find(c => c.id === id);
+
+            if (!contrato) return;
+
+            document.getElementById('lContratoId').value = id;
+            document.getElementById('lContratoTipo').value = tipo;
+            document.getElementById('lContratoInfo').value = `Contrato Nº ${contrato.numero} - ${contrato.empresa}`;
+            document.getElementById('lValorMes').value = '';
+            document.getElementById('lMesRef').value = '2026-09';
+
+            // Carregar Histórico
+            const histUl = document.getElementById('listaHistoricoValores');
+            histUl.innerHTML = '';
+            if (contrato.lancamentos && contrato.lancamentos.length > 0) {
+                contrato.lancamentos.forEach(l => {
+                    histUl.innerHTML += `<li class="list-group-item d-flex justify-content-between py-1"><span>Mês: ${l.mes}</span><strong class="text-success">R$ ${parseFloat(l.valor).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</strong></li>`;
+                });
+            } else {
+                histUl.innerHTML = '<li class="list-group-item text-muted text-center py-1">Nenhum valor lançado ainda.</li>';
+            }
+
+            modalLancamentoBS.show();
+        }
+
+        document.getElementById('formLancamentoMensal').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const id = parseInt(document.getElementById('lContratoId').value);
+            const tipo = document.getElementById('lContratoTipo').value;
+            const mesRef = document.getElementById('lMesRef').value;
+            const valor = parseFloat(document.getElementById('lValorMes').value);
+
+            const lista = tipo === 'Orbenk' ? contratosOrbenk : contratosGerais;
+            const contrato = lista.find(c => c.id === id);
+
+            if (contrato) {
+                if (!contrato.lancamentos) contrato.lancamentos = [];
+                contrato.lancamentos.push({ mes: mesRef, valor: valor });
+                filtrarEBuscarContratos();
+                modalLancamentoBS.hide();
+            }
+        });
+
+        // CADASTRAR CONTRATO NOVO
+        function abrirModalCadastro(tipo) {
+            document.getElementById('cTipoTarget').value = tipo;
+            document.getElementById('formContrato').reset();
+            document.getElementById('cMesInicial').value = '2026-01';
+
+            const header = document.getElementById('modalHeaderBg');
+            const titulo = document.getElementById('modalTitulo');
+
+            if (tipo === 'Orbenk') {
+                header.className = 'modal-header bg-warning text-dark';
+                titulo.innerHTML = '<i class="fas fa-building me-2"></i> Cadastrar Contrato Orbenk';
+            } else {
+                header.className = 'modal-header bg-primary text-white';
+                titulo.innerHTML = '<i class="fas fa-file-signature me-2"></i> Cadastrar Contrato Geral';
+            }
+
+            modalContratoBS.show();
+        }
+
+        document.getElementById('formContrato').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const tipo = document.getElementById('cTipoTarget').value;
+            const vInicial = parseFloat(document.getElementById('cValorInicial').value);
+            const mInicial = document.getElementById('cMesInicial').value;
+
+            const novoContrato = {
+                id: Date.now(),
+                numero: document.getElementById('cNumero').value,
+                objeto: document.getElementById('cObjeto').value,
+                municipio: document.getElementById('cMunicipio').value,
+                empresa: document.getElementById('cEmpresa').value,
+                situacao: document.getElementById('cSituacao').value,
+                status: document.getElementById('cStatus').value,
+                vigenciaFim: document.getElementById('cVigenciaFim').value,
+                sgpe: document.getElementById('cSgpe').value,
+                fiscal: document.getElementById('cFiscal').value,
+                suplente: document.getElementById('cSuplente').value,
+                obs: document.getElementById('cObs').value,
+                lancamentos: [{ mes: mInicial, valor: vInicial }]
+            };
+
+            if (tipo === 'Orbenk') {
+                contratosOrbenk.push(novoContrato);
+            } else {
+                contratosGerais.push(novoContrato);
+            }
+
+            filtrarEBuscarContratos();
+            modalContratoBS.hide();
+        });
+
+        // EXCLUIR CADASTRO
+        function excluirContrato(id, tipo) {
+            if (confirm("Confirma a exclusão permanente deste contrato e seus lançamentos das planilhas?")) {
+                if (tipo === 'Orbenk') {
+                    contratosOrbenk = contratosOrbenk.filter(c => c.id !== id);
+                } else {
+                    contratosGerais = contratosGerais.filter(c => c.id !== id);
+                }
+                filtrarEBuscarContratos();
+            }
+        }
+
+        // ALERTAS DE E-MAIL
+        function verificarAlertasEmail() {
+            const todos = [...contratosGerais, ...contratosOrbenk];
+            const listaContainer = document.getElementById('listaContratosNotificar');
+            listaContainer.innerHTML = '';
+            let encontrou = 0;
+
+            todos.forEach(c => {
+                const dias = calcularDiasParaVencer(c.vigenciaFim);
+                if ([180, 120, 90, 60, 30].includes(dias) || (dias <= 180 && dias > 0)) {
+                    encontrou++;
+                    listaContainer.innerHTML += `
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1 text-primary fw-bold">Contrato Nº ${c.numero}</h6>
+                                <span class="badge bg-danger">${dias} dias para vencer</span>
+                            </div>
+                            <p class="mb-1 small"><strong>Objeto:</strong> ${c.objeto}</p>
+                            <small class="text-muted"><strong>Empresa:</strong> ${c.empresa} | SGPE: ${c.sgpe}</small>
+                        </div>
+                    `;
+                }
+            });
+
+            if (encontrou === 0) {
+                listaContainer.innerHTML = '<div class="alert alert-secondary text-center">Nenhum contrato com vencimento próximo (180, 120, 90, 60 ou 30 dias).</div>';
+            }
+
+            modalAlertasEmailBS.show();
+        }
+
+        function dispararEmailNotificacao() {
+            alert("E-mail de notificação dos prazos de vencimento enviado com sucesso para geapo@detran.sc.gov.br.");
+            modalAlertasEmailBS.hide();
+        }
+    </script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+      // Caso não exista a sessão gravada pelo index.html, redireciona o usuário para o Login
+      if (!sessionStorage.getItem('sicage_usuario')) {
+          alert("Acesso restrito! Por favor, realize o login primeiro na tela inicial.");
+          window.location.href = "index.html";
+      }
+  });
+</script>
+<!-- CÓDIGO DE PROTEÇÃO E MODO VISUALIZADOR -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const usuarioAtivo = sessionStorage.getItem('sicage_usuario');
+        const nivelAtivo = sessionStorage.getItem('sicage_nivel');
+
+        // 1. Se tentar entrar sem logar, manda de volta para o index.html
+        if (!usuarioAtivo) {
+            alert("Acesso restrito! Por favor, faça login na página inicial.");
+            window.location.href = "index.html";
+            return;
+        }
+
+        // 2. Se for Visualizador, bloqueia os botões da página atual
+        if (nivelAtivo === 'Visualizador') {
+            const elementos = document.querySelectorAll('button, input, select, textarea');
+
+            elementos.forEach(el => {
+                const eSidebar = el.closest('.sidebar');
+                const eExercicio = el.id === 'anoExercicio';
+                const eSair = el.getAttribute('onclick') && el.getAttribute('onclick').includes('fazerLogout');
+                const eLink = el.tagName === 'A' || el.classList.contains('btn-whatsapp') || el.classList.contains('btn-email');
+
+                if (!eSidebar && !eExercicio && !eSair && !eLink) {
+                    el.disabled = true;
+                    el.classList.add('disabled');
+                    el.style.pointerEvents = 'none';
+                    el.style.opacity = '0.6';
+                }
+            });
+        }
+    });
+
+    function fazerLogout() {
+        sessionStorage.removeItem('sicage_usuario');
+        sessionStorage.removeItem('sicage_nivel');
+        window.location.href = "index.html";
+    }
+</script>
+</body>
+</body>
+</html>

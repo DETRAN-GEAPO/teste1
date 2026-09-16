@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DETRAN/GEAPO - Agências e Unidades de Atendimento</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome (Ícones) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            background-color: #f4f7f6;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        /* --- ESTILOS DO PAINEL LATERAL --- */
+        .sidebar {
+            height: 100vh;
+            background-color: #343a40;
+            color: white;
+            position: fixed;
+            width: 260px;
+            overflow-y: auto;
+            z-index: 100;
+        }
+        .sidebar::-webkit-scrollbar { width: 6px; }
+        .sidebar::-webkit-scrollbar-thumb { background-color: #6c757d; border-radius: 4px; }
+        .sidebar .nav-link { color: #d1d8e0; margin-bottom: 5px; font-size: 0.9rem; }
+        .sidebar .nav-link:hover { background-color: #495057; color: white; border-radius: 5px; }
+        .sidebar i { width: 25px; text-align: center; margin-right: 10px; font-size: 1.1rem; }
+        
+        .main-content {
+            margin-left: 260px;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        .card-header {
+            background-color: transparent;
+            font-weight: bold;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        /* --- CARDS INFORMATIVOS --- */
+        .card-kpi {
+            border-left: 5px solid;
+            transition: transform 0.2s;
+        }
+        .card-kpi:hover { transform: translateY(-3px); }
+
+        /* --- TABELA PLANILHA RESPONSIVA --- */
+        .table-responsive {
+            max-height: 550px;
+            overflow-y: auto;
+            overflow-x: auto;
+        }
+        .table-docs th, .table-docs td {
+            vertical-align: middle;
+            font-size: 0.85rem;
+            white-space: nowrap;
+        }
+        .table-docs th {
+            position: sticky;
+            top: 0;
+            background-color: #343a40;
+            color: white;
+            z-index: 10;
+            text-align: center;
+        }
+        .col-endereco {
+            max-width: 250px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* FOOTER */
+        .footer {
+            margin-top: auto;
+            text-align: center;
+            padding: 20px 0;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="dashboard-screen">
+        <!-- MENU LATERAL DE NAVEGAÇÃO -->
+        <nav class="sidebar p-3">
+            <div class="text-center mb-4 mt-2">
+                <h5 class="text-white m-0">DETRAN/GEAPO</h5>
+                <small class="text-secondary">Apoio Operacional</small>
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item"><a class="nav-link" href="index.html"><i class="fas fa-chart-line text-info"></i> Painel Geral</a></li>
+                <li class="nav-item"><a class="nav-link" href="geapo.html"><i class="fas fa-building text-primary"></i> GEAPO Institucional</a></li>
+                <li class="nav-item"><a class="nav-link" href="contrato.html"><i class="fas fa-file-signature text-warning"></i> Contrato Geral/Orbenk</a></li>
+                <li class="nav-item"><a class="nav-link" href="ateste.html"><i class="fas fa-check-double text-success"></i> Ateste Serviço/Orbenk</a></li>
+                <li class="nav-item"><a class="nav-link" href="sgpe.html"><i class="fas fa-folder-open text-danger"></i> Controle SGPE</a></li>
+                <li class="nav-item"><a class="nav-link" href="oficios.html"><i class="fas fa-envelope-open-text text-info"></i> Ofícios/Despachos</a></li>
+                <li class="nav-item"><a class="nav-link" href="processos.html"><i class="fas fa-balance-scale text-primary"></i> Processos Jurídicos</a></li>
+                <li class="nav-item"><a class="nav-link" href="frota.html"><i class="fas fa-car text-secondary"></i> Frota e Multas</a></li>
+                <li class="nav-item"><a class="nav-link" href="compras.html"><i class="fas fa-shopping-cart text-success"></i> Compras e CPESC</a></li>
+                <li class="nav-item"><a class="nav-link" href="diarias.html"><i class="fas fa-plane text-info"></i> Diárias e Passagem</a></li>
+                <li class="nav-item"><a class="nav-link" href="efetivo.html"><i class="fas fa-users text-warning"></i> Efetivo</a></li>
+                <li class="nav-item"><a class="nav-link" href="agenda.html"><i class="fas fa-calendar-alt text-danger"></i> Agenda e Prazos</a></li>
+                <li class="nav-item"><a class="nav-link active fw-bold text-white" href="agencias.html"><i class="fas fa-map-marker-alt text-primary"></i> Agências</a></li>
+                <li class="nav-item"><a class="nav-link" href="portarias.html"><i class="fas fa-file-alt text-secondary"></i> Portarias</a></li>
+                <li class="nav-item"><a class="nav-link" href="leis.html"><i class="fas fa-gavel text-warning"></i> Leis e Instruções</a></li>
+                <li class="nav-item"><a class="nav-link" href="manuais.html"><i class="fas fa-book text-success"></i> Manuais/Funções</a></li>
+                <li class="nav-item"><a class="nav-link" href="relatorios.html"><i class="fas fa-chart-pie text-info"></i> Relatorios Gerenciais</a></li>
+            </ul>
+        </nav>
+
+        <!-- CONTEÚDO PRINCIPAL -->
+        <div class="main-content">
+            
+            <!-- CABEÇALHO DO MÓDULO -->
+            <div class="d-flex justify-content-between align-items-center mb-3 pt-2">
+                <div>
+                    <h3 class="m-0"><i class="fas fa-map-marked-alt text-primary me-2"></i>Rede de Agências e Unidades DETRAN/SC</h3>
+                    <small class="text-muted">Mapeamento, endereços, contatos e pontos de atendimento de Santa Catarina</small>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                    <a href="https://www.detran.sc.gov.br" target="_blank" class="btn btn-sm btn-outline-primary shadow-sm" title="Acessar Portal Oficial DETRAN/SC">
+                        <i class="fas fa-globe me-1"></i> Site DETRAN/SC <i class="fas fa-external-link-alt ms-1 small"></i>
+                    </a>
+                    <span class="ps-2"><i class="fas fa-user-circle"></i> <strong>GEAPO (Admin)</strong></span>
+                </div>
+            </div>
+
+            <!-- CARDS DE RESUMO KPI -->
+            <div class="row g-3 mb-3">
+                <div class="col-md-3">
+                    <div class="card card-kpi p-3 bg-white" style="border-color: #0d6efd;">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <small class="text-uppercase fw-bold text-primary">Total de Unidades</small>
+                                <h3 class="fw-bold m-0 text-dark mt-1" id="kpiTotal">0</h3>
+                            </div>
+                            <div class="rounded-circle p-3 bg-light text-primary fs-4">
+                                <i class="fas fa-building"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card card-kpi p-3 bg-white" style="border-color: #198754;">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <small class="text-uppercase fw-bold text-success">Ciretrans Regionais</small>
+                                <h3 class="fw-bold m-0 text-dark mt-1" id="kpiCiretrans">0</h3>
+                            </div>
+                            <div class="rounded-circle p-3 bg-light text-success fs-4">
+                                <i class="fas fa-landmark"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card card-kpi p-3 bg-white" style="border-color: #ffc107;">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <small class="text-uppercase fw-bold text-warning">Citrans / Postos</small>
+                                <h3 class="fw-bold m-0 text-dark mt-1" id="kpiCitrans">0</h3>
+                            </div>
+                            <div class="rounded-circle p-3 bg-light text-warning fs-4">
+                                <i class="fas fa-store-alt"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card card-kpi p-3 bg-white" style="border-color: #17a2b8;">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <small class="text-uppercase fw-bold text-info">Sede Operacional</small>
+                                <h3 class="fw-bold m-0 text-dark mt-1" id="kpiSede">1</h3>
+                            </div>
+                            <div class="rounded-circle p-3 bg-light text-info fs-4">
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAINEL RECOLHÍVEL DE NOVO CADASTRO DE UNIDADE -->
+            <div class="card mb-3">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center py-2">
+                    <span><i class="fas fa-plus-circle text-primary me-2"></i>Cadastrar Nova Agência / Ponto de Atendimento</span>
+                    <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#formAgenciaCollapse">
+                        <i class="fas fa-chevron-down me-1"></i> Recolher / Expandir
+                    </button>
+                </div>
+                <div class="collapse" id="formAgenciaCollapse">
+                    <div class="card-body">
+                        <form onsubmit="salvarAgencia(event)">
+                            <div class="row g-3">
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-bold">Tipo de Unidade</label>
+                                    <select id="selectTipo" class="form-select form-select-sm" required>
+                                        <option value="">Selecione...</option>
+                                        <option value="Sede Direção">Sede Direção Geral</option>
+                                        <option value="Ciretran">Ciretran (Regional)</option>
+                                        <option value="Citran">Citran (Local)</option>
+                                        <option value="Posto Avançado">Posto Avançado / Ponto Atendimento</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold">Município</label>
+                                    <input type="text" id="inputMunicipio" class="form-control form-control-sm" placeholder="Ex: Florianópolis" required>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-bold">Região / Mesorregião</label>
+                                    <select id="selectRegiao" class="form-select form-select-sm" required>
+                                        <option value="">Selecione...</option>
+                                        <option value="Grande Florianópolis">Grande Florianópolis</option>
+                                        <option value="Norte">Norte Catarinense</option>
+                                        <option value="Sul">Sul Catarinense</option>
+                                        <option value="Vale do Itajaí">Vale do Itajaí</option>
+                                        <option value="Oeste">Oeste Catarinense</option>
+                                        <option value="Planalto Serrano">Planalto Serrano</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label small fw-bold">Horário Atendimento</label>
+                                    <input type="text" id="inputHorario" class="form-control form-control-sm" placeholder="Ex: 08h às 17h" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-bold">Endereço Completo</label>
+                                    <input type="text" id="inputEndereco" class="form-control form-control-sm" placeholder="Rua, Número, Bairro e CEP" required>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-bold">Telefone / Ramal</label>
+                                    <input type="text" id="inputTelefone" class="form-control form-control-sm" placeholder="(48) 3664-0000" required>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-bold">E-mail Oficial</label>
+                                    <input type="email" id="inputEmail" class="form-control form-control-sm" placeholder="ciretran.municipio@detran.sc.gov.br" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold">Delegado / Chefia Responsável</label>
+                                    <input type="text" id="inputResponsavel" class="form-control form-control-sm" placeholder="Nome do responsável pelo posto">
+                                </div>
+                                <div class="col-md-8">
+                                    <label class="form-label small fw-bold">Observações / Serviços Prestados</label>
+                                    <input type="text" id="inputObs" class="form-control form-control-sm" placeholder="Ex: Atendimento CNH, Vistoria, Multas">
+                                </div>
+                                <div class="col-md-12 text-end">
+                                    <button type="submit" class="btn btn-sm btn-success px-4"><i class="fas fa-save me-1"></i> Cadastrar Agência</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAINEL CENTRAL DE CONSULTA DE AGÊNCIAS -->
+            <div class="card">
+                <div class="card-header bg-light d-flex flex-wrap justify-content-between align-items-center gap-2 py-2">
+                    <span class="fw-bold"><i class="fas fa-list me-2"></i> Relação de Agências do DETRAN/SC</span>
+                    
+                    <!-- FILTROS DE PESQUISA -->
+                    <div class="d-flex flex-wrap gap-2">
+                        <input type="text" id="buscaTexto" class="form-control form-control-sm" style="width: 200px;" placeholder="Buscar município/endereço..." oninput="filtrarAgencias()">
+                        <select id="buscaTipo" class="form-select form-select-sm" style="width: 160px;" onchange="filtrarAgencias()">
+                            <option value="">Todos os Tipos</option>
+                            <option value="Sede Direção">Sede Direção</option>
+                            <option value="Ciretran">Ciretran</option>
+                            <option value="Citran">Citran</option>
+                            <option value="Posto Avançado">Posto Avançado</option>
+                        </select>
+                        <select id="buscaRegiao" class="form-select form-select-sm" style="width: 170px;" onchange="filtrarAgencias()">
+                            <option value="">Todas as Regiões</option>
+                            <option value="Grande Florianópolis">Grande Floripa</option>
+                            <option value="Norte">Norte</option>
+                            <option value="Sul">Sul</option>
+                            <option value="Vale do Itajaí">Vale do Itajaí</option>
+                            <option value="Oeste">Oeste</option>
+                            <option value="Planalto Serrano">Planalto Serrano</option>
+                        </select>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="limparFiltros()"><i class="fas fa-eraser"></i> Limpar</button>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover align-middle table-docs mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Município</th>
+                                    <th>Tipo</th>
+                                    <th>Região</th>
+                                    <th>Endereço</th>
+                                    <th>Horário</th>
+                                    <th>Telefone</th>
+                                    <th>E-mail</th>
+                                    <th>Responsável</th>
+                                    <th>Link Oficial</th>
+                                    <th style="width: 70px;">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbodyAgencias"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RODAPÉ ASSINADO -->
+            <footer class="footer">
+                SICAGE - Sistema de Controle Administrativo da GEAPO.<br>
+                ⓒ 2026 Desenvolvido por [Ingrid/Gabriela].
+            </footer>
+        </div>
+    </div>
+
+    <!-- Scripts Bootstrap e Lógica JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let agenciasDados = JSON.parse(localStorage.getItem('geapo_agencias')) || [
+            {
+                id: 1,
+                tipo: 'Sede Direção',
+                municipio: 'Florianópolis',
+                regiao: 'Grande Florianópolis',
+                endereco: 'Rua Agostinho Alves, 25 - Coqueiros, CEP 88080-080',
+                horario: '08h às 17h',
+                telefone: '(48) 3664-1800',
+                email: 'geapo@detran.sc.gov.br',
+                responsavel: 'Direção Geral DETRAN/SC',
+                obs: 'Sede Administrativa Central e GEAPO'
+            },
+            {
+                id: 2,
+                tipo: 'Ciretran',
+                municipio: 'Joinville',
+                regiao: 'Norte',
+                endereco: 'Rua Blumenau, 2050 - América, CEP 89204-251',
+                horario: '09h às 17h',
+                telefone: '(47) 3481-2200',
+                email: 'ciretran.joinville@detran.sc.gov.br',
+                responsavel: 'Delegacia Regional de Joinville',
+                obs: ' Atendimento completo de CNH e Veículos'
+            },
+            {
+                id: 3,
+                tipo: 'Ciretran',
+                municipio: 'Blumenau',
+                regiao: 'Vale do Itajaí',
+                endereco: 'Rua Eng. Paul Werner, 1251 - Itoupava Seca, CEP 89030-101',
+                horario: '09h às 17h',
+                telefone: '(47) 3381-6000',
+                email: 'ciretran.blumenau@detran.sc.gov.br',
+                responsavel: 'Delegacia Regional de Blumenau',
+                obs: 'Ciretran Regional 3ª Delegacia'
+            },
+            {
+                id: 4,
+                tipo: 'Ciretran',
+                municipio: 'Chapecó',
+                regiao: 'Oeste',
+                endereco: 'Av. Fernando Machado, 130-E - Centro, CEP 89801-001',
+                horario: '08h às 17h',
+                telefone: '(49) 3321-0100',
+                email: 'ciretran.chapeco@detran.sc.gov.br',
+                responsavel: 'Delegacia Regional de Chapecó',
+                obs: 'Ponto focal de atendimento no Oeste'
+            },
+            {
+                id: 5,
+                tipo: 'Ciretran',
+                municipio: 'Criciúma',
+                regiao: 'Sul',
+                endereco: 'Rua Pedro Benaton, 280 - Centro, CEP 88801-250',
+                horario: '08h às 17h',
+                telefone: '(48) 3461-1500',
+                email: 'ciretran.criciuma@detran.sc.gov.br',
+                responsavel: 'Delegacia Regional de Criciúma',
+                obs: 'Atendimento do Sul do Estado'
+            },
+            {
+                id: 6,
+                tipo: 'Citran',
+                municipio: 'Lages',
+                regiao: 'Planalto Serrano',
+                endereco: 'Av. Belizário Ramos, 3700 - Centro, CEP 88506-000',
+                horario: '09h às 17h',
+                telefone: '(49) 3221-3000',
+                email: 'citran.lages@detran.sc.gov.br',
+                responsavel: 'Delegacia Regional de Lages',
+                obs: 'Atendimento da Região Serrana'
+            }
+        ];
+
+        document.addEventListener("DOMContentLoaded", function() {
+            renderizarModulo();
+        });
+
+        function salvarStorage() {
+            localStorage.setItem('geapo_agencias', JSON.stringify(agenciasDados));
+        }
+
+        function salvarAgencia(event) {
+            event.preventDefault();
+
+            const novoId = agenciasDados.length > 0 ? Math.max(...agenciasDados.map(a => a.id)) + 1 : 1;
+
+            const novaUnidade = {
+                id: novoId,
+                tipo: document.getElementById('selectTipo').value,
+                municipio: document.getElementById('inputMunicipio').value,
+                regiao: document.getElementById('selectRegiao').value,
+                horario: document.getElementById('inputHorario').value,
+                endereco: document.getElementById('inputEndereco').value,
+                telefone: document.getElementById('inputTelefone').value,
+                email: document.getElementById('inputEmail').value,
+                responsavel: document.getElementById('inputResponsavel').value || 'Não informado',
+                obs: document.getElementById('inputObs').value || '-'
+            };
+
+            agenciasDados.push(novaUnidade);
+            salvarStorage();
+
+            event.target.reset();
+            renderizarModulo();
+
+            // Opcional: fechar a aba de cadastro após salvar
+            const collapseElem = document.getElementById('formAgenciaCollapse');
+            const bsCollapse = bootstrap.Collapse.getInstance(collapseElem);
+            if(bsCollapse) bsCollapse.hide();
+        }
+
+        function excluirAgencia(id) {
+            if(confirm("Deseja realmente excluir esta agência do cadastro?")) {
+                agenciasDados = agenciasDados.filter(a => a.id !== id);
+                salvarStorage();
+                renderizarModulo();
+            }
+        }
+
+        function calcularMetricas() {
+            document.getElementById('kpiTotal').innerText = agenciasDados.length;
+            document.getElementById('kpiCiretrans').innerText = agenciasDados.filter(a => a.tipo === 'Ciretran').length;
+            document.getElementById('kpiCitrans').innerText = agenciasDados.filter(a => a.tipo === 'Citran' || a.tipo === 'Posto Avançado').length;
+            document.getElementById('kpiSede').innerText = agenciasDados.filter(a => a.tipo === 'Sede Direção').length;
+        }
+
+        function renderizarModulo() {
+            calcularMetricas();
+            filtrarAgencias();
+        }
+
+        function filtrarAgencias() {
+            const txt = document.getElementById('buscaTexto').value.toLowerCase().trim();
+            const tipoSel = document.getElementById('buscaTipo').value;
+            const regiaoSel = document.getElementById('buscaRegiao').value;
+
+            const tbody = document.getElementById('tbodyAgencias');
+            tbody.innerHTML = '';
+
+            const filtradas = agenciasDados.filter(a => {
+                const bateTexto = !txt || 
+                    a.municipio.toLowerCase().includes(txt) || 
+                    a.endereco.toLowerCase().includes(txt) || 
+                    a.responsavel.toLowerCase().includes(txt);
+
+                const bateTipo = !tipoSel || a.tipo === tipoSel;
+                const bateRegiao = !regiaoSel || a.regiao === regiaoSel;
+
+                return bateTexto && bateTipo && bateRegiao;
+            });
+
+            if(filtradas.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="10" class="text-center text-muted p-4">Nenhuma agência ou ponto de atendimento encontrado com os filtros aplicados.</td></tr>`;
+                return;
+            }
+
+            filtradas.forEach(a => {
+                let badgeClass = 'bg-secondary';
+                if(a.tipo === 'Sede Direção') badgeClass = 'bg-danger';
+                else if(a.tipo === 'Ciretran') badgeClass = 'bg-primary';
+                else if(a.tipo === 'Citran') badgeClass = 'bg-warning text-dark';
+                else if(a.tipo === 'Posto Avançado') badgeClass = 'bg-info text-dark';
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="fw-bold text-dark"><i class="fas fa-map-marker-alt text-danger me-1"></i>${a.municipio}</td>
+                        <td class="text-center"><span class="badge ${badgeClass}">${a.tipo}</span></td>
+                        <td class="text-center"><span class="badge bg-light text-dark border">${a.regiao}</span></td>
+                        <td class="col-endereco" title="${a.endereco}">${a.endereco}</td>
+                        <td class="text-center">${a.horario}</td>
+                        <td class="text-center">${a.telefone}</td>
+                        <td>${a.email}</td>
+                        <td>${a.responsavel}</td>
+                        <td class="text-center">
+                            <a href="https://www.detran.sc.gov.br" target="_blank" class="btn btn-sm btn-outline-primary" title="Abrir portal do DETRAN/SC">
+                                <i class="fas fa-external-link-alt"></i> DETRAN/SC
+                            </a>
+                        </td>
+                        <td class="text-center">
+                            <button class="btn btn-sm btn-outline-danger" onclick="excluirAgencia(${a.id})" title="Excluir Agência">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function limparFiltros() {
+            document.getElementById('buscaTexto').value = '';
+            document.getElementById('buscaTipo').value = '';
+            document.getElementById('buscaRegiao').value = '';
+            filtrarAgencias();
+        }
+    </script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+      // Caso não exista a sessão gravada pelo index.html, redireciona o usuário para o Login
+      if (!sessionStorage.getItem('sicage_usuario')) {
+          alert("Acesso restrito! Por favor, realize o login primeiro na tela inicial.");
+          window.location.href = "index.html";
+      }
+  });
+</script>
+<!-- CÓDIGO DE PROTEÇÃO E MODO VISUALIZADOR -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const usuarioAtivo = sessionStorage.getItem('sicage_usuario');
+        const nivelAtivo = sessionStorage.getItem('sicage_nivel');
+
+        // 1. Se tentar entrar sem logar, manda de volta para o index.html
+        if (!usuarioAtivo) {
+            alert("Acesso restrito! Por favor, faça login na página inicial.");
+            window.location.href = "index.html";
+            return;
+        }
+
+        // 2. Se for Visualizador, bloqueia os botões da página atual
+        if (nivelAtivo === 'Visualizador') {
+            const elementos = document.querySelectorAll('button, input, select, textarea');
+
+            elementos.forEach(el => {
+                const eSidebar = el.closest('.sidebar');
+                const eExercicio = el.id === 'anoExercicio';
+                const eSair = el.getAttribute('onclick') && el.getAttribute('onclick').includes('fazerLogout');
+                const eLink = el.tagName === 'A' || el.classList.contains('btn-whatsapp') || el.classList.contains('btn-email');
+
+                if (!eSidebar && !eExercicio && !eSair && !eLink) {
+                    el.disabled = true;
+                    el.classList.add('disabled');
+                    el.style.pointerEvents = 'none';
+                    el.style.opacity = '0.6';
+                }
+            });
+        }
+    });
+
+    function fazerLogout() {
+        sessionStorage.removeItem('sicage_usuario');
+        sessionStorage.removeItem('sicage_nivel');
+        window.location.href = "index.html";
+    }
+</script>
+</body>
+</body>
+</html>

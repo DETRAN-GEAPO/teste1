@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DETRAN/GEAPO - Compras e CPESC</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome (Ícones) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            background-color: #f4f7f6;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        /* --- ESTILOS DO PAINEL LATERAL --- */
+        .sidebar {
+            height: 100vh;
+            background-color: #343a40;
+            color: white;
+            position: fixed;
+            width: 260px;
+            overflow-y: auto;
+            z-index: 100;
+        }
+        .sidebar::-webkit-scrollbar { width: 6px; }
+        .sidebar::-webkit-scrollbar-thumb { background-color: #6c757d; border-radius: 4px; }
+        .sidebar .nav-link { color: #d1d8e0; margin-bottom: 5px; font-size: 0.9rem; }
+        .sidebar .nav-link:hover { background-color: #495057; color: white; border-radius: 5px; }
+        .sidebar i { width: 25px; text-align: center; margin-right: 10px; font-size: 1.1rem; }
+        
+        .main-content {
+            margin-left: 260px;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        .card-header {
+            background-color: transparent;
+            font-weight: bold;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        /* --- CARDS FINANCEIROS DO PAINEL SUPERIOR --- */
+        .card-tipo {
+            border-left: 5px solid;
+            transition: transform 0.2s;
+        }
+        .card-tipo:hover { transform: translateY(-3px); }
+        .tipo-direta { border-color: #0d6efd; background-color: #e7f1ff; }
+        .tipo-licitacao { border-color: #6f42c1; background-color: #f3ebf9; }
+        .tipo-contrato { border-color: #fd7e14; background-color: #fff4e6; }
+        .tipo-servico { border-color: #198754; background-color: #e8f5e9; }
+        .tipo-emergencial { border-color: #dc3545; background-color: #f8d7da; }
+        .tipo-cpesc { border-color: #ffc107; background-color: #fff9e6; }
+        .tipo-outro { border-color: #d63384; background-color: #fce4ec; }
+
+        /* --- BADGES DE TIPO NA TABELA --- */
+        .badge-tipo-direta { background-color: #0d6efd; color: #fff; }
+        .badge-tipo-licitacao { background-color: #6f42c1; color: #fff; }
+        .badge-tipo-contrato { background-color: #fd7e14; color: #fff; }
+        .badge-tipo-servico { background-color: #198754; color: #fff; }
+        .badge-tipo-emergencial { background-color: #dc3545; color: #fff; }
+        .badge-tipo-cpesc { background-color: #ffc107; color: #000; }
+        .badge-tipo-outro { background-color: #d63384; color: #fff; }
+
+        /* TABELA PLANILHA */
+        .table-responsive {
+            max-height: 550px;
+            overflow-y: auto;
+        }
+        .table-docs th, .table-docs td {
+            vertical-align: middle;
+            font-size: 0.82rem;
+            white-space: nowrap;
+        }
+        .table-docs th {
+            position: sticky;
+            top: 0;
+            background-color: #343a40;
+            color: white;
+            z-index: 10;
+            text-align: center;
+        }
+        .col-desc, .col-obs {
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* FOOTER */
+        .footer {
+            margin-top: auto;
+            text-align: center;
+            padding: 20px 0;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="dashboard-screen">
+        <!-- MENU LATERAL -->
+        <nav class="sidebar p-3">
+            <div class="text-center mb-4 mt-2">
+                <h5 class="text-white m-0">DETRAN/GEAPO</h5>
+                <small class="text-secondary">Apoio Operacional</small>
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item"><a class="nav-link" href="index.html"><i class="fas fa-chart-line text-info"></i> Painel Geral</a></li>
+                <li class="nav-item"><a class="nav-link" href="geapo.html"><i class="fas fa-building text-primary"></i> GEAPO Institucional</a></li>
+                <li class="nav-item"><a class="nav-link" href="contrato.html"><i class="fas fa-file-signature text-warning"></i> Contrato Geral/Orbenk</a></li>
+                <li class="nav-item"><a class="nav-link" href="ateste.html"><i class="fas fa-check-double text-success"></i> Ateste Serviço/Orbenk</a></li>
+                <li class="nav-item"><a class="nav-link" href="sgpe.html"><i class="fas fa-folder-open text-danger"></i> Controle SGPE</a></li>
+                <li class="nav-item"><a class="nav-link" href="oficios.html"><i class="fas fa-envelope-open-text text-info"></i> Ofícios/Despachos</a></li>
+                <li class="nav-item"><a class="nav-link" href="processos.html"><i class="fas fa-balance-scale text-primary"></i> Processos Jurídicos</a></li>
+                <li class="nav-item"><a class="nav-link" href="frota.html"><i class="fas fa-car text-secondary"></i> Frota e Multas</a></li>
+                <li class="nav-item"><a class="nav-link active fw-bold text-white" href="compras.html"><i class="fas fa-shopping-cart text-success"></i> Compras e CPESC</a></li>
+                <li class="nav-item"><a class="nav-link" href="diarias.html"><i class="fas fa-plane text-info"></i> Diárias e Passagem</a></li>
+                <li class="nav-item"><a class="nav-link" href="efetivo.html"><i class="fas fa-users text-warning"></i> Efetivo</a></li>
+                <li class="nav-item"><a class="nav-link" href="agenda.html"><i class="fas fa-calendar-alt text-danger"></i> Agenda e Prazos</a></li>
+                <li class="nav-item"><a class="nav-link" href="agencias.html"><i class="fas fa-map-marker-alt text-primary"></i> Agências</a></li>
+                <li class="nav-item"><a class="nav-link" href="portarias.html"><i class="fas fa-file-alt text-secondary"></i> Portarias</a></li>
+                <li class="nav-item"><a class="nav-link" href="leis.html"><i class="fas fa-gavel text-warning"></i> Leis e Instruções</a></li>
+                <li class="nav-item"><a class="nav-link" href="manuais.html"><i class="fas fa-book text-success"></i> Manuais/Funções</a></li>
+                <li class="nav-item"><a class="nav-link" href="relatorios.html"><i class="fas fa-chart-pie text-info"></i> Relatorios Gerenciais</a></li>
+            </ul>
+        </nav>
+
+        <!-- CONTEÚDO PRINCIPAL -->
+        <div class="main-content">
+            
+            <!-- CABEÇALHO DO MÓDULO -->
+            <div class="d-flex justify-content-between align-items-center mb-3 pt-2">
+                <div>
+                    <h3 class="m-0"><i class="fas fa-shopping-cart text-success me-2"></i>Compras e CPESC</h3>
+                    <small class="text-muted">Gestão de aquisições, contratações, serviços e suprimento de fundos</small>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                    <div class="input-group input-group-sm" style="width: 180px;">
+                        <span class="input-group-text bg-light fw-bold"><i class="fas fa-calendar-alt me-1"></i> Exer.</span>
+                        <input type="number" id="anoExercicio" class="form-control fw-bold text-primary" value="2026" min="1900" max="2100" onchange="trocarAno(this.value)">
+                    </div>
+                    <span class="border-start ps-3"><i class="fas fa-user-circle"></i> <strong>GEAPO (Admin)</strong></span>
+                </div>
+            </div>
+
+            <!-- PAINEL SUPERIOR COM VALORES POR TIPO DE DEMANDA -->
+            <div class="row g-2 mb-3">
+                <div class="col">
+                    <div class="card card-tipo tipo-direta p-2 text-center">
+                        <small class="fw-bold text-primary text-uppercase" style="font-size: 0.72rem;">Compra Direta</small>
+                        <span class="fw-bold fs-6 mt-1 text-dark" id="valDireta">R$ 0,00</span>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card card-tipo tipo-licitacao p-2 text-center">
+                        <small class="fw-bold text-purple text-uppercase" style="font-size: 0.72rem; color: #6f42c1;">Compra/Licitação</small>
+                        <span class="fw-bold fs-6 mt-1 text-dark" id="valLicitacao">R$ 0,00</span>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card card-tipo tipo-contrato p-2 text-center">
+                        <small class="fw-bold text-uppercase" style="font-size: 0.72rem; color: #fd7e14;">Exec. Contrato</small>
+                        <span class="fw-bold fs-6 mt-1 text-dark" id="valContrato">R$ 0,00</span>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card card-tipo tipo-servico p-2 text-center">
+                        <small class="fw-bold text-success text-uppercase" style="font-size: 0.72rem;">Serviço/Manut.</small>
+                        <span class="fw-bold fs-6 mt-1 text-dark" id="valServico">R$ 0,00</span>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card card-tipo tipo-emergencial p-2 text-center">
+                        <small class="fw-bold text-danger text-uppercase" style="font-size: 0.72rem;">Emergencial</small>
+                        <span class="fw-bold fs-6 mt-1 text-dark" id="valEmergencial">R$ 0,00</span>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card card-tipo tipo-cpesc p-2 text-center">
+                        <small class="fw-bold text-uppercase" style="font-size: 0.72rem; color: #b8860b;">Cartão CPESC</small>
+                        <span class="fw-bold fs-6 mt-1 text-dark" id="valCpesc">R$ 0,00</span>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card card-tipo tipo-outro p-2 text-center">
+                        <small class="fw-bold text-uppercase" style="font-size: 0.72rem; color: #d63384;">Outro</small>
+                        <span class="fw-bold fs-6 mt-1 text-dark" id="valOutro">R$ 0,00</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAINEL RECOLHÍVEL DE CADASTRO -->
+            <div class="card mb-3">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center py-2">
+                    <span><i class="fas fa-plus-circle text-success me-2"></i>Cadastrar Nova Demanda de Compra / CPESC</span>
+                    <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#formCompraCollapse">
+                        <i class="fas fa-chevron-down me-1"></i> Recolher / Expandir
+                    </button>
+                </div>
+                <div class="collapse" id="formCompraCollapse">
+                    <div class="card-body">
+                        <form onsubmit="salvarCompra(event)">
+                            <div class="row g-3">
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-bold">Nº SGPE</label>
+                                    <input type="text" id="inputSGPE" class="form-control form-control-sm" placeholder="Ex: 55432/2026" oninput="validarSGPE(this)" required>
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label small fw-bold">Data</label>
+                                    <input type="date" id="inputData" class="form-control form-control-sm" required>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-bold">Tipo de Demanda</label>
+                                    <select id="selectTipoDemanda" class="form-select form-select-sm" onchange="verificarOutroTipo(this.value)" required>
+                                        <option value="">Selecione...</option>
+                                        <option value="Compra direta">Compra direta (Azul)</option>
+                                        <option value="Compra/licitação">Compra/licitação (Roxo)</option>
+                                        <option value="Execução de contrato">Execução de contrato (Laranja)</option>
+                                        <option value="Serviço/manutenção">Serviço/manutenção (Verde)</option>
+                                        <option value="Demanda emergencial">Demanda emergencial (Vermelho)</option>
+                                        <option value="Cartão CPESC">Cartão CPESC (Amarelo)</option>
+                                        <option value="Outro">Outro (Rosa)</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4" id="divOutroTipo" style="display: none;">
+                                    <label class="form-label small fw-bold text-danger">Especificar 'Outro' Tipo</label>
+                                    <input type="text" id="inputOutroTipo" class="form-control form-control-sm" placeholder="Informe qual o outro tipo">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold">Empresa / Fornecedor</label>
+                                    <input type="text" id="inputEmpresa" class="form-control form-control-sm" placeholder="Ex: Fornecedora de Insumos LTDA" required>
+                                </div>
+                                <div class="col-md-8">
+                                    <label class="form-label small fw-bold">Descrição Detalhada do Item ou Serviço</label>
+                                    <input type="text" id="inputDescricao" class="form-control form-control-sm" placeholder="Detalhamento técnico do material ou serviço solicitado" required>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-bold">Valor (R$)</label>
+                                    <input type="number" step="0.01" min="0" id="inputValor" class="form-control form-control-sm" placeholder="0,00" required>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-bold">Data Conclusão Prevista</label>
+                                    <input type="date" id="inputPrevista" class="form-control form-control-sm" required>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-bold">Data Conclusão Efetiva</label>
+                                    <input type="date" id="inputEfetiva" class="form-control form-control-sm">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-bold">Fiscal do Contrato/Demanda</label>
+                                    <input type="text" id="inputFiscal" class="form-control form-control-sm" placeholder="Nome do fiscal técnico" required>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-bold">Nº do Contrato</label>
+                                    <input type="text" id="inputContrato" class="form-control form-control-sm" placeholder="Ex: CT-089/2026">
+                                </div>
+                                <div class="col-md-9">
+                                    <label class="form-label small fw-bold">Observações (OBS)</label>
+                                    <input type="text" id="inputOBS" class="form-control form-control-sm" placeholder="Informações complementares">
+                                </div>
+                                <div class="col-md-12 text-end">
+                                    <button type="submit" class="btn btn-sm btn-success px-4"><i class="fas fa-save me-1"></i> Salvar Registro</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAINEL DE PESQUISA E TABELA PLANILHA -->
+            <div class="card">
+                <div class="card-header bg-light d-flex flex-wrap justify-content-between align-items-center gap-2 py-2">
+                    <span class="fw-bold"><i class="fas fa-table me-2"></i> Planilha de Demandas Cadastradas</span>
+                    
+                    <!-- FILTROS DE PESQUISA -->
+                    <div class="d-flex flex-wrap gap-2">
+                        <input type="text" id="buscaSGPE" class="form-control form-control-sm" style="width: 150px;" placeholder="Buscar SGPE..." oninput="filtrarTabela()">
+                        <select id="buscaTipo" class="form-select form-select-sm" style="width: 180px;" onchange="filtrarTabela()">
+                            <option value="">Todos os Tipos</option>
+                            <option value="Compra direta">Compra direta</option>
+                            <option value="Compra/licitação">Compra/licitação</option>
+                            <option value="Execução de contrato">Execução de contrato</option>
+                            <option value="Serviço/manutenção">Serviço/manutenção</option>
+                            <option value="Demanda emergencial">Demanda emergencial</option>
+                            <option value="Cartão CPESC">Cartão CPESC</option>
+                            <option value="Outro">Outro</option>
+                        </select>
+                        <input type="text" id="buscaEmpresa" class="form-control form-control-sm" style="width: 180px;" placeholder="Buscar Empresa..." oninput="filtrarTabela()">
+                        <button class="btn btn-sm btn-outline-secondary" onclick="limparFiltros()"><i class="fas fa-eraser"></i> Limpar</button>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover align-middle table-docs mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Nº SGPE</th>
+                                    <th>Data</th>
+                                    <th>Tipo de Demanda</th>
+                                    <th>Empresa</th>
+                                    <th>Descrição Detalhada Item/Serviço</th>
+                                    <th>Valor (R$)</th>
+                                    <th>Prev. Conclusão</th>
+                                    <th>Efet. Conclusão</th>
+                                    <th>Fiscal</th>
+                                    <th>Nº Contrato</th>
+                                    <th>OBS</th>
+                                    <th style="width: 70px;">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbodyCompras"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RODAPÉ ASSINADO -->
+            <footer class="footer">
+                SICAGE - Sistema de Controle Administrativo da GEAPO.<br>
+                ⓒ 2026 Desenvolvido por [Ingrid/Gabriela].
+            </footer>
+        </div>
+    </div>
+
+    <!-- Scripts Bootstrap e Lógica JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let anoAtual = 2026;
+
+        let comprasDados = JSON.parse(localStorage.getItem('geapo_compras_cpesc')) || [
+            {
+                id: 1,
+                ano: 2026,
+                sgpe: '55432/2026',
+                data: '2026-03-10',
+                tipo: 'Compra direta',
+                outroEspecificado: '',
+                empresa: 'Suprimentos & Cia LTDA',
+                descricao: 'Aquisição de cartuchos de impressão e papéis A4',
+                valor: 3450.00,
+                prevista: '2026-03-25',
+                efetiva: '2026-03-22',
+                fiscal: 'Marcos Roberto',
+                contrato: '-',
+                obs: 'Entregue no prazo'
+            },
+            {
+                id: 2,
+                ano: 2026,
+                sgpe: '88123/2026',
+                data: '2026-05-15',
+                tipo: 'Cartão CPESC',
+                outroEspecificado: '',
+                empresa: 'Chaveiro & Serviços Rápido',
+                descricao: 'Troca de fechaduras e cópias de chaves das salas operacionais',
+                valor: 820.50,
+                prevista: '2026-05-18',
+                efetiva: '2026-05-18',
+                fiscal: 'Juliana Costa',
+                contrato: '-',
+                obs: 'Pagamento via Cartão CPESC'
+            },
+            {
+                id: 3,
+                ano: 2026,
+                sgpe: '11099/2026',
+                data: '2026-06-01',
+                tipo: 'Demanda emergencial',
+                outroEspecificado: '',
+                empresa: 'Refrigeração Catarinense',
+                descricao: 'Conserto emergencial do ar-condicionado central do CPD',
+                valor: 4100.00,
+                prevista: '2026-06-03',
+                efetiva: '2026-06-02',
+                fiscal: 'Ricardo Ramos',
+                contrato: 'CT-012/2026',
+                obs: 'Reparo concluído com urgência'
+            }
+        ];
+
+        document.addEventListener("DOMContentLoaded", function() {
+            renderizarModulo();
+        });
+
+        function salvarStorage() {
+            localStorage.setItem('geapo_compras_cpesc', JSON.stringify(comprasDados));
+        }
+
+        function trocarAno(novoAno) {
+            if(novoAno) {
+                anoAtual = parseInt(novoAno);
+                renderizarModulo();
+            }
+        }
+
+        function validarSGPE(input) {
+            input.value = input.value.replace(/[^0-9/]/g, '');
+        }
+
+        function verificarOutroTipo(val) {
+            const divOutro = document.getElementById('divOutroTipo');
+            const inputOutro = document.getElementById('inputOutroTipo');
+            if(val === 'Outro') {
+                divOutro.style.display = 'block';
+                inputOutro.required = true;
+            } else {
+                divOutro.style.display = 'none';
+                inputOutro.required = false;
+                inputOutro.value = '';
+            }
+        }
+
+        function salvarCompra(event) {
+            event.preventDefault();
+
+            const novoId = comprasDados.length > 0 ? Math.max(...comprasDados.map(c => c.id)) + 1 : 1;
+            const tipoSel = document.getElementById('selectTipoDemanda').value;
+
+            const novaCompra = {
+                id: novoId,
+                ano: anoAtual,
+                sgpe: document.getElementById('inputSGPE').value,
+                data: document.getElementById('inputData').value,
+                tipo: tipoSel,
+                outroEspecificado: tipoSel === 'Outro' ? document.getElementById('inputOutroTipo').value : '',
+                empresa: document.getElementById('inputEmpresa').value,
+                descricao: document.getElementById('inputDescricao').value,
+                valor: parseFloat(document.getElementById('inputValor').value) || 0,
+                prevista: document.getElementById('inputPrevista').value,
+                efetiva: document.getElementById('inputEfetiva').value || '',
+                fiscal: document.getElementById('inputFiscal').value,
+                contrato: document.getElementById('inputContrato').value || '-',
+                obs: document.getElementById('inputOBS').value || '-'
+            };
+
+            comprasDados.push(novaCompra);
+            salvarStorage();
+
+            event.target.reset();
+            document.getElementById('divOutroTipo').style.display = 'none';
+            renderizarModulo();
+        }
+
+        function excluirCompra(id) {
+            if(confirm("Deseja realmente excluir esta demanda de compra?")) {
+                comprasDados = comprasDados.filter(c => c.id !== id);
+                salvarStorage();
+                renderizarModulo();
+            }
+        }
+
+        function formatarMoeda(val) {
+            return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        }
+
+        function formatarData(dataStr) {
+            if(!dataStr) return '-';
+            return dataStr.split('-').reverse().join('/');
+        }
+
+        function obterBadgeTipo(tipo, outroEsp) {
+            switch(tipo) {
+                case 'Compra direta': return `<span class="badge badge-tipo-direta">Compra direta</span>`;
+                case 'Compra/licitação': return `<span class="badge badge-tipo-licitacao">Compra/licitação</span>`;
+                case 'Execução de contrato': return `<span class="badge badge-tipo-contrato">Execução contrato</span>`;
+                case 'Serviço/manutenção': return `<span class="badge badge-tipo-servico">Serviço/manut.</span>`;
+                case 'Demanda emergencial': return `<span class="badge badge-tipo-emergencial">Emergencial</span>`;
+                case 'Cartão CPESC': return `<span class="badge badge-tipo-cpesc">Cartão CPESC</span>`;
+                case 'Outro': return `<span class="badge badge-tipo-outro" title="${outroEsp}">Outro (${outroEsp || 'N/A'})</span>`;
+                default: return `<span class="badge bg-secondary">${tipo}</span>`;
+            }
+        }
+
+        function calcularTotaisPainel() {
+            const doAno = comprasDados.filter(c => c.ano === anoAtual);
+
+            const soma = (tipo) => doAno
+                .filter(c => c.tipo === tipo)
+                .reduce((acc, item) => acc + (item.valor || 0), 0);
+
+            document.getElementById('valDireta').innerText = formatarMoeda(soma('Compra direta'));
+            document.getElementById('valLicitacao').innerText = formatarMoeda(soma('Compra/licitação'));
+            document.getElementById('valContrato').innerText = formatarMoeda(soma('Execução de contrato'));
+            document.getElementById('valServico').innerText = formatarMoeda(soma('Serviço/manutenção'));
+            document.getElementById('valEmergencial').innerText = formatarMoeda(soma('Demanda emergencial'));
+            document.getElementById('valCpesc').innerText = formatarMoeda(soma('Cartão CPESC'));
+            document.getElementById('valOutro').innerText = formatarMoeda(soma('Outro'));
+        }
+
+        function renderizarModulo() {
+            calcularTotaisPainel();
+            filtrarTabela();
+        }
+
+        function filtrarTabela() {
+            const sgpeFiltro = document.getElementById('buscaSGPE').value.toLowerCase().trim();
+            const tipoFiltro = document.getElementById('buscaTipo').value;
+            const empresaFiltro = document.getElementById('buscaEmpresa').value.toLowerCase().trim();
+
+            const tbody = document.getElementById('tbodyCompras');
+            tbody.innerHTML = '';
+
+            const filtrados = comprasDados.filter(c => {
+                const bateAno = c.ano === anoAtual;
+                const bateSGPE = !sgpeFiltro || c.sgpe.toLowerCase().includes(sgpeFiltro);
+                const bateTipo = !tipoFiltro || c.tipo === tipoFiltro;
+                const bateEmpresa = !empresaFiltro || c.empresa.toLowerCase().includes(empresaFiltro);
+                return bateAno && bateSGPE && bateTipo && bateEmpresa;
+            });
+
+            if(filtrados.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="12" class="text-center text-muted p-4">Nenhum registro encontrado para os critérios selecionados.</td></tr>`;
+                return;
+            }
+
+            filtrados.forEach(c => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="fw-bold text-primary text-center">${c.sgpe}</td>
+                        <td class="text-center">${formatarData(c.data)}</td>
+                        <td class="text-center">${obterBadgeTipo(c.tipo, c.outroEspecificado)}</td>
+                        <td class="fw-bold text-dark">${c.empresa}</td>
+                        <td class="col-desc" title="${c.descricao}">${c.descricao}</td>
+                        <td class="fw-bold text-end text-success">${formatarMoeda(c.valor)}</td>
+                        <td class="text-center">${formatarData(c.prevista)}</td>
+                        <td class="text-center">${c.efetiva ? formatarData(c.efetiva) : '<span class="badge bg-light text-warning border">Pendente</span>'}</td>
+                        <td>${c.fiscal}</td>
+                        <td class="text-center">${c.contrato}</td>
+                        <td class="col-obs" title="${c.obs}">${c.obs}</td>
+                        <td class="text-center">
+                            <button class="btn btn-sm btn-outline-danger" onclick="excluirCompra(${c.id})" title="Excluir Registro">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function limparFiltros() {
+            document.getElementById('buscaSGPE').value = '';
+            document.getElementById('buscaTipo').value = '';
+            document.getElementById('buscaEmpresa').value = '';
+            filtrarTabela();
+        }
+    </script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+      // Caso não exista a sessão gravada pelo index.html, redireciona o usuário para o Login
+      if (!sessionStorage.getItem('sicage_usuario')) {
+          alert("Acesso restrito! Por favor, realize o login primeiro na tela inicial.");
+          window.location.href = "index.html";
+      }
+  });
+</script>
+<!-- CÓDIGO DE PROTEÇÃO E MODO VISUALIZADOR -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const usuarioAtivo = sessionStorage.getItem('sicage_usuario');
+        const nivelAtivo = sessionStorage.getItem('sicage_nivel');
+
+        // 1. Se tentar entrar sem logar, manda de volta para o index.html
+        if (!usuarioAtivo) {
+            alert("Acesso restrito! Por favor, faça login na página inicial.");
+            window.location.href = "index.html";
+            return;
+        }
+
+        // 2. Se for Visualizador, bloqueia os botões da página atual
+        if (nivelAtivo === 'Visualizador') {
+            const elementos = document.querySelectorAll('button, input, select, textarea');
+
+            elementos.forEach(el => {
+                const eSidebar = el.closest('.sidebar');
+                const eExercicio = el.id === 'anoExercicio';
+                const eSair = el.getAttribute('onclick') && el.getAttribute('onclick').includes('fazerLogout');
+                const eLink = el.tagName === 'A' || el.classList.contains('btn-whatsapp') || el.classList.contains('btn-email');
+
+                if (!eSidebar && !eExercicio && !eSair && !eLink) {
+                    el.disabled = true;
+                    el.classList.add('disabled');
+                    el.style.pointerEvents = 'none';
+                    el.style.opacity = '0.6';
+                }
+            });
+        }
+    });
+
+    function fazerLogout() {
+        sessionStorage.removeItem('sicage_usuario');
+        sessionStorage.removeItem('sicage_nivel');
+        window.location.href = "index.html";
+    }
+</script>
+</body>
+</body>
+</html>
